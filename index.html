@@ -335,6 +335,38 @@
     height: 24px;
     border: 1px solid rgba(58,74,92,0.2);
   }
+
+  /* Top-center nav */
+  .top-nav {
+    position: absolute;
+    top: 4.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    gap: 22px;
+  }
+  .nav-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.7;
+    text-decoration: none;
+    padding: 6px 16px;
+    border: 1px solid rgba(58, 74, 92, 0.22);
+    transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+    cursor: none;
+    pointer-events: auto;
+    background: rgba(244, 236, 222, 0.35);
+    backdrop-filter: blur(2px);
+  }
+  .nav-link:hover {
+    opacity: 1;
+    background: rgba(58, 74, 92, 0.08);
+    border-color: rgba(58, 74, 92, 0.4);
+  }
 </style>
 </head>
 <body>
@@ -347,6 +379,10 @@
 
 <div class="meta"><span class="dot"></span>Microbe Atlas — Plate 01</div>
 <div class="meta-right">Giverny Series<br/><span style="opacity:0.6">No. 1 of 99</span></div>
+
+<nav class="top-nav">
+  <a href="paper.pdf" class="nav-link" target="_blank" rel="noopener">Research</a>
+</nav>
 
 <div class="overlay">
   <div class="tagline">
@@ -691,7 +727,7 @@
   requestAnimationFrame(update);
 
   // Hover effect: grow brush over interactive items
-  document.querySelectorAll('.stat').forEach(el => {
+  document.querySelectorAll('.stat, .nav-link').forEach(el => {
     el.addEventListener('mouseenter', () => brushEl.classList.add('click'));
     el.addEventListener('mouseleave', () => brushEl.classList.remove('click'));
   });
