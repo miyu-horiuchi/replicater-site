@@ -106,11 +106,11 @@ body {
   margin-bottom: 26px;
 }
 .index-head .lede {
-  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  font-size: clamp(1.05rem, 1.9vw, 1.35rem);
   font-weight: 300;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--c-ink);
-  max-width: 38ch;
+  max-width: 44ch;
 }
 .section-label {
   font-family: 'Inter', sans-serif;
