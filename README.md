@@ -1,6 +1,6 @@
 # replicater-site
 
-Source for [replicater.us](https://replicater.us/) — a single-page static site (Monet-inspired palette, "Microbe — 1%").
+Source for [replicater.xyz](https://replicater.xyz/) — a single-page static site (Monet-inspired palette, "Microbe — 1%").
 
 Deployed to Vercel under the `microbe-impressionist` project.
 
