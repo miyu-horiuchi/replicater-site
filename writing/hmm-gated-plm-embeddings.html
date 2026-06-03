@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HMM-Gated PLM Embeddings — Microbe 1%</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../research.css" />
+</head>
+<body>
+<div class="frame"></div>
+
+<div class="bar">
+  <a class="wordmark" href="../index.html"><span class="dot"></span>Microbe — 1%</a>
+  <nav class="bar-nav">
+    <a class="nav-link" href="../research.html">Research</a>
+    <a class="nav-link" href="../index.html">Home</a>
+  </nav>
+</div>
+
+<article class="col">
+  <header class="article-head">
+    <h1>HMM-Gated Protein Language Model Embeddings for Bacterial Cultivation Condition Prediction</h1>
+    <p class="subtitle">Gating ESM-2 with curated HMM marker panels to predict cultivation conditions from genome sequence.</p>
+    <p class="byline">Miyu Horiuchi<span class="sep">·</span>26 May 2026</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#introduction">The cultivation bottleneck</a></li>
+      <li><a href="#gap">Why protein inventories are too coarse</a></li>
+      <li><a href="#ptpe">A middle path: HMM-gated PLM embeddings</a></li>
+      <li><a href="#contributions">Contributions</a></li>
+      <li><a href="#results">What the evaluation shows</a></li>
+      <li><a href="#paper">Read the full paper</a></li>
+    </ol>
+  </nav>
+
+  <div class="prose">
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      The majority of microbial diversity remains uncultivated, in large part because we
+      do not know what cultivation conditions a given lineage requires. Existing
+      genome-based phenotype predictors operate on a single feature family — protein
+      family inventories, codon usage statistics, or single-trait marker panels — and most
+      binarize continuous phenotypes such as optimum temperature, pH, and salinity into
+      coarse labels. Here we introduce <strong>HMM-gated protein language model embeddings
+      (PTPE, phenotype-targeted PLM embeddings)</strong>: for each genome we run
+      <em>pyhmmer</em> against eight curated phenotype-relevant HMM marker families (oxygen
+      handling, thermotolerance, pH homeostasis, osmotic response, vitamin biosynthesis,
+      nitrogen cycling, carbon utilization, and a "special" category), embed only the
+      matched proteins with a frozen protein language model (ESM-2), and mean-pool
+      <em>within each category</em> to produce a compact per-genome functional fingerprint.
+    </p>
+    <p>
+      We integrate PTPE with five additional feature paths — amino acid composition,
+      MediaDive recipe metadata, Pfam HMM marker counts, KEGG module fractional completeness
+      (570 modules), and parsed BacDive isolation metadata — for a total of 6,313 features
+      per genome, and train a multi-task XGBoost over 46,029 BacDive strains (22,300 unique
+      genomes) for four cultivation targets (optimum temperature, pH, oxygen requirement,
+      salt tolerance) with five-fold family-grouped cross-validation.
+    </p>
+
+    <h2 id="introduction">The cultivation bottleneck</h2>
+    <p>
+      Cultivation of microbes from environmental samples is bottlenecked not by sequencing
+      or isolation hardware but by the prior question of <strong>which conditions to
+      use</strong>: optimum temperature, pH, oxygen tolerance, and salinity must be chosen,
+      typically from broad ranges, before a strain can be enriched in pure culture. For the
+      &gt;99% of bacterial and archaeal lineages that have never been cultivated, 16S
+      placement provides only weak constraints on these conditions — phylogenetically close
+      strains routinely differ by 10&nbsp;°C in optimum temperature or several pH units.
+      Direct prediction of cultivation conditions from genome sequence would lower this
+      barrier substantially.
+    </p>
+
+    <h2 id="gap">Why protein inventories are too coarse</h2>
+    <p>
+      A common gap across the prior literature is that <strong>protein family inventories
+      are coarse</strong>. A Pfam hit is binary: "does this genome contain a cytochrome c
+      oxidase?" It collapses the substantial <em>sequence-level</em> variation between
+      different cytochromes — variation that determines whether the organism is
+      microaerophilic, strictly aerobic, or facultative. Protein language models such as
+      ESM-2 are designed to expose precisely this continuous variation, but naive
+      whole-proteome PLM pooling averages ESM-2 across every protein in a genome, drowning
+      the few phenotype-relevant proteins (12 cytochromes) in the ~4,000 housekeeping ones
+      and producing a feature vector that is biologically dilute.
+    </p>
+
+    <h2 id="ptpe">A middle path: HMM-gated PLM embeddings</h2>
+    <p>
+      We propose a middle path: <strong>use the HMM as a gate for which proteins to
+      embed</strong>. For each genome we run <em>pyhmmer</em> against a curated panel of 48
+      phenotype-relevant Pfam HMMs grouped into 8 categories, embed only the matched
+      proteins with a frozen ESM-2, and mean-pool within each category. The result is a
+      phenotype-targeted protein language model embedding (PTPE): a compact per-genome
+      functional fingerprint that keeps the <em>specificity</em> of HMM-based feature
+      selection and the <em>continuous functional resolution</em> of PLMs. We integrate PTPE
+      with five additional feature paths and train a multi-task XGBoost on 46,029 BacDive
+      strains with family-grouped cross-validation — the largest BacDive-anchored phenotype
+      prediction corpus published to date (~2× the size of prior work).
+    </p>
+
+    <h2 id="contributions">Contributions</h2>
+    <ol>
+      <li><strong>PTPE construction.</strong> A novel feature type for genome-level
+        phenotype prediction. To our knowledge no prior work in the eight surveyed
+        BacDive-era papers uses HMM-gated PLM mean pooling.</li>
+      <li><strong>Multi-source feature fusion at BacDive scale.</strong> 46,029 strains ×
+        6,313 features integrating composition, MediaDive, Pfam markers, KEGG modules,
+        isolation metadata, and PTPE, with 5-fold family-grouped CV and the strongest
+        pre-PTPE baseline released as a reproducible comparator.</li>
+      <li><strong>An honest empirical evaluation.</strong> PTPE adds modest, target-dependent
+        lift on regression targets (1–2.4%) but slightly regresses oxygen F1. We do not
+        overclaim; we characterize where frozen PTPE helps and where it does not.</li>
+      <li><strong>A fold-0 LoRA result and deployed hybrid predictor.</strong> End-to-end
+        trained ESM-2 adapters improve oxygen classification substantially but do not
+        replace tabular heads for continuous targets, so we deploy a phenotype-specific
+        hybrid and apply it to 5,000 uncultured catalog genomes.</li>
+      <li><strong>A GenomeSPOT comparator.</strong> We run GenomeSPOT on 5,000 held-out
+        BacDive-derived genomes from the same family-grouped manifest, producing an external
+        condition-trait comparator with no failed genomes.</li>
+    </ol>
+
+    <h2 id="results">What the evaluation shows</h2>
+    <p>
+      PTPE adds modest, target-dependent lift over the five-path baseline: optimum
+      temperature MAE improves from 2.74 to 2.67&nbsp;°C (2.4%), salt MAE from 1.94 to
+      1.92% (1.1%), and pH MAE from 0.473 to 0.469 (1.0%); oxygen macro F1 regresses from
+      0.412 to 0.402. Against GenomeSPOT on a deterministic 5,000-genome subset, this work
+      is 39% more accurate at temperature, 23% at pH, and 3% at salt. Fine-tuning the
+      protein language model with LoRA adapters on the HMM-gated marker sequences sharply
+      improves oxygen classification (macro F1 0.945 vs. 0.402 for the tabular head). The
+      retained production system is therefore a hybrid: tabular XGBoost for temperature, pH,
+      and salt; all-task LoRA for oxygen; and a tabular MediaDive recommender for medium
+      ranking. Applied to 5,000 GTDB-derived uncultured catalog genomes, it predicts 3,026
+      aerobes and 1,974 anaerobes.
+    </p>
+
+    <p class="keywords">
+      Keywords — microbial cultivation · phenotype prediction · protein language models ·
+      HMM profiles · KEGG modules · BacDive · uncultivated microorganisms
+    </p>
+  </div>
+
+  <div class="pdf-cta" id="paper">
+    <a href="../paper.pdf" target="_blank" rel="noopener">Read the full paper (PDF) →</a>
+  </div>
+
+  <section class="citation">
+    <h2>Cite</h2>
+    <pre>@article{horiuchi2026hmmgated,
+  title   = {HMM-Gated Protein Language Model Embeddings for
+             Bacterial Cultivation Condition Prediction},
+  author  = {Horiuchi, Miyu},
+  year    = {2026},
+  note    = {replicater.xyz/writing/hmm-gated-plm-embeddings}
+}</pre>
+  </section>
+</article>
+
+<footer>
+  <span><a href="../research.html">← All research</a></span>
+  <span><a href="../index.html">replicater.xyz</a></span>
+</footer>
+</body>
+</html>
