@@ -98,9 +98,9 @@ body {
 .index-head { padding: 12vh 0 0; }
 .index-head h1 {
   font-family: 'Inter', sans-serif;
-  font-size: clamp(1.7rem, 3.6vw, 2.4rem);
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
   font-weight: 400;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--c-deep);
   opacity: 0.45;
@@ -123,12 +123,12 @@ body {
 .research-block { margin-top: 6vh; }
 .section-label {
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--c-deep);
   opacity: 0.55;
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.7rem;
 }
 .papers { list-style: none; }
 .paper-item {
