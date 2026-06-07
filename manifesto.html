@@ -1,0 +1,1832 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Microbial Dark Matter · A Manifesto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --c-cream: #f4ecde;
+        --c-sky: #b8c9d8;
+        --c-lavender: #c2b6cf;
+        --c-rose: #e6b9ae;
+        --c-sage: #9bb29a;
+        --c-deep: #3a4a5c;
+        --c-ink: #2a2f3a;
+        --c-soft: #6b7c8e;
+        --c-line: rgba(58, 74, 92, 0.18);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 18% 8%, rgba(184, 201, 216, 0.50), transparent 48%),
+          radial-gradient(ellipse at 80% 18%, rgba(194, 182, 207, 0.42), transparent 45%),
+          radial-gradient(ellipse at 24% 88%, rgba(155, 178, 154, 0.36), transparent 52%),
+          linear-gradient(180deg, #f8f1e5 0%, var(--c-cream) 46%, #efe5d4 100%);
+        background-attachment: fixed;
+        color: var(--c-ink);
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 20px;
+        line-height: 1.72;
+        position: relative;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.06;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        z-index: 0;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 58%, rgba(58, 74, 92, 0.14) 100%);
+        z-index: 0;
+      }
+
+      .site-frame {
+        position: fixed;
+        inset: 3vh 3vw;
+        border: 1px solid var(--c-line);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .top-nav {
+        position: fixed;
+        top: 4.5vh;
+        right: 4.5vw;
+        z-index: 5;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 18px;
+      }
+
+      .nav-link {
+        font-family: "Inter", sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--c-deep);
+        opacity: 0.72;
+        text-decoration: none;
+        padding: 6px 16px;
+        border: 1px solid rgba(58, 74, 92, 0.22);
+        transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        background: rgba(244, 236, 222, 0.42);
+        backdrop-filter: blur(2px);
+      }
+
+      .nav-link:hover {
+        opacity: 1;
+        background: rgba(58, 74, 92, 0.08);
+        border-color: rgba(58, 74, 92, 0.4);
+      }
+
+      .page {
+        position: relative;
+        z-index: 2;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: clamp(112px, 16vh, 168px) clamp(24px, 6vw, 76px) 140px;
+      }
+
+      .page::before {
+        content: "";
+        position: absolute;
+        top: 82px;
+        left: clamp(24px, 6vw, 76px);
+        width: 1px;
+        height: calc(100% - 190px);
+        background: linear-gradient(180deg, transparent, rgba(58, 74, 92, 0.16) 8%, rgba(58, 74, 92, 0.16) 92%, transparent);
+      }
+
+      header {
+        text-align: center;
+        margin: 0 auto 54px;
+        max-width: 760px;
+      }
+
+      .folio {
+        font-family: "Inter", sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.38em;
+        color: var(--c-deep);
+        text-transform: uppercase;
+        margin-bottom: 26px;
+        opacity: 0.68;
+      }
+
+      .mirror { display: none; }
+
+      h1.title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 300;
+        font-size: clamp(42px, 7vw, 86px);
+        letter-spacing: 0;
+        line-height: 1.04;
+        margin: 0 0 18px;
+        color: var(--c-ink);
+        text-wrap: balance;
+      }
+
+      h1.title em {
+        font-weight: 400;
+        font-style: italic;
+        text-transform: lowercase;
+        color: var(--c-soft);
+      }
+
+      .subtitle {
+        font-style: italic;
+        font-size: clamp(22px, 3vw, 30px);
+        color: var(--c-soft);
+        max-width: 580px;
+        margin: 0 auto;
+        line-height: 1.36;
+      }
+
+      .rule {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        margin: 34px auto 0;
+        max-width: 320px;
+        color: var(--c-deep);
+        opacity: 0.58;
+      }
+
+      .rule::before, .rule::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: currentColor;
+        opacity: 0.45;
+      }
+
+      .rule svg { width: 20px; height: 20px; opacity: 0.72; }
+
+      .figure {
+        margin: 54px auto 72px;
+        text-align: center;
+      }
+
+      .figure svg {
+        width: min(100%, 520px);
+        height: auto;
+        color: var(--c-deep);
+        filter: drop-shadow(0 16px 42px rgba(58, 74, 92, 0.08));
+      }
+
+      .figure figcaption {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-style: italic;
+        font-size: 16px;
+        color: var(--c-soft);
+        margin-top: 14px;
+        letter-spacing: 0.02em;
+      }
+
+      .figure figcaption b,
+      .footnotes h3,
+      .colophon h3 {
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--c-deep);
+      }
+
+      article {
+        font-size: clamp(19px, 2vw, 22px);
+        line-height: 1.72;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      article p {
+        margin: 0 0 24px;
+        text-align: left;
+        hyphens: none;
+      }
+
+      article > p:first-of-type::first-letter {
+        float: left;
+        font-size: 86px;
+        font-style: italic;
+        line-height: 0.82;
+        padding: 10px 14px 0 0;
+        color: var(--c-deep);
+      }
+
+      article p.lede {
+        font-style: italic;
+        font-size: clamp(25px, 3.2vw, 34px);
+        line-height: 1.36;
+        color: var(--c-ink);
+        margin-bottom: 36px;
+        text-wrap: balance;
+      }
+
+      article p.turn {
+        font-style: italic;
+        font-size: clamp(24px, 3vw, 32px);
+        line-height: 1.28;
+        color: var(--c-deep);
+        margin: 44px 0 24px;
+        text-wrap: balance;
+      }
+
+      article p.stat {
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        text-align: center;
+        margin: 36px 0;
+        color: var(--c-deep);
+      }
+
+      article .name {
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 0.72em;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--c-deep);
+      }
+
+      aside.marginalia {
+        float: right;
+        clear: right;
+        width: 190px;
+        margin: 8px -150px 18px 28px;
+        font-family: "Inter", sans-serif;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        line-height: 1.55;
+        color: var(--c-deep);
+        border-left: 1px solid rgba(58, 74, 92, 0.32);
+        padding-left: 16px;
+        opacity: 0.72;
+      }
+
+      aside.marginalia.left {
+        float: left;
+        clear: left;
+        margin: 8px 28px 18px -150px;
+        border-left: none;
+        border-right: 1px solid rgba(58, 74, 92, 0.32);
+        padding-left: 0;
+        padding-right: 16px;
+        text-align: right;
+      }
+
+      .fleuron {
+        text-align: center;
+        margin: 52px 0;
+        color: var(--c-deep);
+        font-family: "Inter", sans-serif;
+        font-size: 10px;
+        letter-spacing: 1.2em;
+        opacity: 0.42;
+      }
+
+      blockquote.proverb {
+        font-style: italic;
+        font-size: clamp(28px, 4vw, 42px);
+        text-align: center;
+        max-width: 620px;
+        margin: 64px auto;
+        color: var(--c-deep);
+        line-height: 1.18;
+        text-wrap: balance;
+      }
+
+      blockquote.proverb cite {
+        display: block;
+        font-family: "Inter", sans-serif;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        margin-top: 18px;
+        color: var(--c-soft);
+      }
+
+      sup.cite {
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        font-size: 0.56em;
+        color: var(--c-deep);
+        vertical-align: super;
+        line-height: 0;
+        margin: 0 1px;
+      }
+
+      sup.cite a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px dotted rgba(58, 74, 92, 0.55);
+      }
+
+      sup.cite a:hover { color: var(--c-ink); border-bottom-color: var(--c-ink); }
+
+      .call {
+        margin: 72px auto 0;
+        max-width: 680px;
+        padding: 30px 34px;
+        border: 1px solid rgba(58, 74, 92, 0.22);
+        text-align: center;
+        font-style: italic;
+        font-size: 21px;
+        color: var(--c-ink);
+        line-height: 1.52;
+        background: rgba(244, 236, 222, 0.36);
+        backdrop-filter: blur(2px);
+      }
+
+      .call::before, .call::after { content: none; }
+      .call a { color: var(--c-deep); text-decoration: none; border-bottom: 1px solid rgba(58, 74, 92, 0.45); }
+      .call a:hover { border-bottom-color: var(--c-ink); }
+
+      .footnotes {
+        margin: 88px auto 0;
+        max-width: 720px;
+        padding-top: 28px;
+        border-top: 1px solid rgba(58, 74, 92, 0.24);
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--c-soft);
+        counter-reset: fn;
+      }
+
+      .footnotes h3 {
+        margin: 0 0 18px;
+        text-align: center;
+      }
+
+      .footnotes ol { list-style: none; padding: 0; margin: 0; }
+
+      .footnotes li {
+        counter-increment: fn;
+        position: relative;
+        padding: 7px 0 7px 34px;
+      }
+
+      .footnotes li::before {
+        content: counter(fn);
+        position: absolute;
+        left: 0;
+        top: 7px;
+        font-size: 11px;
+        color: var(--c-deep);
+        width: 24px;
+        text-align: right;
+      }
+
+      .footnotes li:target { background: rgba(155, 178, 154, 0.18); }
+
+      .colophon {
+        margin: 70px auto 0;
+        padding-top: 32px;
+        border-top: 1px solid rgba(58, 74, 92, 0.18);
+        max-width: 680px;
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        color: var(--c-soft);
+      }
+
+      .colophon h3 { margin: 0 0 12px; }
+      .colophon p { margin: 0 0 8px; line-height: 1.6; }
+
+      .signature {
+        margin: 58px auto 0;
+        max-width: 680px;
+        text-align: right;
+        font-style: italic;
+        font-size: 34px;
+        color: var(--c-deep);
+        line-height: 1;
+      }
+
+      .signature small {
+        display: block;
+        font-family: "Inter", sans-serif;
+        font-size: 11px;
+        color: var(--c-soft);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 1080px) {
+        aside.marginalia, aside.marginalia.left {
+          float: none;
+          width: auto;
+          margin: 20px 0;
+          border-left: 1px solid rgba(58, 74, 92, 0.24);
+          border-right: none;
+          padding-left: 16px;
+          padding-right: 0;
+          text-align: left;
+        }
+      }
+
+      @media (max-width: 720px) {
+        body { font-size: 18px; }
+        .site-frame { inset: 16px; }
+        .top-nav {
+          position: absolute;
+          top: 28px;
+          left: 24px;
+          right: 24px;
+          justify-content: center;
+          gap: 10px;
+        }
+        .nav-link {
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          padding: 6px 11px;
+        }
+        .page { padding: 104px 24px 88px; }
+        .page::before { display: none; }
+        .folio { font-size: 10px; letter-spacing: 0.26em; }
+        article { font-size: 19px; }
+        article p { margin-bottom: 22px; }
+        article > p:first-of-type::first-letter { font-size: 64px; }
+        .figure { margin: 42px -4px 54px; }
+        .fleuron { letter-spacing: 0.62em; }
+        .call { padding: 24px 22px; font-size: 20px; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="site-frame"></div>
+    <nav class="top-nav" aria-label="Site navigation">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="research.html" class="nav-link">Research</a>
+      <a href="manifesto.html" class="nav-link">Manifesto</a>
+    </nav>
+    <main class="page">
+      <header>
+        <div class="folio">A manifesto · 2026</div>
+        <h1 class="title">The Microbial <em>dark matter</em></h1>
+        <p class="subtitle">
+          99% of life we have yet to discover.
+        </p>
+        <div class="rule">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="4" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <line x1="12" y1="2" x2="12" y2="22" />
+          </svg>
+        </div>
+      </header>
+
+      <figure class="figure">
+        <svg viewBox="0 0 580 620" xmlns="http://www.w3.org/2000/svg" aria-label="The microbial dark matter: 1 cultured microbe among 99 uncultured ghost outlines">
+          <defs>
+            <pattern id="hatch" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="4" stroke="#3a4a5c" stroke-width="0.4" opacity="0.55" />
+            </pattern>
+          </defs>
+
+          <!-- Title -->
+          <text x="290" y="44" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="22" fill="#3a4a5c">
+            the microbial dark matter
+          </text>
+          <text x="290" y="68" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#6b7c8e" opacity="0.85">
+            of every hundred microbes on Earth, we have grown one
+          </text>
+
+          <!-- Faint outer frame for the grid (da Vinci square) -->
+          <rect x="44" y="92" width="492" height="436" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.45"/>
+
+          <!-- Faint construction tick marks at corners -->
+          <g stroke="#3a4a5c" stroke-width="0.4" opacity="0.4">
+            <line x1="44" y1="92" x2="52" y2="92"/><line x1="44" y1="92" x2="44" y2="100"/>
+            <line x1="528" y1="92" x2="536" y2="92"/><line x1="536" y1="92" x2="536" y2="100"/>
+            <line x1="44" y1="528" x2="52" y2="528"/><line x1="44" y1="520" x2="44" y2="528"/>
+            <line x1="528" y1="528" x2="536" y2="528"/><line x1="536" y1="520" x2="536" y2="528"/>
+          </g>
+
+          <!-- Grid: 99 ghosts + 1 solid -->
+          <ellipse cx="70" cy="110" rx="15.6" ry="8.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-7.8 70 110)"/>
+          <ellipse cx="114" cy="110" rx="17.1" ry="7.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-18.8 114 110)"/>
+          <ellipse cx="158" cy="110" rx="17.0" ry="7.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-19.4 158 110)"/>
+          <ellipse cx="202" cy="110" rx="15.3" ry="7.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-2.9 202 110)"/>
+          <ellipse cx="246" cy="110" rx="18.3" ry="7.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-3.3 246 110)"/>
+          <ellipse cx="290" cy="110" rx="17.5" ry="8.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-12.2 290 110)"/>
+          <ellipse cx="334" cy="110" rx="16.6" ry="9.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(3.4 334 110)"/>
+          <ellipse cx="378" cy="110" rx="18.4" ry="7.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-20.0 378 110)"/>
+          <ellipse cx="422" cy="110" rx="15.5" ry="7.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-15.7 422 110)"/>
+          <ellipse cx="466" cy="110" rx="15.7" ry="8.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(13.9 466 110)"/>
+          <ellipse cx="70" cy="154" rx="16.5" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(6.1 70 154)"/>
+          <ellipse cx="114" cy="154" rx="15.2" ry="7.4" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-19.2 114 154)"/>
+          <ellipse cx="158" cy="154" rx="16.7" ry="7.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(7.9 158 154)"/>
+          <ellipse cx="202" cy="154" rx="16.8" ry="7.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(3.8 202 154)"/>
+          <ellipse cx="246" cy="154" rx="17.8" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(13.0 246 154)"/>
+          <ellipse cx="290" cy="154" rx="17.1" ry="8.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(3.3 290 154)"/>
+          <ellipse cx="334" cy="154" rx="16.2" ry="9.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(10.1 334 154)"/>
+          <ellipse cx="378" cy="154" rx="16.7" ry="8.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-16.8 378 154)"/>
+          <ellipse cx="422" cy="154" rx="17.0" ry="7.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-15.3 422 154)"/>
+          <ellipse cx="466" cy="154" rx="18.1" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(7.4 466 154)"/>
+          <ellipse cx="70" cy="198" rx="16.3" ry="8.4" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(16.5 70 198)"/>
+          <ellipse cx="114" cy="198" rx="17.3" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(4.2 114 198)"/>
+          <ellipse cx="158" cy="198" rx="18.8" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(15.0 158 198)"/>
+          <ellipse cx="202" cy="198" rx="15.2" ry="8.4" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(7.2 202 198)"/>
+          <ellipse cx="246" cy="198" rx="19.0" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(6.5 246 198)"/>
+          <ellipse cx="290" cy="198" rx="16.5" ry="8.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-9.5 290 198)"/>
+          <ellipse cx="334" cy="198" rx="16.8" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-21.0 334 198)"/>
+          <ellipse cx="378" cy="198" rx="15.2" ry="8.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-16.8 378 198)"/>
+          <ellipse cx="422" cy="198" rx="16.0" ry="7.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-16.3 422 198)"/>
+          <ellipse cx="466" cy="198" rx="15.3" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(16.3 466 198)"/>
+          <ellipse cx="70" cy="242" rx="18.5" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(2.2 70 242)"/>
+          <ellipse cx="114" cy="242" rx="16.1" ry="7.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(16.0 114 242)"/>
+          <ellipse cx="158" cy="242" rx="18.5" ry="8.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-6.2 158 242)"/>
+          <ellipse cx="202" cy="242" rx="15.7" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-15.4 202 242)"/>
+          <ellipse cx="246" cy="242" rx="16.9" ry="8.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-11.7 246 242)"/>
+          <ellipse cx="290" cy="242" rx="15.0" ry="7.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-10.4 290 242)"/>
+          <ellipse cx="334" cy="242" rx="17.3" ry="8.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-5.8 334 242)"/>
+          <ellipse cx="378" cy="242" rx="17.1" ry="8.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(8.4 378 242)"/>
+          <ellipse cx="422" cy="242" rx="15.2" ry="8.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(7.8 422 242)"/>
+          <ellipse cx="466" cy="242" rx="18.5" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(12.3 466 242)"/>
+          <ellipse cx="70" cy="286" rx="16.6" ry="7.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-4.7 70 286)"/>
+          <ellipse cx="114" cy="286" rx="15.2" ry="7.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(5.9 114 286)"/>
+          <ellipse cx="158" cy="286" rx="15.6" ry="7.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-12.8 158 286)"/>
+          <ellipse cx="202" cy="286" rx="15.0" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-19.7 202 286)"/>
+          <g transform="translate(246 286)">
+            <ellipse cx="0" cy="0" rx="17" ry="8.5" fill="url(#hatch)" stroke="#3a4a5c" stroke-width="1.2" transform="rotate(-17.5)"/>
+            <line x1="-17" y1="0" x2="-26" y2="-2" stroke="#3a4a5c" stroke-width="0.9" transform="rotate(-17.5)"/>
+            <line x1="17" y1="0" x2="26" y2="2" stroke="#3a4a5c" stroke-width="0.9" transform="rotate(-17.5)"/>
+          </g>
+          <ellipse cx="290" cy="286" rx="17.5" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(16.5 290 286)"/>
+          <ellipse cx="334" cy="286" rx="16.4" ry="7.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-10.9 334 286)"/>
+          <ellipse cx="378" cy="286" rx="18.4" ry="9.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-16.6 378 286)"/>
+          <ellipse cx="422" cy="286" rx="16.9" ry="7.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-1.5 422 286)"/>
+          <ellipse cx="466" cy="286" rx="16.4" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-17.5 466 286)"/>
+          <ellipse cx="70" cy="330" rx="15.6" ry="7.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(14.5 70 330)"/>
+          <ellipse cx="114" cy="330" rx="17.1" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(19.8 114 330)"/>
+          <ellipse cx="158" cy="330" rx="15.1" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(1.9 158 330)"/>
+          <ellipse cx="202" cy="330" rx="18.5" ry="8.4" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(21.1 202 330)"/>
+          <ellipse cx="246" cy="330" rx="16.5" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-10.5 246 330)"/>
+          <ellipse cx="290" cy="330" rx="17.1" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(12.0 290 330)"/>
+          <ellipse cx="334" cy="330" rx="15.9" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-7.5 334 330)"/>
+          <ellipse cx="378" cy="330" rx="18.4" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(21.3 378 330)"/>
+          <ellipse cx="422" cy="330" rx="18.0" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(14.0 422 330)"/>
+          <ellipse cx="466" cy="330" rx="16.4" ry="7.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(0.8 466 330)"/>
+          <ellipse cx="70" cy="374" rx="16.1" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-20.8 70 374)"/>
+          <ellipse cx="114" cy="374" rx="18.8" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(8.5 114 374)"/>
+          <ellipse cx="158" cy="374" rx="19.0" ry="8.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(19.2 158 374)"/>
+          <ellipse cx="202" cy="374" rx="15.9" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-6.0 202 374)"/>
+          <ellipse cx="246" cy="374" rx="15.8" ry="8.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-13.3 246 374)"/>
+          <ellipse cx="290" cy="374" rx="18.4" ry="8.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(17.6 290 374)"/>
+          <ellipse cx="334" cy="374" rx="18.2" ry="7.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(6.7 334 374)"/>
+          <ellipse cx="378" cy="374" rx="18.6" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(7.1 378 374)"/>
+          <ellipse cx="422" cy="374" rx="16.9" ry="7.4" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(11.0 422 374)"/>
+          <ellipse cx="466" cy="374" rx="16.3" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(12.7 466 374)"/>
+          <ellipse cx="70" cy="418" rx="16.6" ry="7.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(20.8 70 418)"/>
+          <ellipse cx="114" cy="418" rx="17.9" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(19.7 114 418)"/>
+          <ellipse cx="158" cy="418" rx="15.6" ry="8.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-16.4 158 418)"/>
+          <ellipse cx="202" cy="418" rx="15.6" ry="8.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(13.5 202 418)"/>
+          <ellipse cx="246" cy="418" rx="17.6" ry="7.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(21.1 246 418)"/>
+          <ellipse cx="290" cy="418" rx="15.5" ry="7.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(2.1 290 418)"/>
+          <ellipse cx="334" cy="418" rx="17.6" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(20.7 334 418)"/>
+          <ellipse cx="378" cy="418" rx="16.7" ry="8.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(19.1 378 418)"/>
+          <ellipse cx="422" cy="418" rx="15.8" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(14.4 422 418)"/>
+          <ellipse cx="466" cy="418" rx="16.0" ry="8.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-9.1 466 418)"/>
+          <ellipse cx="70" cy="462" rx="16.7" ry="7.3" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-10.6 70 462)"/>
+          <ellipse cx="114" cy="462" rx="16.4" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(18.0 114 462)"/>
+          <ellipse cx="158" cy="462" rx="18.6" ry="7.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(3.7 158 462)"/>
+          <ellipse cx="202" cy="462" rx="17.0" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(18.4 202 462)"/>
+          <ellipse cx="246" cy="462" rx="15.1" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(1.0 246 462)"/>
+          <ellipse cx="290" cy="462" rx="15.0" ry="8.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-13.9 290 462)"/>
+          <ellipse cx="334" cy="462" rx="16.9" ry="8.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-14.4 334 462)"/>
+          <ellipse cx="378" cy="462" rx="16.3" ry="8.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(2.5 378 462)"/>
+          <ellipse cx="422" cy="462" rx="18.1" ry="7.2" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(2.4 422 462)"/>
+          <ellipse cx="466" cy="462" rx="16.0" ry="7.6" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(2.7 466 462)"/>
+          <ellipse cx="70" cy="506" rx="17.0" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(12.0 70 506)"/>
+          <ellipse cx="114" cy="506" rx="18.6" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(11.4 114 506)"/>
+          <ellipse cx="158" cy="506" rx="17.0" ry="8.0" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(5.0 158 506)"/>
+          <ellipse cx="202" cy="506" rx="16.8" ry="8.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(8.5 202 506)"/>
+          <ellipse cx="246" cy="506" rx="18.8" ry="8.4" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-1.0 246 506)"/>
+          <ellipse cx="290" cy="506" rx="18.8" ry="7.5" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(16.6 290 506)"/>
+          <ellipse cx="334" cy="506" rx="18.8" ry="8.7" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(2.6 334 506)"/>
+          <ellipse cx="378" cy="506" rx="15.5" ry="7.9" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-16.0 378 506)"/>
+          <ellipse cx="422" cy="506" rx="16.0" ry="7.1" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(-18.8 422 506)"/>
+          <ellipse cx="466" cy="506" rx="18.1" ry="8.8" fill="none" stroke="#3a4a5c" stroke-width="0.5" opacity="0.32" transform="rotate(7.5 466 506)"/>
+
+          <!-- Highlight ring around the solid microbe -->
+          <circle cx="246" cy="286" r="26" fill="none" stroke="#3a4a5c" stroke-width="0.6" opacity="0.7"/>
+
+          <!-- Callout arrow + label for the solid -->
+          <g font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#3a4a5c">
+            <line x1="272" y1="286" x2="306" y2="282" stroke="#3a4a5c" stroke-width="0.7" opacity="0.85"/>
+            <text x="310" y="284" text-anchor="start">the cultured 1%</text>
+            <text x="310" y="300" text-anchor="start" font-size="11" fill="#6b7c8e" opacity="0.85">we have a living culture</text>
+          </g>
+
+          <!-- Bracket / note for the 99% -->
+          <g font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#3a4a5c">
+            <text x="50" y="556" text-anchor="start">the uncultured 99%</text>
+            <text x="50" y="572" text-anchor="start" font-size="11" fill="#6b7c8e" opacity="0.85">we have only the genome — never the cell</text>
+          </g>
+
+          <!-- Right side note: counts -->
+          <g font-family="Cormorant Garamond, serif" font-style="italic" font-size="11" fill="#6b7c8e" opacity="0.85">
+            <text x="528" y="556" text-anchor="end">1 cultured · 99 uncultured</text>
+            <text x="528" y="572" text-anchor="end">representative; ratio not exaggerated</text>
+          </g>
+
+          <!-- Tiny scale annotation (top-left) -->
+          <g font-family="Cormorant Garamond, serif" font-style="italic" font-size="11" fill="#6b7c8e" opacity="0.7">
+            <text x="44" y="84">1 cell ≈ 1% of microbial life</text>
+          </g>
+        </svg>
+        <figcaption><b>Fig. I.</b> &nbsp; The potential is unimaginable if we discover the other 99%.</figcaption>
+      </figure>
+
+      <article>
+        <p class="lede">
+          There is a bacterium in your gut right now, possibly several thousand
+          species, that we have never been able to grow in a lab.
+        </p>
+
+        <p>
+          We know they exist. We have sequenced their DNA from your stool, from soil,
+          from seawater, from hot springs. They sit in databases as ghost
+          organisms: full genomes with no organism behind them. We can read every gene they have. We just cannot culture them.
+        </p>
+
+        <p class="stat">this is true for 99% of microbial life on earth</p>
+
+        <p>
+          It is not for lack of trying. Microbiologists have been at this for over a
+          century. The standard procedure is depressing: take a sample, dilute it,
+          plate it on agar, try every growth medium you can think of, wait days to
+          weeks, see what grows. Most labs run this with perhaps five media. The most
+          ambitious labs run two hundred. The result is always the same: a handful of
+          fast-growing generalists colonise the plates, and everything interesting
+          stays invisible.
+        </p>
+
+        <aside class="marginalia">
+          <i>Ghost organisms:</i> a complete genome, sitting in a public database,
+          with no living cell behind it.
+        </aside>
+
+        <p>
+          Some of what we are missing. <span class="name">Christensenella</span>, the
+          genus most strongly associated with leanness in human gut microbiome studies,
+          of which we have grown less than one percent.<sup class="cite"><a href="#fn1">1</a></sup>
+          <span class="name">Patescibacteria</span>, an entire bacterial superphylum
+          that lives by attaching to the surface of other bacteria, discovered through
+          metagenomic sequencing in 2015, almost none cultured, their lifestyle so
+          unusual that nobody is confident standard methods will ever work on them.<sup class="cite"><a href="#fn2">2</a></sup>
+          <span class="name">Asgard archaea</span>, the closest living relatives of the
+          cell type that became all complex life. The first one,
+          <i>Prometheoarchaeum syntrophicum</i>, was finally cultured in 2019 after
+          twelve years of trying with a single sample.<sup class="cite"><a href="#fn3">3</a></sup>
+          And the <span class="name">deep biosphere</span>, bacteria living kilometres
+          below the Earth's surface, in rock pores, with doubling times measured in
+          thousands of years: sequenced, but not a single one grown.<sup class="cite"><a href="#fn4">4</a></sup>
+        </p>
+
+
+      <figure class="figure dots-figure">
+        <svg viewBox="0 0 490 480" xmlns="http://www.w3.org/2000/svg" aria-label="6 cultivated species, 843 known only as genome">
+          <text x="245" y="36" text-anchor="middle"
+                font-family="Cormorant Garamond, serif" font-style="italic" font-size="22" fill="#3a4a5c">
+            Christensenella
+          </text>
+          <g class="grid">
+            <circle cx="128" cy="70" r="2.4"/>
+            <circle cx="141" cy="70" r="2.4"/>
+            <circle cx="154" cy="70" r="2.4"/>
+            <circle cx="167" cy="70" r="2.4"/>
+            <circle cx="180" cy="70" r="2.4"/>
+            <circle cx="193" cy="70" r="2.4"/>
+            <circle cx="206" cy="70" r="2.4"/>
+            <circle cx="219" cy="70" r="2.4"/>
+            <circle cx="232" cy="70" r="2.4"/>
+            <circle cx="245" cy="70" r="2.4"/>
+            <circle cx="258" cy="70" r="2.4"/>
+            <circle cx="271" cy="70" r="2.4"/>
+            <circle cx="284" cy="70" r="2.4"/>
+            <circle cx="297" cy="70" r="2.4"/>
+            <circle cx="310" cy="70" r="2.4"/>
+            <circle cx="323" cy="70" r="2.4"/>
+            <circle cx="336" cy="70" r="2.4"/>
+            <circle cx="349" cy="70" r="2.4"/>
+            <circle cx="362" cy="70" r="2.4"/>
+            <circle cx="375" cy="70" r="2.4"/>
+            <circle cx="388" cy="70" r="2.4"/>
+            <circle cx="401" cy="70" r="2.4"/>
+            <circle cx="414" cy="70" r="2.4"/>
+            <circle cx="427" cy="70" r="2.4"/>
+            <circle cx="50" cy="83" r="2.4"/>
+            <circle cx="63" cy="83" r="2.4"/>
+            <circle cx="76" cy="83" r="2.4"/>
+            <circle cx="89" cy="83" r="2.4"/>
+            <circle cx="102" cy="83" r="2.4"/>
+            <circle cx="115" cy="83" r="2.4"/>
+            <circle cx="128" cy="83" r="2.4"/>
+            <circle cx="141" cy="83" r="2.4"/>
+            <circle cx="154" cy="83" r="2.4"/>
+            <circle cx="167" cy="83" r="2.4"/>
+            <circle cx="180" cy="83" r="2.4"/>
+            <circle cx="193" cy="83" r="2.4"/>
+            <circle cx="206" cy="83" r="2.4"/>
+            <circle cx="219" cy="83" r="2.4"/>
+            <circle cx="232" cy="83" r="2.4"/>
+            <circle cx="245" cy="83" r="2.4"/>
+            <circle cx="258" cy="83" r="2.4"/>
+            <circle cx="271" cy="83" r="2.4"/>
+            <circle cx="284" cy="83" r="2.4"/>
+            <circle cx="297" cy="83" r="2.4"/>
+            <circle cx="310" cy="83" r="2.4"/>
+            <circle cx="323" cy="83" r="2.4"/>
+            <circle cx="336" cy="83" r="2.4"/>
+            <circle cx="349" cy="83" r="2.4"/>
+            <circle cx="362" cy="83" r="2.4"/>
+            <circle cx="375" cy="83" r="2.4"/>
+            <circle cx="388" cy="83" r="2.4"/>
+            <circle cx="401" cy="83" r="2.4"/>
+            <circle cx="414" cy="83" r="2.4"/>
+            <circle cx="427" cy="83" r="2.4"/>
+            <circle cx="50" cy="96" r="2.4"/>
+            <circle cx="63" cy="96" r="2.4"/>
+            <circle cx="76" cy="96" r="2.4"/>
+            <circle cx="89" cy="96" r="2.4"/>
+            <circle cx="102" cy="96" r="2.4"/>
+            <circle cx="115" cy="96" r="2.4"/>
+            <circle cx="128" cy="96" r="2.4"/>
+            <circle cx="141" cy="96" r="2.4"/>
+            <circle cx="154" cy="96" r="2.4"/>
+            <circle cx="167" cy="96" r="2.4"/>
+            <circle cx="180" cy="96" r="2.4"/>
+            <circle cx="193" cy="96" r="2.4"/>
+            <circle cx="206" cy="96" r="2.4"/>
+            <circle cx="219" cy="96" r="2.4"/>
+            <circle cx="232" cy="96" r="2.4"/>
+            <circle cx="245" cy="96" r="2.4"/>
+            <circle cx="258" cy="96" r="2.4"/>
+            <circle cx="271" cy="96" r="2.4"/>
+            <circle cx="284" cy="96" r="2.4"/>
+            <circle cx="297" cy="96" r="2.4"/>
+            <circle cx="310" cy="96" r="2.4"/>
+            <circle cx="323" cy="96" r="2.4"/>
+            <circle cx="336" cy="96" r="2.4"/>
+            <circle cx="349" cy="96" r="2.4"/>
+            <circle cx="362" cy="96" r="2.4"/>
+            <circle cx="375" cy="96" r="2.4"/>
+            <circle cx="388" cy="96" r="2.4"/>
+            <circle cx="401" cy="96" r="2.4"/>
+            <circle cx="414" cy="96" r="2.4"/>
+            <circle cx="427" cy="96" r="2.4"/>
+            <circle cx="50" cy="109" r="2.4"/>
+            <circle cx="63" cy="109" r="2.4"/>
+            <circle cx="76" cy="109" r="2.4"/>
+            <circle cx="89" cy="109" r="2.4"/>
+            <circle cx="102" cy="109" r="2.4"/>
+            <circle cx="115" cy="109" r="2.4"/>
+            <circle cx="128" cy="109" r="2.4"/>
+            <circle cx="141" cy="109" r="2.4"/>
+            <circle cx="154" cy="109" r="2.4"/>
+            <circle cx="167" cy="109" r="2.4"/>
+            <circle cx="180" cy="109" r="2.4"/>
+            <circle cx="193" cy="109" r="2.4"/>
+            <circle cx="206" cy="109" r="2.4"/>
+            <circle cx="219" cy="109" r="2.4"/>
+            <circle cx="232" cy="109" r="2.4"/>
+            <circle cx="245" cy="109" r="2.4"/>
+            <circle cx="258" cy="109" r="2.4"/>
+            <circle cx="271" cy="109" r="2.4"/>
+            <circle cx="284" cy="109" r="2.4"/>
+            <circle cx="297" cy="109" r="2.4"/>
+            <circle cx="310" cy="109" r="2.4"/>
+            <circle cx="323" cy="109" r="2.4"/>
+            <circle cx="336" cy="109" r="2.4"/>
+            <circle cx="349" cy="109" r="2.4"/>
+            <circle cx="362" cy="109" r="2.4"/>
+            <circle cx="375" cy="109" r="2.4"/>
+            <circle cx="388" cy="109" r="2.4"/>
+            <circle cx="401" cy="109" r="2.4"/>
+            <circle cx="414" cy="109" r="2.4"/>
+            <circle cx="427" cy="109" r="2.4"/>
+            <circle cx="50" cy="122" r="2.4"/>
+            <circle cx="63" cy="122" r="2.4"/>
+            <circle cx="76" cy="122" r="2.4"/>
+            <circle cx="89" cy="122" r="2.4"/>
+            <circle cx="102" cy="122" r="2.4"/>
+            <circle cx="115" cy="122" r="2.4"/>
+            <circle cx="128" cy="122" r="2.4"/>
+            <circle cx="141" cy="122" r="2.4"/>
+            <circle cx="154" cy="122" r="2.4"/>
+            <circle cx="167" cy="122" r="2.4"/>
+            <circle cx="180" cy="122" r="2.4"/>
+            <circle cx="193" cy="122" r="2.4"/>
+            <circle cx="206" cy="122" r="2.4"/>
+            <circle cx="219" cy="122" r="2.4"/>
+            <circle cx="232" cy="122" r="2.4"/>
+            <circle cx="245" cy="122" r="2.4"/>
+            <circle cx="258" cy="122" r="2.4"/>
+            <circle cx="271" cy="122" r="2.4"/>
+            <circle cx="284" cy="122" r="2.4"/>
+            <circle cx="297" cy="122" r="2.4"/>
+            <circle cx="310" cy="122" r="2.4"/>
+            <circle cx="323" cy="122" r="2.4"/>
+            <circle cx="336" cy="122" r="2.4"/>
+            <circle cx="349" cy="122" r="2.4"/>
+            <circle cx="362" cy="122" r="2.4"/>
+            <circle cx="375" cy="122" r="2.4"/>
+            <circle cx="388" cy="122" r="2.4"/>
+            <circle cx="401" cy="122" r="2.4"/>
+            <circle cx="414" cy="122" r="2.4"/>
+            <circle cx="427" cy="122" r="2.4"/>
+            <circle cx="50" cy="135" r="2.4"/>
+            <circle cx="63" cy="135" r="2.4"/>
+            <circle cx="76" cy="135" r="2.4"/>
+            <circle cx="89" cy="135" r="2.4"/>
+            <circle cx="102" cy="135" r="2.4"/>
+            <circle cx="115" cy="135" r="2.4"/>
+            <circle cx="128" cy="135" r="2.4"/>
+            <circle cx="141" cy="135" r="2.4"/>
+            <circle cx="154" cy="135" r="2.4"/>
+            <circle cx="167" cy="135" r="2.4"/>
+            <circle cx="180" cy="135" r="2.4"/>
+            <circle cx="193" cy="135" r="2.4"/>
+            <circle cx="206" cy="135" r="2.4"/>
+            <circle cx="219" cy="135" r="2.4"/>
+            <circle cx="232" cy="135" r="2.4"/>
+            <circle cx="245" cy="135" r="2.4"/>
+            <circle cx="258" cy="135" r="2.4"/>
+            <circle cx="271" cy="135" r="2.4"/>
+            <circle cx="284" cy="135" r="2.4"/>
+            <circle cx="297" cy="135" r="2.4"/>
+            <circle cx="310" cy="135" r="2.4"/>
+            <circle cx="323" cy="135" r="2.4"/>
+            <circle cx="336" cy="135" r="2.4"/>
+            <circle cx="349" cy="135" r="2.4"/>
+            <circle cx="362" cy="135" r="2.4"/>
+            <circle cx="375" cy="135" r="2.4"/>
+            <circle cx="388" cy="135" r="2.4"/>
+            <circle cx="401" cy="135" r="2.4"/>
+            <circle cx="414" cy="135" r="2.4"/>
+            <circle cx="427" cy="135" r="2.4"/>
+            <circle cx="50" cy="148" r="2.4"/>
+            <circle cx="63" cy="148" r="2.4"/>
+            <circle cx="76" cy="148" r="2.4"/>
+            <circle cx="89" cy="148" r="2.4"/>
+            <circle cx="102" cy="148" r="2.4"/>
+            <circle cx="115" cy="148" r="2.4"/>
+            <circle cx="128" cy="148" r="2.4"/>
+            <circle cx="141" cy="148" r="2.4"/>
+            <circle cx="154" cy="148" r="2.4"/>
+            <circle cx="167" cy="148" r="2.4"/>
+            <circle cx="180" cy="148" r="2.4"/>
+            <circle cx="193" cy="148" r="2.4"/>
+            <circle cx="206" cy="148" r="2.4"/>
+            <circle cx="219" cy="148" r="2.4"/>
+            <circle cx="232" cy="148" r="2.4"/>
+            <circle cx="245" cy="148" r="2.4"/>
+            <circle cx="258" cy="148" r="2.4"/>
+            <circle cx="271" cy="148" r="2.4"/>
+            <circle cx="284" cy="148" r="2.4"/>
+            <circle cx="297" cy="148" r="2.4"/>
+            <circle cx="310" cy="148" r="2.4"/>
+            <circle cx="323" cy="148" r="2.4"/>
+            <circle cx="336" cy="148" r="2.4"/>
+            <circle cx="349" cy="148" r="2.4"/>
+            <circle cx="362" cy="148" r="2.4"/>
+            <circle cx="375" cy="148" r="2.4"/>
+            <circle cx="388" cy="148" r="2.4"/>
+            <circle cx="401" cy="148" r="2.4"/>
+            <circle cx="414" cy="148" r="2.4"/>
+            <circle cx="427" cy="148" r="2.4"/>
+            <circle cx="50" cy="161" r="2.4"/>
+            <circle cx="63" cy="161" r="2.4"/>
+            <circle cx="76" cy="161" r="2.4"/>
+            <circle cx="89" cy="161" r="2.4"/>
+            <circle cx="102" cy="161" r="2.4"/>
+            <circle cx="115" cy="161" r="2.4"/>
+            <circle cx="128" cy="161" r="2.4"/>
+            <circle cx="141" cy="161" r="2.4"/>
+            <circle cx="154" cy="161" r="2.4"/>
+            <circle cx="167" cy="161" r="2.4"/>
+            <circle cx="180" cy="161" r="2.4"/>
+            <circle cx="193" cy="161" r="2.4"/>
+            <circle cx="206" cy="161" r="2.4"/>
+            <circle cx="219" cy="161" r="2.4"/>
+            <circle cx="232" cy="161" r="2.4"/>
+            <circle cx="245" cy="161" r="2.4"/>
+            <circle cx="258" cy="161" r="2.4"/>
+            <circle cx="271" cy="161" r="2.4"/>
+            <circle cx="284" cy="161" r="2.4"/>
+            <circle cx="297" cy="161" r="2.4"/>
+            <circle cx="310" cy="161" r="2.4"/>
+            <circle cx="323" cy="161" r="2.4"/>
+            <circle cx="336" cy="161" r="2.4"/>
+            <circle cx="349" cy="161" r="2.4"/>
+            <circle cx="362" cy="161" r="2.4"/>
+            <circle cx="375" cy="161" r="2.4"/>
+            <circle cx="388" cy="161" r="2.4"/>
+            <circle cx="401" cy="161" r="2.4"/>
+            <circle cx="414" cy="161" r="2.4"/>
+            <circle cx="427" cy="161" r="2.4"/>
+            <circle cx="50" cy="174" r="2.4"/>
+            <circle cx="63" cy="174" r="2.4"/>
+            <circle cx="76" cy="174" r="2.4"/>
+            <circle cx="89" cy="174" r="2.4"/>
+            <circle cx="102" cy="174" r="2.4"/>
+            <circle cx="115" cy="174" r="2.4"/>
+            <circle cx="128" cy="174" r="2.4"/>
+            <circle cx="141" cy="174" r="2.4"/>
+            <circle cx="154" cy="174" r="2.4"/>
+            <circle cx="167" cy="174" r="2.4"/>
+            <circle cx="180" cy="174" r="2.4"/>
+            <circle cx="193" cy="174" r="2.4"/>
+            <circle cx="206" cy="174" r="2.4"/>
+            <circle cx="219" cy="174" r="2.4"/>
+            <circle cx="232" cy="174" r="2.4"/>
+            <circle cx="245" cy="174" r="2.4"/>
+            <circle cx="258" cy="174" r="2.4"/>
+            <circle cx="271" cy="174" r="2.4"/>
+            <circle cx="284" cy="174" r="2.4"/>
+            <circle cx="297" cy="174" r="2.4"/>
+            <circle cx="310" cy="174" r="2.4"/>
+            <circle cx="323" cy="174" r="2.4"/>
+            <circle cx="336" cy="174" r="2.4"/>
+            <circle cx="349" cy="174" r="2.4"/>
+            <circle cx="362" cy="174" r="2.4"/>
+            <circle cx="375" cy="174" r="2.4"/>
+            <circle cx="388" cy="174" r="2.4"/>
+            <circle cx="401" cy="174" r="2.4"/>
+            <circle cx="414" cy="174" r="2.4"/>
+            <circle cx="427" cy="174" r="2.4"/>
+            <circle cx="50" cy="187" r="2.4"/>
+            <circle cx="63" cy="187" r="2.4"/>
+            <circle cx="76" cy="187" r="2.4"/>
+            <circle cx="89" cy="187" r="2.4"/>
+            <circle cx="102" cy="187" r="2.4"/>
+            <circle cx="115" cy="187" r="2.4"/>
+            <circle cx="128" cy="187" r="2.4"/>
+            <circle cx="141" cy="187" r="2.4"/>
+            <circle cx="154" cy="187" r="2.4"/>
+            <circle cx="167" cy="187" r="2.4"/>
+            <circle cx="180" cy="187" r="2.4"/>
+            <circle cx="193" cy="187" r="2.4"/>
+            <circle cx="206" cy="187" r="2.4"/>
+            <circle cx="219" cy="187" r="2.4"/>
+            <circle cx="232" cy="187" r="2.4"/>
+            <circle cx="245" cy="187" r="2.4"/>
+            <circle cx="258" cy="187" r="2.4"/>
+            <circle cx="271" cy="187" r="2.4"/>
+            <circle cx="284" cy="187" r="2.4"/>
+            <circle cx="297" cy="187" r="2.4"/>
+            <circle cx="310" cy="187" r="2.4"/>
+            <circle cx="323" cy="187" r="2.4"/>
+            <circle cx="336" cy="187" r="2.4"/>
+            <circle cx="349" cy="187" r="2.4"/>
+            <circle cx="362" cy="187" r="2.4"/>
+            <circle cx="375" cy="187" r="2.4"/>
+            <circle cx="388" cy="187" r="2.4"/>
+            <circle cx="401" cy="187" r="2.4"/>
+            <circle cx="414" cy="187" r="2.4"/>
+            <circle cx="427" cy="187" r="2.4"/>
+            <circle cx="50" cy="200" r="2.4"/>
+            <circle cx="63" cy="200" r="2.4"/>
+            <circle cx="76" cy="200" r="2.4"/>
+            <circle cx="89" cy="200" r="2.4"/>
+            <circle cx="102" cy="200" r="2.4"/>
+            <circle cx="115" cy="200" r="2.4"/>
+            <circle cx="128" cy="200" r="2.4"/>
+            <circle cx="141" cy="200" r="2.4"/>
+            <circle cx="154" cy="200" r="2.4"/>
+            <circle cx="167" cy="200" r="2.4"/>
+            <circle cx="180" cy="200" r="2.4"/>
+            <circle cx="193" cy="200" r="2.4"/>
+            <circle cx="206" cy="200" r="2.4"/>
+            <circle cx="219" cy="200" r="2.4"/>
+            <circle cx="232" cy="200" r="2.4"/>
+            <circle cx="245" cy="200" r="2.4"/>
+            <circle cx="258" cy="200" r="2.4"/>
+            <circle cx="271" cy="200" r="2.4"/>
+            <circle cx="284" cy="200" r="2.4"/>
+            <circle cx="297" cy="200" r="2.4"/>
+            <circle cx="310" cy="200" r="2.4"/>
+            <circle cx="323" cy="200" r="2.4"/>
+            <circle cx="336" cy="200" r="2.4"/>
+            <circle cx="349" cy="200" r="2.4"/>
+            <circle cx="362" cy="200" r="2.4"/>
+            <circle cx="375" cy="200" r="2.4"/>
+            <circle cx="388" cy="200" r="2.4"/>
+            <circle cx="401" cy="200" r="2.4"/>
+            <circle cx="414" cy="200" r="2.4"/>
+            <circle cx="427" cy="200" r="2.4"/>
+            <circle cx="50" cy="213" r="2.4"/>
+            <circle cx="63" cy="213" r="2.4"/>
+            <circle cx="76" cy="213" r="2.4"/>
+            <circle cx="89" cy="213" r="2.4"/>
+            <circle cx="102" cy="213" r="2.4"/>
+            <circle cx="115" cy="213" r="2.4"/>
+            <circle cx="128" cy="213" r="2.4"/>
+            <circle cx="141" cy="213" r="2.4"/>
+            <circle cx="154" cy="213" r="2.4"/>
+            <circle cx="167" cy="213" r="2.4"/>
+            <circle cx="180" cy="213" r="2.4"/>
+            <circle cx="193" cy="213" r="2.4"/>
+            <circle cx="206" cy="213" r="2.4"/>
+            <circle cx="219" cy="213" r="2.4"/>
+            <circle cx="232" cy="213" r="2.4"/>
+            <circle cx="245" cy="213" r="2.4"/>
+            <circle cx="258" cy="213" r="2.4"/>
+            <circle cx="271" cy="213" r="2.4"/>
+            <circle cx="284" cy="213" r="2.4"/>
+            <circle cx="297" cy="213" r="2.4"/>
+            <circle cx="310" cy="213" r="2.4"/>
+            <circle cx="323" cy="213" r="2.4"/>
+            <circle cx="336" cy="213" r="2.4"/>
+            <circle cx="349" cy="213" r="2.4"/>
+            <circle cx="362" cy="213" r="2.4"/>
+            <circle cx="375" cy="213" r="2.4"/>
+            <circle cx="388" cy="213" r="2.4"/>
+            <circle cx="401" cy="213" r="2.4"/>
+            <circle cx="414" cy="213" r="2.4"/>
+            <circle cx="427" cy="213" r="2.4"/>
+            <circle cx="50" cy="226" r="2.4"/>
+            <circle cx="63" cy="226" r="2.4"/>
+            <circle cx="76" cy="226" r="2.4"/>
+            <circle cx="89" cy="226" r="2.4"/>
+            <circle cx="102" cy="226" r="2.4"/>
+            <circle cx="115" cy="226" r="2.4"/>
+            <circle cx="128" cy="226" r="2.4"/>
+            <circle cx="141" cy="226" r="2.4"/>
+            <circle cx="154" cy="226" r="2.4"/>
+            <circle cx="167" cy="226" r="2.4"/>
+            <circle cx="180" cy="226" r="2.4"/>
+            <circle cx="193" cy="226" r="2.4"/>
+            <circle cx="206" cy="226" r="2.4"/>
+            <circle cx="219" cy="226" r="2.4"/>
+            <circle cx="232" cy="226" r="2.4"/>
+            <circle cx="245" cy="226" r="2.4"/>
+            <circle cx="258" cy="226" r="2.4"/>
+            <circle cx="271" cy="226" r="2.4"/>
+            <circle cx="284" cy="226" r="2.4"/>
+            <circle cx="297" cy="226" r="2.4"/>
+            <circle cx="310" cy="226" r="2.4"/>
+            <circle cx="323" cy="226" r="2.4"/>
+            <circle cx="336" cy="226" r="2.4"/>
+            <circle cx="349" cy="226" r="2.4"/>
+            <circle cx="362" cy="226" r="2.4"/>
+            <circle cx="375" cy="226" r="2.4"/>
+            <circle cx="388" cy="226" r="2.4"/>
+            <circle cx="401" cy="226" r="2.4"/>
+            <circle cx="414" cy="226" r="2.4"/>
+            <circle cx="427" cy="226" r="2.4"/>
+            <circle cx="50" cy="239" r="2.4"/>
+            <circle cx="63" cy="239" r="2.4"/>
+            <circle cx="76" cy="239" r="2.4"/>
+            <circle cx="89" cy="239" r="2.4"/>
+            <circle cx="102" cy="239" r="2.4"/>
+            <circle cx="115" cy="239" r="2.4"/>
+            <circle cx="128" cy="239" r="2.4"/>
+            <circle cx="141" cy="239" r="2.4"/>
+            <circle cx="154" cy="239" r="2.4"/>
+            <circle cx="167" cy="239" r="2.4"/>
+            <circle cx="180" cy="239" r="2.4"/>
+            <circle cx="193" cy="239" r="2.4"/>
+            <circle cx="206" cy="239" r="2.4"/>
+            <circle cx="219" cy="239" r="2.4"/>
+            <circle cx="232" cy="239" r="2.4"/>
+            <circle cx="245" cy="239" r="2.4"/>
+            <circle cx="258" cy="239" r="2.4"/>
+            <circle cx="271" cy="239" r="2.4"/>
+            <circle cx="284" cy="239" r="2.4"/>
+            <circle cx="297" cy="239" r="2.4"/>
+            <circle cx="310" cy="239" r="2.4"/>
+            <circle cx="323" cy="239" r="2.4"/>
+            <circle cx="336" cy="239" r="2.4"/>
+            <circle cx="349" cy="239" r="2.4"/>
+            <circle cx="362" cy="239" r="2.4"/>
+            <circle cx="375" cy="239" r="2.4"/>
+            <circle cx="388" cy="239" r="2.4"/>
+            <circle cx="401" cy="239" r="2.4"/>
+            <circle cx="414" cy="239" r="2.4"/>
+            <circle cx="427" cy="239" r="2.4"/>
+            <circle cx="50" cy="252" r="2.4"/>
+            <circle cx="63" cy="252" r="2.4"/>
+            <circle cx="76" cy="252" r="2.4"/>
+            <circle cx="89" cy="252" r="2.4"/>
+            <circle cx="102" cy="252" r="2.4"/>
+            <circle cx="115" cy="252" r="2.4"/>
+            <circle cx="128" cy="252" r="2.4"/>
+            <circle cx="141" cy="252" r="2.4"/>
+            <circle cx="154" cy="252" r="2.4"/>
+            <circle cx="167" cy="252" r="2.4"/>
+            <circle cx="180" cy="252" r="2.4"/>
+            <circle cx="193" cy="252" r="2.4"/>
+            <circle cx="206" cy="252" r="2.4"/>
+            <circle cx="219" cy="252" r="2.4"/>
+            <circle cx="232" cy="252" r="2.4"/>
+            <circle cx="245" cy="252" r="2.4"/>
+            <circle cx="258" cy="252" r="2.4"/>
+            <circle cx="271" cy="252" r="2.4"/>
+            <circle cx="284" cy="252" r="2.4"/>
+            <circle cx="297" cy="252" r="2.4"/>
+            <circle cx="310" cy="252" r="2.4"/>
+            <circle cx="323" cy="252" r="2.4"/>
+            <circle cx="336" cy="252" r="2.4"/>
+            <circle cx="349" cy="252" r="2.4"/>
+            <circle cx="362" cy="252" r="2.4"/>
+            <circle cx="375" cy="252" r="2.4"/>
+            <circle cx="388" cy="252" r="2.4"/>
+            <circle cx="401" cy="252" r="2.4"/>
+            <circle cx="414" cy="252" r="2.4"/>
+            <circle cx="427" cy="252" r="2.4"/>
+            <circle cx="50" cy="265" r="2.4"/>
+            <circle cx="63" cy="265" r="2.4"/>
+            <circle cx="76" cy="265" r="2.4"/>
+            <circle cx="89" cy="265" r="2.4"/>
+            <circle cx="102" cy="265" r="2.4"/>
+            <circle cx="115" cy="265" r="2.4"/>
+            <circle cx="128" cy="265" r="2.4"/>
+            <circle cx="141" cy="265" r="2.4"/>
+            <circle cx="154" cy="265" r="2.4"/>
+            <circle cx="167" cy="265" r="2.4"/>
+            <circle cx="180" cy="265" r="2.4"/>
+            <circle cx="193" cy="265" r="2.4"/>
+            <circle cx="206" cy="265" r="2.4"/>
+            <circle cx="219" cy="265" r="2.4"/>
+            <circle cx="232" cy="265" r="2.4"/>
+            <circle cx="245" cy="265" r="2.4"/>
+            <circle cx="258" cy="265" r="2.4"/>
+            <circle cx="271" cy="265" r="2.4"/>
+            <circle cx="284" cy="265" r="2.4"/>
+            <circle cx="297" cy="265" r="2.4"/>
+            <circle cx="310" cy="265" r="2.4"/>
+            <circle cx="323" cy="265" r="2.4"/>
+            <circle cx="336" cy="265" r="2.4"/>
+            <circle cx="349" cy="265" r="2.4"/>
+            <circle cx="362" cy="265" r="2.4"/>
+            <circle cx="375" cy="265" r="2.4"/>
+            <circle cx="388" cy="265" r="2.4"/>
+            <circle cx="401" cy="265" r="2.4"/>
+            <circle cx="414" cy="265" r="2.4"/>
+            <circle cx="427" cy="265" r="2.4"/>
+            <circle cx="50" cy="278" r="2.4"/>
+            <circle cx="63" cy="278" r="2.4"/>
+            <circle cx="76" cy="278" r="2.4"/>
+            <circle cx="89" cy="278" r="2.4"/>
+            <circle cx="102" cy="278" r="2.4"/>
+            <circle cx="115" cy="278" r="2.4"/>
+            <circle cx="128" cy="278" r="2.4"/>
+            <circle cx="141" cy="278" r="2.4"/>
+            <circle cx="154" cy="278" r="2.4"/>
+            <circle cx="167" cy="278" r="2.4"/>
+            <circle cx="180" cy="278" r="2.4"/>
+            <circle cx="193" cy="278" r="2.4"/>
+            <circle cx="206" cy="278" r="2.4"/>
+            <circle cx="219" cy="278" r="2.4"/>
+            <circle cx="232" cy="278" r="2.4"/>
+            <circle cx="245" cy="278" r="2.4"/>
+            <circle cx="258" cy="278" r="2.4"/>
+            <circle cx="271" cy="278" r="2.4"/>
+            <circle cx="284" cy="278" r="2.4"/>
+            <circle cx="297" cy="278" r="2.4"/>
+            <circle cx="310" cy="278" r="2.4"/>
+            <circle cx="323" cy="278" r="2.4"/>
+            <circle cx="336" cy="278" r="2.4"/>
+            <circle cx="349" cy="278" r="2.4"/>
+            <circle cx="362" cy="278" r="2.4"/>
+            <circle cx="375" cy="278" r="2.4"/>
+            <circle cx="388" cy="278" r="2.4"/>
+            <circle cx="401" cy="278" r="2.4"/>
+            <circle cx="414" cy="278" r="2.4"/>
+            <circle cx="427" cy="278" r="2.4"/>
+            <circle cx="50" cy="291" r="2.4"/>
+            <circle cx="63" cy="291" r="2.4"/>
+            <circle cx="76" cy="291" r="2.4"/>
+            <circle cx="89" cy="291" r="2.4"/>
+            <circle cx="102" cy="291" r="2.4"/>
+            <circle cx="115" cy="291" r="2.4"/>
+            <circle cx="128" cy="291" r="2.4"/>
+            <circle cx="141" cy="291" r="2.4"/>
+            <circle cx="154" cy="291" r="2.4"/>
+            <circle cx="167" cy="291" r="2.4"/>
+            <circle cx="180" cy="291" r="2.4"/>
+            <circle cx="193" cy="291" r="2.4"/>
+            <circle cx="206" cy="291" r="2.4"/>
+            <circle cx="219" cy="291" r="2.4"/>
+            <circle cx="232" cy="291" r="2.4"/>
+            <circle cx="245" cy="291" r="2.4"/>
+            <circle cx="258" cy="291" r="2.4"/>
+            <circle cx="271" cy="291" r="2.4"/>
+            <circle cx="284" cy="291" r="2.4"/>
+            <circle cx="297" cy="291" r="2.4"/>
+            <circle cx="310" cy="291" r="2.4"/>
+            <circle cx="323" cy="291" r="2.4"/>
+            <circle cx="336" cy="291" r="2.4"/>
+            <circle cx="349" cy="291" r="2.4"/>
+            <circle cx="362" cy="291" r="2.4"/>
+            <circle cx="375" cy="291" r="2.4"/>
+            <circle cx="388" cy="291" r="2.4"/>
+            <circle cx="401" cy="291" r="2.4"/>
+            <circle cx="414" cy="291" r="2.4"/>
+            <circle cx="427" cy="291" r="2.4"/>
+            <circle cx="50" cy="304" r="2.4"/>
+            <circle cx="63" cy="304" r="2.4"/>
+            <circle cx="76" cy="304" r="2.4"/>
+            <circle cx="89" cy="304" r="2.4"/>
+            <circle cx="102" cy="304" r="2.4"/>
+            <circle cx="115" cy="304" r="2.4"/>
+            <circle cx="128" cy="304" r="2.4"/>
+            <circle cx="141" cy="304" r="2.4"/>
+            <circle cx="154" cy="304" r="2.4"/>
+            <circle cx="167" cy="304" r="2.4"/>
+            <circle cx="180" cy="304" r="2.4"/>
+            <circle cx="193" cy="304" r="2.4"/>
+            <circle cx="206" cy="304" r="2.4"/>
+            <circle cx="219" cy="304" r="2.4"/>
+            <circle cx="232" cy="304" r="2.4"/>
+            <circle cx="245" cy="304" r="2.4"/>
+            <circle cx="258" cy="304" r="2.4"/>
+            <circle cx="271" cy="304" r="2.4"/>
+            <circle cx="284" cy="304" r="2.4"/>
+            <circle cx="297" cy="304" r="2.4"/>
+            <circle cx="310" cy="304" r="2.4"/>
+            <circle cx="323" cy="304" r="2.4"/>
+            <circle cx="336" cy="304" r="2.4"/>
+            <circle cx="349" cy="304" r="2.4"/>
+            <circle cx="362" cy="304" r="2.4"/>
+            <circle cx="375" cy="304" r="2.4"/>
+            <circle cx="388" cy="304" r="2.4"/>
+            <circle cx="401" cy="304" r="2.4"/>
+            <circle cx="414" cy="304" r="2.4"/>
+            <circle cx="427" cy="304" r="2.4"/>
+            <circle cx="50" cy="317" r="2.4"/>
+            <circle cx="63" cy="317" r="2.4"/>
+            <circle cx="76" cy="317" r="2.4"/>
+            <circle cx="89" cy="317" r="2.4"/>
+            <circle cx="102" cy="317" r="2.4"/>
+            <circle cx="115" cy="317" r="2.4"/>
+            <circle cx="128" cy="317" r="2.4"/>
+            <circle cx="141" cy="317" r="2.4"/>
+            <circle cx="154" cy="317" r="2.4"/>
+            <circle cx="167" cy="317" r="2.4"/>
+            <circle cx="180" cy="317" r="2.4"/>
+            <circle cx="193" cy="317" r="2.4"/>
+            <circle cx="206" cy="317" r="2.4"/>
+            <circle cx="219" cy="317" r="2.4"/>
+            <circle cx="232" cy="317" r="2.4"/>
+            <circle cx="245" cy="317" r="2.4"/>
+            <circle cx="258" cy="317" r="2.4"/>
+            <circle cx="271" cy="317" r="2.4"/>
+            <circle cx="284" cy="317" r="2.4"/>
+            <circle cx="297" cy="317" r="2.4"/>
+            <circle cx="310" cy="317" r="2.4"/>
+            <circle cx="323" cy="317" r="2.4"/>
+            <circle cx="336" cy="317" r="2.4"/>
+            <circle cx="349" cy="317" r="2.4"/>
+            <circle cx="362" cy="317" r="2.4"/>
+            <circle cx="375" cy="317" r="2.4"/>
+            <circle cx="388" cy="317" r="2.4"/>
+            <circle cx="401" cy="317" r="2.4"/>
+            <circle cx="414" cy="317" r="2.4"/>
+            <circle cx="427" cy="317" r="2.4"/>
+            <circle cx="50" cy="330" r="2.4"/>
+            <circle cx="63" cy="330" r="2.4"/>
+            <circle cx="76" cy="330" r="2.4"/>
+            <circle cx="89" cy="330" r="2.4"/>
+            <circle cx="102" cy="330" r="2.4"/>
+            <circle cx="115" cy="330" r="2.4"/>
+            <circle cx="128" cy="330" r="2.4"/>
+            <circle cx="141" cy="330" r="2.4"/>
+            <circle cx="154" cy="330" r="2.4"/>
+            <circle cx="167" cy="330" r="2.4"/>
+            <circle cx="180" cy="330" r="2.4"/>
+            <circle cx="193" cy="330" r="2.4"/>
+            <circle cx="206" cy="330" r="2.4"/>
+            <circle cx="219" cy="330" r="2.4"/>
+            <circle cx="232" cy="330" r="2.4"/>
+            <circle cx="245" cy="330" r="2.4"/>
+            <circle cx="258" cy="330" r="2.4"/>
+            <circle cx="271" cy="330" r="2.4"/>
+            <circle cx="284" cy="330" r="2.4"/>
+            <circle cx="297" cy="330" r="2.4"/>
+            <circle cx="310" cy="330" r="2.4"/>
+            <circle cx="323" cy="330" r="2.4"/>
+            <circle cx="336" cy="330" r="2.4"/>
+            <circle cx="349" cy="330" r="2.4"/>
+            <circle cx="362" cy="330" r="2.4"/>
+            <circle cx="375" cy="330" r="2.4"/>
+            <circle cx="388" cy="330" r="2.4"/>
+            <circle cx="401" cy="330" r="2.4"/>
+            <circle cx="414" cy="330" r="2.4"/>
+            <circle cx="427" cy="330" r="2.4"/>
+            <circle cx="50" cy="343" r="2.4"/>
+            <circle cx="63" cy="343" r="2.4"/>
+            <circle cx="76" cy="343" r="2.4"/>
+            <circle cx="89" cy="343" r="2.4"/>
+            <circle cx="102" cy="343" r="2.4"/>
+            <circle cx="115" cy="343" r="2.4"/>
+            <circle cx="128" cy="343" r="2.4"/>
+            <circle cx="141" cy="343" r="2.4"/>
+            <circle cx="154" cy="343" r="2.4"/>
+            <circle cx="167" cy="343" r="2.4"/>
+            <circle cx="180" cy="343" r="2.4"/>
+            <circle cx="193" cy="343" r="2.4"/>
+            <circle cx="206" cy="343" r="2.4"/>
+            <circle cx="219" cy="343" r="2.4"/>
+            <circle cx="232" cy="343" r="2.4"/>
+            <circle cx="245" cy="343" r="2.4"/>
+            <circle cx="258" cy="343" r="2.4"/>
+            <circle cx="271" cy="343" r="2.4"/>
+            <circle cx="284" cy="343" r="2.4"/>
+            <circle cx="297" cy="343" r="2.4"/>
+            <circle cx="310" cy="343" r="2.4"/>
+            <circle cx="323" cy="343" r="2.4"/>
+            <circle cx="336" cy="343" r="2.4"/>
+            <circle cx="349" cy="343" r="2.4"/>
+            <circle cx="362" cy="343" r="2.4"/>
+            <circle cx="375" cy="343" r="2.4"/>
+            <circle cx="388" cy="343" r="2.4"/>
+            <circle cx="401" cy="343" r="2.4"/>
+            <circle cx="414" cy="343" r="2.4"/>
+            <circle cx="427" cy="343" r="2.4"/>
+            <circle cx="50" cy="356" r="2.4"/>
+            <circle cx="63" cy="356" r="2.4"/>
+            <circle cx="76" cy="356" r="2.4"/>
+            <circle cx="89" cy="356" r="2.4"/>
+            <circle cx="102" cy="356" r="2.4"/>
+            <circle cx="115" cy="356" r="2.4"/>
+            <circle cx="128" cy="356" r="2.4"/>
+            <circle cx="141" cy="356" r="2.4"/>
+            <circle cx="154" cy="356" r="2.4"/>
+            <circle cx="167" cy="356" r="2.4"/>
+            <circle cx="180" cy="356" r="2.4"/>
+            <circle cx="193" cy="356" r="2.4"/>
+            <circle cx="206" cy="356" r="2.4"/>
+            <circle cx="219" cy="356" r="2.4"/>
+            <circle cx="232" cy="356" r="2.4"/>
+            <circle cx="245" cy="356" r="2.4"/>
+            <circle cx="258" cy="356" r="2.4"/>
+            <circle cx="271" cy="356" r="2.4"/>
+            <circle cx="284" cy="356" r="2.4"/>
+            <circle cx="297" cy="356" r="2.4"/>
+            <circle cx="310" cy="356" r="2.4"/>
+            <circle cx="323" cy="356" r="2.4"/>
+            <circle cx="336" cy="356" r="2.4"/>
+            <circle cx="349" cy="356" r="2.4"/>
+            <circle cx="362" cy="356" r="2.4"/>
+            <circle cx="375" cy="356" r="2.4"/>
+            <circle cx="388" cy="356" r="2.4"/>
+            <circle cx="401" cy="356" r="2.4"/>
+            <circle cx="414" cy="356" r="2.4"/>
+            <circle cx="427" cy="356" r="2.4"/>
+            <circle cx="50" cy="369" r="2.4"/>
+            <circle cx="63" cy="369" r="2.4"/>
+            <circle cx="76" cy="369" r="2.4"/>
+            <circle cx="89" cy="369" r="2.4"/>
+            <circle cx="102" cy="369" r="2.4"/>
+            <circle cx="115" cy="369" r="2.4"/>
+            <circle cx="128" cy="369" r="2.4"/>
+            <circle cx="141" cy="369" r="2.4"/>
+            <circle cx="154" cy="369" r="2.4"/>
+            <circle cx="167" cy="369" r="2.4"/>
+            <circle cx="180" cy="369" r="2.4"/>
+            <circle cx="193" cy="369" r="2.4"/>
+            <circle cx="206" cy="369" r="2.4"/>
+            <circle cx="219" cy="369" r="2.4"/>
+            <circle cx="232" cy="369" r="2.4"/>
+            <circle cx="245" cy="369" r="2.4"/>
+            <circle cx="258" cy="369" r="2.4"/>
+            <circle cx="271" cy="369" r="2.4"/>
+            <circle cx="284" cy="369" r="2.4"/>
+            <circle cx="297" cy="369" r="2.4"/>
+            <circle cx="310" cy="369" r="2.4"/>
+            <circle cx="323" cy="369" r="2.4"/>
+            <circle cx="336" cy="369" r="2.4"/>
+            <circle cx="349" cy="369" r="2.4"/>
+            <circle cx="362" cy="369" r="2.4"/>
+            <circle cx="375" cy="369" r="2.4"/>
+            <circle cx="388" cy="369" r="2.4"/>
+            <circle cx="401" cy="369" r="2.4"/>
+            <circle cx="414" cy="369" r="2.4"/>
+            <circle cx="427" cy="369" r="2.4"/>
+            <circle cx="50" cy="382" r="2.4"/>
+            <circle cx="63" cy="382" r="2.4"/>
+            <circle cx="76" cy="382" r="2.4"/>
+            <circle cx="89" cy="382" r="2.4"/>
+            <circle cx="102" cy="382" r="2.4"/>
+            <circle cx="115" cy="382" r="2.4"/>
+            <circle cx="128" cy="382" r="2.4"/>
+            <circle cx="141" cy="382" r="2.4"/>
+            <circle cx="154" cy="382" r="2.4"/>
+            <circle cx="167" cy="382" r="2.4"/>
+            <circle cx="180" cy="382" r="2.4"/>
+            <circle cx="193" cy="382" r="2.4"/>
+            <circle cx="206" cy="382" r="2.4"/>
+            <circle cx="219" cy="382" r="2.4"/>
+            <circle cx="232" cy="382" r="2.4"/>
+            <circle cx="245" cy="382" r="2.4"/>
+            <circle cx="258" cy="382" r="2.4"/>
+            <circle cx="271" cy="382" r="2.4"/>
+            <circle cx="284" cy="382" r="2.4"/>
+            <circle cx="297" cy="382" r="2.4"/>
+            <circle cx="310" cy="382" r="2.4"/>
+            <circle cx="323" cy="382" r="2.4"/>
+            <circle cx="336" cy="382" r="2.4"/>
+            <circle cx="349" cy="382" r="2.4"/>
+            <circle cx="362" cy="382" r="2.4"/>
+            <circle cx="375" cy="382" r="2.4"/>
+            <circle cx="388" cy="382" r="2.4"/>
+            <circle cx="401" cy="382" r="2.4"/>
+            <circle cx="414" cy="382" r="2.4"/>
+            <circle cx="427" cy="382" r="2.4"/>
+            <circle cx="50" cy="395" r="2.4"/>
+            <circle cx="63" cy="395" r="2.4"/>
+            <circle cx="76" cy="395" r="2.4"/>
+            <circle cx="89" cy="395" r="2.4"/>
+            <circle cx="102" cy="395" r="2.4"/>
+            <circle cx="115" cy="395" r="2.4"/>
+            <circle cx="128" cy="395" r="2.4"/>
+            <circle cx="141" cy="395" r="2.4"/>
+            <circle cx="154" cy="395" r="2.4"/>
+            <circle cx="167" cy="395" r="2.4"/>
+            <circle cx="180" cy="395" r="2.4"/>
+            <circle cx="193" cy="395" r="2.4"/>
+            <circle cx="206" cy="395" r="2.4"/>
+            <circle cx="219" cy="395" r="2.4"/>
+            <circle cx="232" cy="395" r="2.4"/>
+            <circle cx="245" cy="395" r="2.4"/>
+            <circle cx="258" cy="395" r="2.4"/>
+            <circle cx="271" cy="395" r="2.4"/>
+            <circle cx="284" cy="395" r="2.4"/>
+            <circle cx="297" cy="395" r="2.4"/>
+            <circle cx="310" cy="395" r="2.4"/>
+            <circle cx="323" cy="395" r="2.4"/>
+            <circle cx="336" cy="395" r="2.4"/>
+            <circle cx="349" cy="395" r="2.4"/>
+            <circle cx="362" cy="395" r="2.4"/>
+            <circle cx="375" cy="395" r="2.4"/>
+            <circle cx="388" cy="395" r="2.4"/>
+            <circle cx="401" cy="395" r="2.4"/>
+            <circle cx="414" cy="395" r="2.4"/>
+            <circle cx="427" cy="395" r="2.4"/>
+            <circle cx="50" cy="408" r="2.4"/>
+            <circle cx="63" cy="408" r="2.4"/>
+            <circle cx="76" cy="408" r="2.4"/>
+            <circle cx="89" cy="408" r="2.4"/>
+            <circle cx="102" cy="408" r="2.4"/>
+            <circle cx="115" cy="408" r="2.4"/>
+            <circle cx="128" cy="408" r="2.4"/>
+            <circle cx="141" cy="408" r="2.4"/>
+            <circle cx="154" cy="408" r="2.4"/>
+            <circle cx="167" cy="408" r="2.4"/>
+            <circle cx="180" cy="408" r="2.4"/>
+            <circle cx="193" cy="408" r="2.4"/>
+            <circle cx="206" cy="408" r="2.4"/>
+            <circle cx="219" cy="408" r="2.4"/>
+            <circle cx="232" cy="408" r="2.4"/>
+            <circle cx="245" cy="408" r="2.4"/>
+            <circle cx="258" cy="408" r="2.4"/>
+            <circle cx="271" cy="408" r="2.4"/>
+            <circle cx="284" cy="408" r="2.4"/>
+            <circle cx="297" cy="408" r="2.4"/>
+            <circle cx="310" cy="408" r="2.4"/>
+            <circle cx="323" cy="408" r="2.4"/>
+            <circle cx="336" cy="408" r="2.4"/>
+            <circle cx="349" cy="408" r="2.4"/>
+            <circle cx="362" cy="408" r="2.4"/>
+            <circle cx="375" cy="408" r="2.4"/>
+            <circle cx="388" cy="408" r="2.4"/>
+            <circle cx="401" cy="408" r="2.4"/>
+            <circle cx="414" cy="408" r="2.4"/>
+            <circle cx="427" cy="408" r="2.4"/>
+            <circle cx="50" cy="421" r="2.4"/>
+            <circle cx="63" cy="421" r="2.4"/>
+            <circle cx="76" cy="421" r="2.4"/>
+            <circle cx="89" cy="421" r="2.4"/>
+            <circle cx="102" cy="421" r="2.4"/>
+            <circle cx="115" cy="421" r="2.4"/>
+            <circle cx="128" cy="421" r="2.4"/>
+            <circle cx="141" cy="421" r="2.4"/>
+            <circle cx="154" cy="421" r="2.4"/>
+            <circle cx="167" cy="421" r="2.4"/>
+            <circle cx="180" cy="421" r="2.4"/>
+            <circle cx="193" cy="421" r="2.4"/>
+            <circle cx="206" cy="421" r="2.4"/>
+            <circle cx="219" cy="421" r="2.4"/>
+            <circle cx="232" cy="421" r="2.4"/>
+            <circle cx="245" cy="421" r="2.4"/>
+            <circle cx="258" cy="421" r="2.4"/>
+            <circle cx="271" cy="421" r="2.4"/>
+            <circle cx="284" cy="421" r="2.4"/>
+            <circle cx="297" cy="421" r="2.4"/>
+            <circle cx="310" cy="421" r="2.4"/>
+            <circle cx="323" cy="421" r="2.4"/>
+            <circle cx="336" cy="421" r="2.4"/>
+            <circle cx="349" cy="421" r="2.4"/>
+            <circle cx="362" cy="421" r="2.4"/>
+            <circle cx="375" cy="421" r="2.4"/>
+            <circle cx="388" cy="421" r="2.4"/>
+            <circle cx="401" cy="421" r="2.4"/>
+            <circle cx="414" cy="421" r="2.4"/>
+            <circle cx="427" cy="421" r="2.4"/>
+            <circle cx="50" cy="434" r="2.4"/>
+            <circle cx="63" cy="434" r="2.4"/>
+            <circle cx="76" cy="434" r="2.4"/>
+            <circle cx="89" cy="434" r="2.4"/>
+            <circle cx="102" cy="434" r="2.4"/>
+            <circle cx="115" cy="434" r="2.4"/>
+            <circle cx="128" cy="434" r="2.4"/>
+            <circle cx="141" cy="434" r="2.4"/>
+            <circle cx="154" cy="434" r="2.4"/>
+            <circle cx="50" cy="70" r="5.5" fill="#3a4a5c"/>
+            <circle cx="63" cy="70" r="5.5" fill="#3a4a5c"/>
+            <circle cx="76" cy="70" r="5.5" fill="#3a4a5c"/>
+            <circle cx="89" cy="70" r="5.5" fill="#3a4a5c"/>
+            <circle cx="102" cy="70" r="5.5" fill="#3a4a5c"/>
+            <circle cx="115" cy="70" r="5.5" fill="#3a4a5c"/>
+          </g>
+        </svg>
+        <figcaption><b>Fig. II.</b> &nbsp; <i>Christensenella</i>, the genus most associated with leanness in the human gut. 6 species we can grow. 843 known only by their genomes.</figcaption>
+      </figure>
+
+        <p>
+          These are not edge cases. These are the rule. The cultivable microbes
+          (the <i>E. coli</i>, the <i>Bacillus</i>, the lactobacilli upon which we have
+          built a hundred years of microbiology) are weird, fast-growing outliers that
+          happened to tolerate the conditions a human in a lab coat decided were
+          "standard."
+        </p>
+
+        <div class="fleuron">❧ ❦ ❧</div>
+
+        <p class="turn">Why does this matter?</p>
+
+        <p>
+          Because every working antibiotic we have was discovered from cultivable
+          microbes. Penicillin came from <i>Penicillium</i>, vancomycin from
+          <i>Streptomyces</i>, a hundred others from a handful of soil genera. The drug
+          discovery pipeline is running dry. We have squeezed the cultivable one
+          percent for everything they have, and resistance is winning. The next
+          generation of antibiotics, almost by definition, has to come from the
+          uncultured 99%.
+        </p>
+
+        <aside class="marginalia left">
+          <i>Note in the margin:</i> we can see the genes for the antibiotics. We
+          just cannot grow the microbes that make them.
+        </aside>
+
+        <p>
+          Here is the surprise: we know these uncultured organisms make novel compounds.
+          Metagenomic mining (reading the DNA without growing the organism) has shown
+          they encode biosynthetic pathways for hundreds of thousands of small molecules
+          we have never characterised.<sup class="cite"><a href="#fn5">5</a></sup> We can
+          see the genes for the antibiotics. We just cannot grow the microbes to make them.
+        </p>
+
+        <p>
+          The same is true for probiotics. The next generation of microbiome
+          therapeutics (drugs based on actual gut bacteria, not yogurt) is blocked by
+          cultivability. Seres Therapeutics brought an FDA-approved microbiome drug to
+          market;<sup class="cite"><a href="#fn6">6</a></sup> their pipeline is
+          constrained by what they can grow. The next breakthrough probiotic, the next
+          <i>Akkermansia</i> (itself only cultured in 2004, and now a billion-dollar
+          market opportunity<sup class="cite"><a href="#fn7">7</a></sup>), almost
+          certainly already exists as a sequence in someone's database. We just cannot
+          get it into a flask.
+        </p>
+
+        <p>
+          The same is true for environmental remediation. Microbes that eat plastic,
+          microbes that fix nitrogen without fertiliser, microbes that capture carbon.
+          The actual best ones, the ones evolution spent four billion years optimising,
+          are mostly uncultured.
+        </p>
+
+        <blockquote class="proverb">
+          The unseen is not the unknowable.
+        </blockquote>
+
+        <p class="turn">So here is the question: what would it take to grow them?</p>
+
+        <p>
+          The current approach is brute force. Try more media. Screen more conditions.
+          Hope something works. Some labs run two hundred conditions per sample.
+          Pacific Northwest National Lab runs more than a thousand. None of this scales.
+          Each condition takes weeks, requires expert microbiologists, and most attempts
+          fail.
+        </p>
+
+        <p>
+          What has changed in the last five years is that we now have foundation models
+          that can read DNA and predict function. ESM-2 reads proteins and predicts
+          structure. Evo 2 reads genomes and predicts mutational effects. These models
+          contain a vast amount of implicit biological knowledge, learned from hundreds
+          of millions of sequences.
+        </p>
+
+        <p>
+          And beyond sequence, there is molecular dynamics. In materials chemistry this
+          is already real: MACE-MP-0 is a foundation neural potential trained on the
+          Materials Project at near-DFT accuracy, running stable molecular dynamics on
+          solids, liquids, and battery cells.<sup class="cite"><a href="#fn8">8</a></sup>
+          In biology the equivalent is younger but arriving. AlphaFlow fine-tunes
+          AlphaFold under a flow-matching objective so the output is a conformational
+          ensemble rather than a single structure.<sup class="cite"><a href="#fn9">9</a></sup>
+          BioEmu, trained on over 200 milliseconds of aggregated MD, generates thousands
+          of protein equilibrium conformations per hour and predicts free energies to
+          roughly 1 kcal/mol.<sup class="cite"><a href="#fn10">10</a></sup> MDGen models
+          full molecular dynamics trajectories directly, up to 100,000 frames at a
+          time.<sup class="cite"><a href="#fn11">11</a></sup> The training substrate is
+          ATLAS, an open corpus of 1,390 proteins each simulated in triplicate for 100
+          nanoseconds.<sup class="cite"><a href="#fn12">12</a></sup> Sequence gives you
+          the parts list. Dynamics gives you the runtime.
+        </p>
+
+        <p>
+          None of this yet predicts cultivation conditions for an uncultured microbe.
+          The pieces sit in different communities: machine-learned interatomic
+          potentials in materials,<sup class="cite"><a href="#fn8">8</a></sup> protein
+          ensemble generators in computational biology,<sup class="cite"><a href="#fn9">9</a></sup>
+          genome-scale metabolic networks at 247,000-microbe
+          scale,<sup class="cite"><a href="#fn13">13</a></sup> and amino-acid-composition
+          models that already predict oxygen tolerance, optimum temperature, and
+          salinity from genome alone.<sup class="cite"><a href="#fn14">14</a></sup> None
+          of them individually is enough.
+        </p>
+
+        <p>
+          The bet is the loop. From a genome, predict what the cell needs. Simulate
+          the dynamics: how membranes assemble, how metabolites flow, what conditions
+          the cell was built to live in. Test in the lab. Every outcome trains the
+          model further. Every cycle, predictions get sharper. Every cycle, cultivation
+          gets faster and cheaper. The artifact at the end is the most accurate model
+          in the world for growing an unknown microbe, and <em>the model is the moat</em>.
+        </p>
+
+        <div class="fleuron">❧ ❦ ❧</div>
+
+        <p>
+          This is hard for several reasons. The labels are bad: existing cultivation
+          databases (BacDive, ATCC, DSMZ) record what worked, not what failed; a working
+          ML pipeline needs both, and we will have to generate the negative data
+          ourselves. The same organism behaves differently in different communities. A
+          bacterium that grows in a defined medium with one neighbour may refuse to
+          grow alone, so cultivation is not really a property of an organism, but of an
+          organism plus its context, and most existing models ignore this. Wet-lab
+          cycles are slow: a single round of cultivation is one to four weeks, so to
+          learn fast every experiment must be maximally informative, which means active
+          learning and Bayesian optimisation choosing what to run next, weighted by
+          information per dollar. And frontier labs (Arc, Insitro, Recursion) could
+          build this too, so the moat is not the model, it is the loop, the proprietary
+          data we generate by running experiments. The first team to close that loop
+          credibly accumulates a data advantage that compounds monthly.
+        </p>
+
+        <p>
+          Most pharmaceuticals fail. Most biology is harder than it looks. This will
+          probably fail too. But the upside is large enough that even partial success
+          matters. Every previously uncultured organism we grow is a potentially useful
+          new tool. New antibiotics. New probiotics. New enzymes. New chemistry.
+        </p>
+
+        <p>
+          And if it works at scale, the implication is not subtle. The microbial
+          99% is the largest unexplored library of useful biology on
+          Earth. Unlocking it is the closest thing biology has to <em>computing the
+          missing dark matter and seeing what is actually out there</em>.
+        </p>
+
+        <p class="stat">that is the bet</p>
+
+        <p>
+          In a few years, hopefully, I will be writing the postmortem on this. Either
+          <i>"here is why it failed and what we learned,"</i> or <i>"here is a new genus
+          we just cultured, and the antibiotic it makes."</i> Either way, somebody has
+          to try.
+        </p>
+      </article>
+
+      <div class="call">
+        If you would like to help (wet-lab partnership, advisor role, environmental
+        samples from weird places, or simply an idea), please
+        <a href="mailto:miyuhpenn@gmail.com">reach out</a>.
+      </div>
+
+      <div class="signature">
+        Miyu Horiuchi
+      </div>
+
+      <section class="footnotes">
+        <h3>Notes &amp; Sources</h3>
+        <ol>
+          <li id="fn1">
+            BacDive cultivation records vs. GTDB genome counts for family
+            <i>Christensenellaceae</i>, as of 2024.
+          </li>
+          <li id="fn2">
+            Brown et al., <i>Nature</i>, 2015. On the unusual biology of candidate
+            phyla radiation bacteria.
+          </li>
+          <li id="fn3">
+            Imachi et al., <i>Nature</i>, 2020. Isolation of an archaeon at the
+            prokaryote–eukaryote interface; twelve years of cultivation work.
+          </li>
+          <li id="fn4">
+            Lloyd et al., <i>Nature Microbiology</i>, 2018. Phylogenetically novel
+            uncultured microbial cells dominate Earth microbiomes.
+          </li>
+          <li id="fn5">
+            Nayfach et al., <i>Nature</i>, 2021. A genomic catalogue of Earth's
+            microbiomes; 52,515 metagenome-assembled genomes.
+          </li>
+          <li id="fn6">
+            Seres Therapeutics SER-109 (Vowst), FDA-approved for recurrent
+            <i>C. difficile</i> infection, 2023.
+          </li>
+          <li id="fn7">
+            Derrien et al., <i>Int. J. Syst. Evol. Microbiol.</i>, 2004.
+            <i>Akkermansia muciniphila</i> gen. nov., sp. nov.
+          </li>
+          <li id="fn8">
+            Batatia et al., <i>J. Chem. Phys.</i>, 2024. A foundation model for
+            atomistic materials chemistry (MACE-MP-0). arXiv:2401.00096.
+          </li>
+          <li id="fn9">
+            Jing, Berger, Jaakkola. <i>ICML</i>, 2024. AlphaFold meets flow matching
+            for generating protein ensembles. arXiv:2402.04845.
+          </li>
+          <li id="fn10">
+            Lewis et al., <i>Science</i>, 2025. Scalable emulation of protein
+            equilibrium ensembles with generative deep learning (BioEmu).
+          </li>
+          <li id="fn11">
+            Jing, Stark, Jaakkola, Berger. <i>NeurIPS</i>, 2024. Generative modeling
+            of molecular dynamics trajectories (MDGen). arXiv:2409.17808.
+          </li>
+          <li id="fn12">
+            Vander Meersche et al., <i>Nucleic Acids Research</i>, 2024. ATLAS: protein
+            flexibility description from atomistic molecular dynamics simulations.
+          </li>
+          <li id="fn13">
+            Heinken et al., <i>Cell Systems</i>, 2025. A genome-scale metabolic
+            reconstruction resource of 247,092 diverse human microbes (APOLLO).
+          </li>
+          <li id="fn14">
+            Weissman et al., bioRxiv, 2024. Predicting microbial growth conditions
+            from amino acid composition. doi:10.1101/2024.03.22.586313.
+          </li>
+        </ol>
+      </section>
+
+      <footer class="colophon">
+        <div>
+          <h3>On the Title</h3>
+          <p>
+            <i>Dark matter</i> here is borrowed from cosmology: that which cannot be
+            observed directly, yet whose presence is felt in everything we can measure.
+            The microbial dark matter is, in this sense, more tractable: it can be read,
+            even where it cannot yet be grown.
+          </p>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
