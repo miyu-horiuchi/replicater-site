@@ -106,7 +106,18 @@
       first principles and <em>before</em> seeing any pooling results.
     </p>
 
+    <figure class="figure">
+      <img src="figures/fig-2-pooling-bias.png" alt="Two bar charts: a diffuse compositional signal with many roughly equal contributors, versus a localized machinery signal concentrated in a few decisive proteins." />
+      <figcaption><b>Pooling bias.</b> Mean-pooling is a diffuse-signal prior; attention-pooling is a localized-signal prior. The operator should match where the label's signal actually lives.</figcaption>
+    </figure>
+
     <h2 id="design">A deliberately narrow experiment</h2>
+
+    <figure class="figure">
+      <img src="figures/fig-1-schematic.png" alt="Study schematic: NCBI genomes with BacDive labels flow through ORF prediction and a frozen ESM-2 encoder into either mean-pool or attention-pool, then into 21 trait heads evaluated under species, genus, and family held-out tests." />
+      <figcaption><b>Study schematic.</b> The experiment keeps the protein encoder, task heads, loss, and data fixed, and changes only the genome-level pooling operator.</figcaption>
+    </figure>
+
     <p>
       For each strain with an NCBI genome we predict open reading frames with pyrodigal and
       embed each protein independently with a <strong>frozen ESM-2</strong> encoder,
@@ -174,6 +185,17 @@
       factor is not how we pool proteins but whether <em>any</em> protein-set representation
       transfers across evolutionary distance.
     </p>
+
+    <figure class="figure">
+      <img src="figures/fig-3-gradient.png" alt="Line chart of attention-minus-mean delta F1 across species, genus, and family holdout. The machinery line starts high (+0.083) and collapses to +0.010 at family; the compositional line stays low and flat (+0.021 to +0.009)." />
+      <figcaption><b>The observed predictability gradient.</b> Attention gain is large for machinery traits within taxonomic distribution and disappears under family-level shift, where it converges with the flat compositional line.</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img src="figures/fig-4-localization-audit.png" alt="Scatter plot of species-level attention gain versus gene-family localization (top-10 association share). The two pathogenicity points sit in the high-localization, high-gain region; Spearman rho = 0.447, p = 0.083." />
+      <figcaption><b>Preliminary localization audit.</b> A scalar-trait gene-family concentration proxy is directionally correlated with attention gain (Spearman ρ = 0.447), with the two pathogenicity heads in the high-gain, high-localization corner.</figcaption>
+    </figure>
+
     <p>
       A deliberately simple taxonomy-majority baseline sharpens the interpretation: on
       species-held-out pathogenicity it reaches macro-F1 0.730 (animal) and 0.647 (human),
@@ -183,6 +205,11 @@
       animal, 0.85 human), and their top-attended proteins are externally validated against
       VFDB virulence factors under matched controls and intervention masking.
     </p>
+
+    <figure class="figure">
+      <img src="figures/fig-5-virulence.png" alt="Two panels. Left: top-5 attended proteins hit VFDB virulence factors at 28.1% versus 5.9% for random (Wilcoxon p = 2.5e-7). Right: masking the top-5 proteins flips 22.7% of pathogenic calls versus near-zero for random masking (p = 1.2e-4)." />
+      <figcaption><b>Does the attention find the right genes?</b> Top-attended proteins are enriched for VFDB virulence factors against matched controls (left), and masking them measurably flips pathogenic predictions (right) — evidence the learned attention is mechanistically real, not just predictive.</figcaption>
+    </figure>
 
     <p class="keywords">
       Keywords — set learning · attention pooling · protein language models · genomic trait
