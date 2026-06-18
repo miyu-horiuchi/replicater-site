@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Taxonomy Ceiling: Why Protein-Language-Model Adaptation Fails to Generalize Across Bacterial Families — Microbe 1%</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../research.css" />
+<style>
+  /* figures are rendered on the site's cream canvas, so blend the cards in */
+  .figure img {
+    background: var(--c-cream);
+    border-color: rgba(58, 74, 92, 0.12);
+  }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+
+<div class="bar">
+  <a class="wordmark" href="../index.html"><span class="dot"></span>Microbe — 1%</a>
+  <nav class="bar-nav">
+    <a class="nav-link" href="../research.html">Research</a>
+    <a class="nav-link" href="../manifesto.html">Manifesto</a>
+    <a class="nav-link" href="../index.html">Home</a>
+  </nav>
+</div>
+
+<article class="col">
+  <header class="article-head">
+    <h1>The Taxonomy Ceiling: Why Protein-Language-Model Adaptation Fails to Generalize Across Bacterial Families</h1>
+    <p class="subtitle">Fine-tuning ESM-2 with LoRA does not beat a frozen encoder under family-level shift; the apparent gain is a majority-class accuracy artifact.</p>
+    <p class="byline">Miyu Horiuchi<span class="sep">·</span>17 June 2026</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#question">If pooling is not the constraint, is the encoder?</a></li>
+      <li><a href="#design">A deliberately narrow experiment</a></li>
+      <li><a href="#contributions">Contributions</a></li>
+      <li><a href="#results">The gain is an accuracy illusion</a></li>
+      <li><a href="#takeaway">What it means</a></li>
+      <li><a href="#paper">Read the full paper</a></li>
+    </ol>
+  </nav>
+
+  <div class="prose">
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      A bacterial genome is a <em>set</em> of proteins, and recent phenotype predictors
+      aggregate frozen protein language-model embeddings into a genome representation. A
+      natural next lever, once the pooling step is fixed, is to adapt the encoder itself:
+      rather than treat ESM-2 as a frozen feature extractor, fine-tune it to the genomic task.
+      We ask whether this lever survives the regime that matters for uncultured organisms:
+      prediction on held-out taxonomic families. Holding data, splits, pooling (a Set
+      Transformer), task heads, and training recipe fixed, we compare a frozen ESM-2-150M
+      encoder against the same encoder adapted with Low-Rank Adaptation (LoRA), on a
+      family-held-out split of 19,278 bacterial genomes and 21 traits.
+    </p>
+    <p>
+      On the aggregate primary metric, LoRA <em>appears</em> to win by a small margin (0.580
+      vs 0.568). We show this gain is a measurement artifact: it is produced entirely by two
+      imbalanced binary pathogenicity heads on which LoRA collapses to majority-class
+      prediction, raising accuracy (0.70 → 0.94; 0.75 → 0.96) while driving F1 to
+      <em>exactly zero</em>. With those two heads removed, encoder adaptation is net negative
+      (−0.011), and on F1 it is neutral-to-harmful across the imbalanced traits. The
+      conclusion mirrors and extends our earlier pooling study: under cross-family shift,
+      neither the pooling operator nor encoder adaptation is the binding constraint. We
+      document the artifact as a reusable warning, that accuracy is the wrong primary metric
+      for imbalanced genomic traits, and offer this as a focused, single-seed pilot rather
+      than a finished benchmark.
+    </p>
+
+    <h2 id="question">If pooling is not the constraint, is the encoder?</h2>
+    <p>
+      Foundation models for bacterial genomes increasingly follow a common template: a protein
+      language model such as ESM-2 embeds each open reading frame, and a genome-level model
+      pools the resulting variable-size protein set into one vector for phenotype prediction.
+      In prior work we isolated the <strong>pooling</strong> step and showed that adaptive
+      (attention / Set-Transformer) pooling helps gene-localized "machinery" traits more than
+      diffuse "compositional" traits, but that the entire advantage collapses under
+      family-level distribution shift. That study deliberately <em>froze</em> the encoder so
+      the result could be read as a pooling effect. It left the obvious follow-up question: if
+      the pooling operator is not the binding constraint under cross-family shift, is the
+      <strong>encoder</strong>?
+    </p>
+    <p>
+      The standard hope is that fine-tuning the protein encoder, rather than using it frozen,
+      lets the representation specialize to the genomic task and recover generalization that a
+      fixed encoder cannot. This is the most expensive lever short of retraining a foundation
+      model, and the one most practitioners reach for next. We test it in the cleanest possible
+      way: hold the pooling, heads, loss, data, and split fixed, and change <em>only</em>
+      whether the ESM-2 encoder is frozen or adapted with LoRA (which adds only ~1.8M trainable
+      parameters, keeping the comparison close to a controlled ablation).
+    </p>
+
+    <h2 id="design">A deliberately narrow experiment</h2>
+
+    <figure class="figure">
+      <img src="figures/taxonomy-ceiling-fig1-schematic.png" alt="Study schematic: a genome (set of proteins) flows through the ESM-2 encoder, a Set Transformer pool, and 21 task heads, evaluated on a family-held-out split. The only variable that changes is whether the encoder is frozen or LoRA-adapted." />
+      <figcaption><b>Controlled comparison.</b> Data, pooling, task heads, loss, optimizer, split, and seed are held fixed; the <em>only</em> experimental variable is whether the ESM-2 encoder is frozen (a fixed feature extractor) or adapted with LoRA. Any difference in family-held-out performance is therefore attributable to encoder adaptation.</figcaption>
+    </figure>
+
+    <p>
+      Labels are drawn from BacDive, giving <strong>21 prediction heads</strong> across seven
+      biological blocks. We use the <strong>family-held-out split</strong>: no taxonomic family
+      appears in more than one fold, the regime in which our earlier pooling advantage
+      vanished. The genome representation is produced by a Set Transformer pool over the
+      protein embeddings, feeding 21 heads under a masked multi-task loss. In the
+      <strong>frozen</strong> arm, ESM-2 weights are fixed and only the pool and heads train
+      (5.54M trainable). In the <strong>LoRA</strong> arm, rank-16 adapters are injected into
+      the encoder and trained jointly with the pool and heads (7.39M trainable). Both arms
+      train for 3 epochs with balanced-family sampling and class-weighted losses, sharded
+      across 8 GPUs.
+    </p>
+
+    <h2 id="contributions">Contributions</h2>
+    <ol>
+      <li><strong>A controlled frozen-vs-LoRA comparison under family shift.</strong> With
+        encoder adaptation as the only experimental variable, on 19,278 genomes / 21 traits at
+        family-held-out evaluation, we find no genuine benefit from fine-tuning ESM-2-150M.</li>
+      <li><strong>A concrete metric-artifact diagnosis.</strong> The apparent aggregate
+        improvement is an <em>accuracy illusion</em> driven by majority-class collapse on
+        imbalanced binary heads, with F1 going to zero where accuracy goes up. This is a
+        reusable warning for any genomic-trait benchmark that aggregates accuracy across
+        imbalanced labels.</li>
+      <li><strong>A second, independent confirmation of the cross-family bottleneck.</strong>
+        Combined with our pooling study, this gives two separate architectural levers, set
+        aggregation and encoder adaptation, that both fail to move family-level generalization,
+        sharpening the claim that distribution shift, not architecture, is the open problem.</li>
+    </ol>
+    <p>
+      We are explicit about scope. This is a <strong>single-seed pilot</strong> with one
+      encoder scale and three training epochs; it is a focused, honest measurement and a
+      methodological warning, not a benchmark sweep or a claim that fine-tuning can never help.
+    </p>
+
+    <h2 id="results">The gain is an accuracy illusion</h2>
+    <p>
+      Read at face value, encoder adaptation gives a +0.011 improvement in the aggregate
+      primary metric (frozen 0.568 → LoRA 0.580). But decomposing by head reveals the
+      <em>entire</em> improvement is carried by two pathogenicity heads, and in a way that
+      signals failure rather than success. On both, the adapted model's accuracy jumps by
+      ~0.20 to 0.24 while its F1 drops to <em>exactly zero</em>. F1 = 0 with high accuracy is
+      the unambiguous signature of majority-class collapse: the model has stopped predicting
+      the rare positive class entirely, scoring well precisely because ~94% of test genomes are
+      negative. In fact, LoRA's accuracy equals the no-skill majority-class baseline to three
+      decimals (0.939 and 0.956).
+    </p>
+
+    <figure class="figure">
+      <img src="figures/taxonomy-ceiling-fig2-accuracy-illusion.png" alt="Two bar charts. Left: accuracy rises sharply from frozen to LoRA on both pathogenicity heads, reaching a dashed no-skill baseline line. Right: F1 collapses from nonzero (frozen) to exactly zero (LoRA)." />
+      <figcaption><b>The aggregate gain is an accuracy illusion.</b> On the two pathogenicity heads that drive the headline number, encoder adaptation <em>raises</em> accuracy (left, up to the dashed no-skill line) while <em>collapsing</em> F1 to exactly zero (right). High accuracy with zero F1 is a classifier that has stopped predicting the rare positive class.</figcaption>
+    </figure>
+
+    <p>
+      These two heads contribute +0.021 to the aggregate on their own, more than the entire
+      +0.011 gain. Removing only them flips the sign: across the remaining 19 heads, encoder
+      adaptation is net negative (−0.011).
+    </p>
+
+    <figure class="figure">
+      <img src="figures/taxonomy-ceiling-fig3-signflip.png" alt="Bar chart. Over all 21 heads the LoRA-minus-frozen aggregate is +0.0115 (green, labeled 'looks like a win'); excluding the two pathogenicity heads it becomes -0.0106 (red, labeled 'actually a loss')." />
+      <figcaption><b>Removing two heads flips the sign.</b> The aggregate favors LoRA by +0.0115 over all 21 heads, but once the two majority-class-collapse pathogenicity heads are excluded, the same comparison becomes −0.0106. The "win" lives entirely in the artifact.</figcaption>
+    </figure>
+
+    <p>
+      Measured by F1, where it is informative, adaptation is neutral-to-harmful. The largest
+      movements are losses (temperature class −0.144, pathogenicity human −0.176, animal
+      −0.152); the few gains are small and concentrated in multilabel heads (carbon
+      utilization +0.034, motility +0.023). On the metric that actually tracks positive-class
+      performance, fine-tuning the encoder did not help the imbalanced traits it most needed
+      to improve.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/taxonomy-ceiling-fig4-f1-delta.png" alt="Horizontal bar chart of per-head F1 change (LoRA minus frozen), sorted by effect. Most large bars are losses (red), including both pathogenicity heads; a few small gains (green) appear for carbon utilization and motility." />
+      <figcaption><b>Per-head F1 change under encoder adaptation (LoRA − frozen).</b> The large movements are losses, including both pathogenicity heads that collapse to F1 = 0; gains are few and small. On positive-class performance, adaptation is neutral-to-harmful.</figcaption>
+    </figure>
+
+    <h2 id="takeaway">What it means</h2>
+    <p>
+      Our earlier study showed that swapping the pooling operator (mean vs attention) does not
+      survive family-level shift. This note shows that the far more expensive move, adapting
+      the encoder weights themselves with LoRA, <em>also</em> fails once the accuracy artifact
+      is removed. Two independent architectural levers come up empty in the same regime. The
+      limiting factor in cross-family genomic trait prediction is not how we represent or pool
+      a genome's proteins, but whether <em>any</em> protein-set representation transfers across
+      evolutionary distance. Architecture is not the lever; distribution shift is the problem.
+    </p>
+    <p>
+      The cleanest practical takeaway is methodological: a benchmark that aggregates per-head
+      accuracy will <em>reward</em> a model for collapsing to the majority class on imbalanced
+      labels, exactly the failure mode that matters most for rare, high-stakes traits like
+      pathogenicity. Reporting F1 alongside accuracy on every imbalanced head, and being
+      suspicious of accuracy gains that coincide with F1 collapse, is a cheap and necessary
+      guard.
+    </p>
+
+    <p class="keywords">
+      Keywords — encoder fine-tuning · LoRA · protein language models · genomic trait
+      prediction · distribution shift · class imbalance · BacDive · ESM-2 · uncultivated
+      microorganisms
+    </p>
+  </div>
+
+  <div class="pdf-cta" id="paper">
+    <a href="../taxonomy-ceiling.pdf" target="_blank" rel="noopener">Read the full paper (PDF) →</a>
+  </div>
+
+  <section class="citation">
+    <h2>Cite</h2>
+    <pre>@article{horiuchi2026taxonomyceiling,
+  title   = {The Taxonomy Ceiling: Why Protein-Language-Model Adaptation Fails to Generalize Across Bacterial Families},
+  author  = {Horiuchi, Miyu},
+  year    = {2026},
+  note    = {replicater.xyz/writing/taxonomy-ceiling}
+}</pre>
+  </section>
+</article>
+
+<footer>
+  <span><a href="../research.html">← All research</a></span>
+  <span><a href="../index.html">replicater.xyz</a></span>
+</footer>
+</body>
+</html>

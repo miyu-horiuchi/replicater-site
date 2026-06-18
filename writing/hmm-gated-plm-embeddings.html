@@ -9,6 +9,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../research.css" />
+<style>
+  /* figures are rendered on the site's cream canvas, so blend the cards in */
+  .figure img {
+    background: var(--c-cream);
+    border-color: rgba(58, 74, 92, 0.12);
+  }
+</style>
 </head>
 <body>
 <div class="frame"></div>
@@ -107,6 +114,11 @@
       prediction corpus published to date (~2× the size of prior work).
     </p>
 
+    <figure class="figure">
+      <img src="figures/hmm-gated-fig1-architecture.png" alt="Five-layer pipeline schematic: (1) Ingest BacDive v2 and NCBI Datasets into streaming pyrodigal CDS; (2) six parallel feature paths including the PTPE HMM-gated ESM-2 path; (3) fuse by left-join on genome accession; (4) a hybrid predictor with tabular XGBoost, LoRA on ESM-2, and a medium recommender; (5) serve via FastAPI and a HuggingFace Space." />
+      <figcaption><b>End-to-end system architecture.</b> A five-layer pipeline: BacDive v2 and NCBI Datasets are joined to retrieve 22,300 unique genomes across 46,029 strains; six parallel feature paths (the largest being PTPE, this work) left-join into one training table; a hybrid predictor is trained with 5-fold GroupKFold over BacDive family (tabular XGBoost for temperature / pH / salt, a LoRA fine-tune of ESM-2 for oxygen, and an XGBoost medium recommender); and the system is served behind FastAPI with a 5,000-genome uncultured-catalog overlay.</figcaption>
+    </figure>
+
     <h2 id="contributions">Contributions</h2>
     <ol>
       <li><strong>PTPE construction.</strong> A novel feature type for genome-level
@@ -142,6 +154,21 @@
       ranking. Applied to 5,000 GTDB-derived uncultured catalog genomes, it predicts 3,026
       aerobes and 1,974 anaerobes.
     </p>
+
+    <figure class="figure">
+      <img src="figures/hmm-gated-fig2-temperature.png" alt="Horizontal bar chart of optimum temperature mean absolute error in degrees Celsius (lower is better): This work +PTPE 2.67, This work pre-PTPE 2.74, Koblitz 2025 2.94, GenomeSPOT 4.39." />
+      <figcaption><b>Temperature accuracy against external genome-based comparators.</b> Optimum temperature MAE on the family-heldout subset (n=5,000) for GenomeSPOT and this work, alongside the best published Koblitz et al. number. This work is 39% more accurate than GenomeSPOT, and PTPE shaves the error further (2.74 → 2.67 °C).</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img src="figures/hmm-gated-fig3-oxygen.png" alt="Horizontal bar chart of four-class oxygen requirement macro-F1 (higher is better): This work LoRA 0.945, This work tabular 0.402, This work pre-PTPE 0.412. GenomeSPOT and Koblitz 2025 are marked as a different (binary) label space and not directly comparable." />
+      <figcaption><b>LoRA fine-tuning lifts oxygen classification but not regression.</b> Four-class oxygen requirement macro-F1 across the three internal variants. End-to-end LoRA on the HMM-gated marker proteins reaches 0.945, far above the tabular head (0.402); the external comparators use a binary oxygen label space and are not directly comparable.</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img src="figures/hmm-gated-fig4-medium.png" alt="Horizontal bar chart of medium-recommender Hit@5 on a 5-fold family-heldout benchmark (higher is better): XGBoost recommender (this work) 77.5%, taxonomic popularity 37.2%, global popularity 36.6%." />
+      <figcaption><b>Medium recommender outperforms popularity baselines by ~2×.</b> Medium-recommender Hit@5 on the family-heldout dry-lab benchmark (21,050 strains, 40 media). The XGBoost recommender recovers a known medium in the top 5 for 77.5% of strains, versus 37.2% (taxonomic-popularity) and 36.6% (global-popularity) baselines.</figcaption>
+    </figure>
 
     <p class="keywords">
       Keywords — microbial cultivation · phenotype prediction · protein language models ·
