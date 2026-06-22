@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Tokenization Trap: Domain-Adaptive BPE for Protein and Genome Language Models — Microbe 1%</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../research.css" />
+<style>
+  /* figures are rendered on the site's cream canvas, so blend the cards in */
+  .figure img {
+    background: var(--c-cream);
+    border-color: rgba(58, 74, 92, 0.12);
+  }
+  /* lightweight result tables tuned to the cream/ink theme */
+  .data-table {
+    margin: 4vh 0;
+    overflow-x: auto;
+  }
+  .data-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Inter", sans-serif;
+    font-size: 0.86rem;
+    color: var(--c-ink);
+  }
+  .data-table caption {
+    caption-side: top;
+    text-align: left;
+    font-family: "Inter", sans-serif;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(58, 74, 92, 0.14);
+    text-align: right;
+  }
+  .data-table th:first-child,
+  .data-table td:first-child {
+    text-align: left;
+  }
+  .data-table thead th {
+    border-bottom: 1.5px solid rgba(58, 74, 92, 0.35);
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .data-table tr.best td { font-weight: 600; }
+  .data-table .num { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="frame"></div>
+
+<div class="bar">
+  <a class="wordmark" href="../index.html"><span class="dot"></span>Microbe — 1%</a>
+  <nav class="bar-nav">
+    <a class="nav-link" href="../research.html">Research</a>
+    <a class="nav-link" href="../manifesto.html">Manifesto</a>
+    <a class="nav-link" href="../index.html">Home</a>
+  </nav>
+</div>
+
+<article class="col">
+  <header class="article-head">
+    <h1>The Tokenization Trap: Domain-Adaptive BPE Restores Language-Like Token Statistics for Protein and Genome Language Models</h1>
+    <p class="subtitle">Single-residue tokenization gives a flat, non-Zipfian token distribution that barely benefits from scale. Domain-trained BPE restores a language-like distribution and scales ~2× faster — but it is only the first of two bottlenecks; attention is the second.</p>
+    <p class="byline">Miyu Horiuchi<span class="sep">·</span>Anherutowa Calvo<span class="sep">·</span>22 June 2026</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#trap">The tokenization trap</a></li>
+      <li><a href="#distribution">Domain BPE restores Zipfian statistics</a></li>
+      <li><a href="#proof">Better statistics, better modelling</a></li>
+      <li><a href="#gpt2">Why GPT-2 English BPE is special</a></li>
+      <li><a href="#curve">The scaling curve</a></li>
+      <li><a href="#probe">The downstream probe</a></li>
+      <li><a href="#architecture">The second bottleneck: attention</a></li>
+      <li><a href="#takeaway">What it means</a></li>
+      <li><a href="#paper">Read the full paper</a></li>
+    </ol>
+  </nav>
+
+  <div class="prose">
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      Protein and genome language models (pLMs/gLMs) have not shown the smooth, predictable
+      scaling that drives progress in natural-language models. We argue a central,
+      under-examined cause is <em>tokenization</em>. The near-universal choice of
+      single-residue tokenization (one token per amino acid or nucleotide) collapses the
+      token-frequency distribution onto the marginal residue frequencies, producing a flat,
+      non-Zipfian spectrum (fitted exponent α ≈ 0.4–0.6). Natural language is Zipfian
+      (α ≈ 1), and that heavy tail is exactly what neural scaling laws exploit. We formalize
+      this as the <strong>tokenization trap</strong> and test it on real Swiss-Prot.
+    </p>
+    <p>
+      Domain-adaptive byte-pair encoding (BPE) moves the token-frequency exponent into the
+      language-like band (α ≈ 1.0–1.2) with high goodness-of-fit, while single-residue
+      tokenization and an English-trained GPT-2 BPE do not. A model-size sweep makes the trap
+      quantitative: single-residue tokenization is nearly flat with scale
+      (bits-per-residue slope b ≈ 0.0025), whereas domain BPE turns parameters into
+      compression about twice as fast (b ≈ 0.0058) and closes the gap monotonically. A
+      frozen-feature linear probe on a composition-controlled family task shows single-residue
+      features are near chance (0.23 vs 0.17) while domain BPE recovers motif structure
+      (0.86). We conclude domain-specific subword tokenization is a <em>necessary but not
+      sufficient</em> condition for language-like scaling: it fixes the input, but the
+      transformer still learns correlation, not mechanism — motivating a spectral,
+      mechanism-aware architecture.
+    </p>
+
+    <h2 id="trap">The tokenization trap</h2>
+    <p>
+      Scaling laws predict test loss as a smooth power law in parameters, data, and compute.
+      Human language is Zipfian: a few very common tokens and a long tail of rare,
+      information-dense ones. A protein is a string over 20 amino acids; a genome over 4
+      nucleotides. Under single-residue tokenization the token distribution <em>is</em> the
+      marginal residue distribution — nearly flat, with no heavy tail. Our hypothesis: pLMs
+      and gLMs scale poorly in part because single-residue tokenization yields non-Zipfian
+      token statistics, and domain-adaptive BPE — learning merges on biological corpora so
+      frequent motifs/<em>k</em>-mers become tokens — restores a language-like distribution.
+      We contrast against the natural baseline of reusing a powerful existing LLM tokenizer
+      (GPT-2's English BPE).
+    </p>
+    <p>
+      We stress that fixing tokenization is necessary but <em>not</em> sufficient. Even with a
+      language-like input distribution, the transformer learns <em>correlational</em>
+      structure (which residues co-occur), not the underlying biophysical <em>mechanism</em>
+      (why they co-occur). The full path is a chain: (a) current pLMs/gLMs scale poorly;
+      (b) single-residue tokenization is too flat; (c) BPE could fix this; (d) but
+      <em>generic</em> (English) BPE learns no biological units; (e) so a
+      <em>domain-derived</em> tokenizer is required; and (f) even then, attention is the wrong
+      inductive bias, motivating (g) a spectral, mechanism-aware architecture. This work gives
+      evidence for (a)–(e) and a concrete design and falsifiable test for (f)–(g).
+    </p>
+
+    <h2 id="distribution">Domain BPE restores Zipfian statistics</h2>
+    <p>
+      On real Swiss-Prot, single-residue tokenization sits at α ≈ 0.5–0.6 with a poor
+      power-law fit. Across a vocabulary sweep, domain BPE moves the exponent into the
+      language-like ≈ 1.0–1.2 band <em>with high r²</em> (≥ 0.9) — a genuinely Zipfian
+      distribution. The rank–frequency tail is flat for single residues and heavy-tailed for
+      BPE.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/tokenization-trap-fig1-zipf.png" alt="Log-log rank-frequency plots by tokenizer. Single-residue tokenization is a flat line (non-Zipfian); domain BPE develops a heavy, downward-sloping language-like tail." />
+      <figcaption><b>Rank–frequency tails by tokenizer.</b> Single-residue tokenization is flat (non-Zipfian); domain BPE develops a heavy, language-like tail.</figcaption>
+    </figure>
+
+    <div class="data-table">
+      <table>
+        <caption><b>Protein token-distribution metrics (real Swiss-Prot).</b> p<sub>median</sub> ≥ 1 marks the language-like band; † denotes a poor power-law fit (r² &lt; 0.85). The GPT-2 exponent uses a goodness-of-fit-gated robust estimator.</caption>
+        <thead>
+          <tr><th>Tokenizer</th><th>Vocab</th><th>p<sub>median</sub></th><th>fit r²</th></tr>
+        </thead>
+        <tbody class="num">
+          <tr><td>Single AA</td><td>20</td><td>0.59</td><td>0.70†</td></tr>
+          <tr><td>BPE 50</td><td>50</td><td>1.19</td><td>0.76†</td></tr>
+          <tr><td>BPE 100</td><td>100</td><td>0.92</td><td>0.89</td></tr>
+          <tr><td>BPE 250</td><td>250</td><td>0.92</td><td>0.91</td></tr>
+          <tr><td>BPE 500</td><td>500</td><td>1.08</td><td>0.90</td></tr>
+          <tr><td>BPE 1000</td><td>1000</td><td>1.14</td><td>0.93</td></tr>
+          <tr><td>BPE 2000</td><td>2000</td><td>1.12</td><td>0.96</td></tr>
+          <tr><td>BPE 4000</td><td>4000</td><td>1.17</td><td>0.97</td></tr>
+          <tr><td>BPE 8000</td><td>8000</td><td>1.18</td><td>0.96</td></tr>
+          <tr><td>GPT-2 (English BPE)</td><td>50257</td><td>0.87</td><td>0.75†</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="proof">Better statistics, better modelling (at fixed size)</h2>
+    <p>
+      Distribution is necessary but not sufficient, so we test modelling efficiency directly.
+      We train an identical small Transformer ("TinyGPT") under each tokenizer, holding
+      parameters, optimizer, steps, and data fixed, and evaluate with <strong>bits per
+      residue</strong> — total next-token negative log-likelihood divided by the raw
+      amino-acid characters scored — a tokenizer-agnostic compression metric. On a synthetic
+      motif corpus with strong embedded structure, domain BPE attains the lowest
+      bits-per-residue (3.535 at vocab 256 vs 3.869 for single residues, ≈ 9% lower), while
+      GPT-2's English BPE is worst by a wide margin despite its large embedding table.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/tokenization-trap-fig2-scaling-proof.png" alt="Left: training-loss curves by tokenizer at identical model size and compute. Right: horizontal bar chart of bits-per-residue, with domain BPE lowest and GPT-2 English BPE highest." />
+      <figcaption><b>Fixed-size scaling proof.</b> Identical TinyGPT per tokenizer; only the tokenizer changes. Domain BPE compresses best, GPT-2 English BPE worst.</figcaption>
+    </figure>
+
+    <h2 id="gpt2">Why GPT-2 English BPE is special — and unstable</h2>
+    <p>
+      GPT-2's merges are frozen English byte-pairs; applied to biology they fall on arbitrary
+      residue boundaries. The resulting token distribution is <em>not</em> a power law: its
+      global fit has r² of only 0.75 (protein) and 0.49 (genome), and its local per-chunk
+      slope (~0.9 protein, ~1.4 genome) differs sharply from its cliff-inflated global slope
+      (~2.0). Any single "exponent" for GPT-2 is therefore fragile. We always report the fit
+      r² so misfit rows are visible, and use a robust chunk-median estimator when r² &lt; 0.80.
+      The decisive evidence against GPT-2 is the modelling result, which needs no curve fit and
+      ranks it worst: <em>reusing a strong LLM tokenizer does not work</em> — the merges must
+      be learned on the target domain.
+    </p>
+
+    <h2 id="curve">The scaling curve: single-residue tokenization barely benefits from scale</h2>
+    <p>
+      The single-point proof fixes model size; the central claim is about <em>scaling</em>. We
+      train each tokenizer at four TinyGPT sizes on real Swiss-Prot and fit a power law
+      bpr = a·N<sup>−b</sup> over non-embedding parameters N. Single-residue tokenization is
+      essentially flat (b = 0.0025, r² = 0.99): growing the model 63× reduces bits-per-residue
+      by barely 1%. Domain BPE scales about twice as fast (b = 0.0058 at vocab 256) and narrows
+      its gap to single-AA monotonically. GPT-2's English BPE has the steepest slope only
+      because it starts catastrophically high and is digging out of a hole; it stays worst at
+      every size.
+    </p>
+    <p>
+      We are honest about the caveat rather than overclaiming a crossover: at this
+      CPU-bounded, <em>step-matched</em> budget (&lt; 2M params, 150 steps), single-residue
+      tokenization still has the lowest <em>absolute</em> bpr, because shorter BPE token
+      streams get less gradient at fixed steps. The load-bearing signal is the <em>slope</em>:
+      single residues convert scale into compression ~2× more slowly than domain BPE, and the
+      curves are converging. A compute/token-matched sweep at larger scale is the natural
+      confirmation.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/tokenization-trap-fig3-scaling-curve.png" alt="Log-log plot of bits-per-residue versus non-embedding parameters for four tokenizers. Single-AA is a nearly flat low line; domain BPE lines slope down ~2x steeper and converge toward it; GPT-2 English BPE is a high line that drops steeply but stays worst." />
+      <figcaption><b>Scaling curve on real Swiss-Prot.</b> Single-residue tokenization (red) is nearly flat — scaling barely helps. Domain BPE (blue/green) has a ~2× steeper slope and converges toward the single-AA line. GPT-2 English BPE (orange) is worst at every size.</figcaption>
+    </figure>
+
+    <div class="data-table">
+      <table>
+        <caption><b>Scaling curve: bits-per-residue at four model sizes, and the fitted power-law slope b.</b> Larger b = faster improvement with scale. *GPT-2's large slope reflects recovery from a catastrophic small-model fit, not efficiency: it is worst at every size.</caption>
+        <thead>
+          <tr><th>Tokenizer</th><th>bpr (xs)</th><th>bpr (s)</th><th>bpr (m)</th><th>bpr (l)</th><th>slope b</th></tr>
+        </thead>
+        <tbody class="num">
+          <tr><td>single-AA</td><td>4.156</td><td>4.134</td><td>4.122</td><td>4.113</td><td>0.0025</td></tr>
+          <tr class="best"><td>domain BPE 256</td><td>4.370</td><td>4.338</td><td>4.306</td><td>4.265</td><td>0.0058</td></tr>
+          <tr><td>domain BPE 1000</td><td>4.393</td><td>4.337</td><td>4.324</td><td>4.326</td><td>0.0038</td></tr>
+          <tr><td>GPT-2 (English BPE)</td><td>5.285</td><td>4.635</td><td>4.475</td><td>4.443</td><td>0.0420*</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="probe">The downstream probe: single-residue features lose motif structure</h2>
+    <p>
+      Compression is one axis; we also want a <em>functional</em> signal. We build a controlled
+      protein-family task where each of six families is defined by motifs that are
+      <em>anagrams of a shared residue multiset</em> embedded in a common random background, so
+      every family has a statistically identical amino-acid composition. Only an
+      order-sensitive (subword) representation can separate them. We train each tokenizer's
+      TinyGPT unsupervised, freeze it, mean-pool the final hidden states, and fit a
+      logistic-regression probe. Single-residue features are near chance (0.233 vs chance
+      0.167); every subword tokenizer recovers the structure, and domain BPE does so with a
+      256-token vocabulary (0.863).
+    </p>
+    <p>
+      Interestingly, GPT-2's English BPE scores highest on this <em>probe</em> (0.937) even
+      though it is the <em>worst</em> generative compressor. The results are complementary, not
+      contradictory: GPT-2's 50k-token vocabulary exposes arbitrary orderings to a linear
+      classifier (presence detection), but those misaligned merges make it a poor next-token
+      model of biology. Domain BPE is the only tokenizer strong on <em>both</em> axes with a
+      tiny vocabulary — exactly the profile a scalable foundation model needs.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/tokenization-trap-fig4-probe.png" alt="Horizontal bar chart of linear-probe accuracy on a six-family task with chance line at 0.167. single-AA sits at chance (0.233); domain BPE 256 reaches 0.863; domain BPE 1000 is 0.647; GPT-2 English BPE is highest at 0.937." />
+      <figcaption><b>Linear probe, composition-controlled family task.</b> Single-residue features (red) sit at chance; subword tokenizers recover the motif-ordering structure. Domain BPE reaches 0.863 with a 256-token vocab.</figcaption>
+    </figure>
+
+    <div class="data-table">
+      <table>
+        <caption><b>Linear probe on the composition-controlled family task</b> (six families, chance = 0.167). Frozen mean-pooled features → logistic regression; identical model size and compute per tokenizer.</caption>
+        <thead>
+          <tr><th>Tokenizer</th><th>Vocab</th><th>probe accuracy</th><th>lift over chance</th></tr>
+        </thead>
+        <tbody class="num">
+          <tr><td>single-AA</td><td>24</td><td>0.233</td><td>0.067</td></tr>
+          <tr class="best"><td>domain BPE 256</td><td>256</td><td>0.863</td><td>0.697</td></tr>
+          <tr><td>domain BPE 1000</td><td>1000</td><td>0.647</td><td>0.480</td></tr>
+          <tr><td>GPT-2 (English BPE)</td><td>50257</td><td>0.937</td><td>0.770</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="architecture">The second bottleneck: attention is the wrong inductive bias</h2>
+    <p>
+      Fixing tokenization removes the input-side trap but leaves a deeper problem. A
+      transformer trained by next-token prediction learns <em>which</em> tokens co-occur; it
+      has no built-in notion of <em>why</em>. In biology the "why" is mechanistic: residues are
+      coupled through a sparse, low-rank physical interaction operator (the same structure that
+      Potts/direct-coupling models and pLM attention maps partially recover). Vanilla softmax
+      attention can approximate this operator but is not biased toward it, so it spends capacity
+      memorizing surface correlations and scales inefficiently even with good tokens.
+    </p>
+    <p>
+      We propose <strong>Spectral Composition Attention</strong> as a follow-up: let C be the
+      empirical token-coupling (pointwise mutual information) operator over the domain BPE
+      vocabulary; its spectrum is sharply concentrated. The design (i) biases attention logits
+      toward the leading eigenmodes of C (a mechanism prior rather than a free QKᵀ surface),
+      and (ii) maintains a multi-scale residual stream pooled along BPE merge boundaries so the
+      residue→motif→domain hierarchy is explicit. This is testable in exactly this paper's
+      harness: fix the domain BPE tokenizer, swap <em>only</em> the attention block, and compare
+      bits-per-residue and probe accuracy at matched parameters — with the prediction that the
+      spectral bias, not added parameters, drives the gain.
+    </p>
+
+    <h2 id="takeaway">What it means</h2>
+    <p>
+      Single-residue tokenization imposes a non-Zipfian token distribution that starves the
+      scaling pressure language models exploit — the tokenization trap. Domain-adaptive BPE
+      escapes it: genuinely Zipfian, high-r² statistics; ~2× faster conversion of scale into
+      compression; and features that recover motif structure single-residue features cannot.
+      An English-trained BPE does none of this for modelling. But tokenization is only the
+      first of two bottlenecks: a correct input distribution still feeds an architecture that
+      learns correlation, not mechanism. Unlocking LLM-style scaling for biology will require
+      pairing a domain-derived tokenizer with a domain-derived, spectral, mechanism-aware
+      architecture.
+    </p>
+
+    <p class="keywords">
+      Keywords — tokenization · byte-pair encoding · Zipf's law · scaling laws · protein
+      language models · genome language models · bits per residue · ESM · spectral attention
+    </p>
+  </div>
+
+  <div class="pdf-cta" id="paper">
+    <a href="../tokenization-trap.pdf" target="_blank" rel="noopener">Read the full paper (PDF) →</a>
+  </div>
+
+  <section class="citation">
+    <h2>Cite</h2>
+    <pre>@article{horiuchi2026tokenization,
+  title   = {The Tokenization Trap: Domain-Adaptive BPE Restores Language-Like
+             Token Statistics for Protein and Genome Language Models},
+  author  = {Horiuchi, Miyu and Calvo, Anherutowa},
+  year    = {2026},
+  note    = {replicater.xyz/writing/tokenization-trap}
+}</pre>
+  </section>
+</article>
+
+<footer>
+  <span><a href="../research.html">← All research</a></span>
+  <span><a href="../index.html">replicater.xyz</a></span>
+</footer>
+</body>
+</html>
