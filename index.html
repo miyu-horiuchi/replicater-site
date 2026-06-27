@@ -132,15 +132,6 @@
     margin-bottom: 28px;
     animation: fadeUp 1.6s 0.2s forwards;
   }
-  .eyebrow .line {
-    display: inline-block;
-    width: 36px;
-    height: 1px;
-    background: var(--c-deep);
-    vertical-align: middle;
-    margin: 0 14px;
-    opacity: 0.5;
-  }
   .hero-title {
     font-weight: 300;
     font-size: clamp(40px, 6.4vw, 92px);
@@ -187,15 +178,6 @@
   }
   .hero-sub .word.line2 { color: #4a5a6c; }
 
-  .divider {
-    margin: 38px auto 30px;
-    width: 1px;
-    height: 44px;
-    background: linear-gradient(180deg, transparent, var(--c-deep) 50%, transparent);
-    opacity: 0;
-    animation: fadeIn 1.6s 1.8s forwards;
-  }
-
   .stats {
     display: flex;
     gap: clamp(40px, 7vw, 96px);
@@ -227,27 +209,6 @@
     text-transform: uppercase;
     color: var(--c-deep);
     opacity: 0.65;
-  }
-  .stat .bar {
-    margin: 14px auto 0;
-    width: 110px;
-    height: 2px;
-    background: rgba(58, 74, 92, 0.12);
-    position: relative;
-    overflow: hidden;
-  }
-  .stat .bar::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--c-deep);
-    transform-origin: left center;
-    transform: scaleX(0);
-    animation: grow 2.2s 2.6s cubic-bezier(.2,.7,.2,1) forwards;
-  }
-  .stat.unknown .bar::after {
-    background: var(--c-sage);
-    animation: grow99 2.6s 2.8s cubic-bezier(.2,.7,.2,1) forwards;
   }
 
   /* Custom cursor — a paintbrush dot */
@@ -288,8 +249,6 @@
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
   @keyframes fadeIn { to { opacity: 1; } }
-  @keyframes grow { to { transform: scaleX(0.01); } }
-  @keyframes grow99 { to { transform: scaleX(1); } }
 
   /* Top-right nav */
   .top-nav {
@@ -340,7 +299,7 @@
 
 <div class="overlay">
   <div class="tagline">
-    <div class="eyebrow"><span class="line"></span>An invisible world<span class="line"></span></div>
+    <div class="eyebrow">An invisible world</div>
     <h1 class="hero-title">
       <span class="word" style="animation-delay:.5s">Discovering</span>
       <span class="word" style="animation-delay:.66s">Microbial</span>
@@ -360,17 +319,14 @@
       <span class="word line2" style="animation-delay:1.79s">other</span>
       <span class="word line2 num" style="animation-delay:1.87s">99%.</span>
     </p>
-    <div class="divider"></div>
     <div class="stats">
       <div class="stat known">
         <div class="pct">1<span style="font-size:0.55em; vertical-align: 0.25em; margin-left:2px">%</span></div>
         <div class="label">Discovered</div>
-        <div class="bar"></div>
       </div>
       <div class="stat unknown">
         <div class="pct">99<span style="font-size:0.55em; vertical-align: 0.25em; margin-left:2px">%</span></div>
         <div class="label">Awaiting Discovery</div>
-        <div class="bar"></div>
       </div>
     </div>
   </div>
