@@ -12,7 +12,4 @@
     location.replace(clean + location.search + location.hash);
     return;
   }
-  if (path.length > 1 && /\/$/.test(path)) {
-    location.replace(path.replace(/\/$/, '') + location.search + location.hash);
-  }
 })();
