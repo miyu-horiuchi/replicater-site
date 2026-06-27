@@ -284,16 +284,7 @@
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
 
-  /* Vignette for painterly edges */
-  .vignette {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 4;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(58,74,92,0.18) 100%);
-  }
-
-  @keyframes fadeUp {
+  /* Subtle film grain */
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
   @keyframes fadeIn { to { opacity: 1; } }
@@ -385,7 +376,6 @@
   </div>
 </div>
 
-<div class="vignette"></div>
 <div class="grain"></div>
 
 <div class="brush" id="brush"></div>
