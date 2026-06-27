@@ -3,11 +3,717 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="canonical" href="https://replicater.xyz/" />
+<link rel="canonical" href="https://replicater.xyz/lab.html" />
 <script>
-  location.replace('/' + location.search + location.hash);
+  if (/\/index\.html$/.test(location.pathname)) {
+    location.replace(location.pathname.replace(/\/index\.html$/, '/') + location.search + location.hash);
+  }
 </script>
-<title>Redirecting…</title>
+<title>Replicater Labs — Discovering Microbial Dark Matter</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Monet-inspired palette: water lilies, dawn at Giverny */
+    --c-cream: #f4ecde;
+    --c-sky: #b8c9d8;
+    --c-lavender: #c2b6cf;
+    --c-rose: #e6b9ae;
+    --c-sage: #9bb29a;
+    --c-deep: #3a4a5c;
+    --c-ink: #2a2f3a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--c-cream);
+    color: var(--c-ink);
+    cursor: none;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+  #stage {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  #canvas-paint {
+    z-index: 1;
+  }
+  #canvas-life {
+    z-index: 2;
+    pointer-events: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 6vw;
+  }
+  .frame {
+    position: absolute;
+    inset: 3vh 3vw;
+    border: 1px solid rgba(58, 74, 92, 0.18);
+    pointer-events: none;
+    z-index: 3;
+  }
+  .meta {
+    position: absolute;
+    top: 4.5vh;
+    left: 4.5vw;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.7;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .meta-right {
+    position: absolute;
+    top: 4.5vh;
+    right: 4.5vw;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.55;
+    z-index: 4;
+    text-align: right;
+    pointer-events: none;
+  }
+  .meta-bottom-left {
+    position: absolute;
+    bottom: 4.5vh;
+    left: 4.5vw;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.55;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .meta-bottom-right {
+    position: absolute;
+    bottom: 4.5vh;
+    right: 4.5vw;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.55;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hint {
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0.04em;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  .tagline {
+    max-width: 1100px;
+    text-align: center;
+    color: var(--c-ink);
+    transform: translateY(-2vh);
+  }
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0;
+    margin-bottom: 28px;
+    animation: fadeUp 1.6s 0.2s forwards;
+  }
+  .eyebrow .line {
+    display: inline-block;
+    width: 36px;
+    height: 1px;
+    background: var(--c-deep);
+    vertical-align: middle;
+    margin: 0 14px;
+    opacity: 0.5;
+  }
+  .hero-title {
+    font-weight: 300;
+    font-size: clamp(40px, 6.4vw, 92px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .hero-title .em {
+    font-style: italic;
+    color: var(--c-deep);
+  }
+  .hero-sub {
+    font-weight: 300;
+    font-size: clamp(17px, 2.4vw, 27px);
+    line-height: 1.34;
+    letter-spacing: 0;
+    color: #4a5a6c;
+    margin-top: 24px;
+    text-wrap: balance;
+  }
+  .tagline .num {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--c-deep);
+    position: relative;
+    padding: 0 0.05em;
+  }
+  .tagline .num.hero {
+    background: linear-gradient(180deg, var(--c-deep) 0%, #5a7793 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-sub .em {
+    font-style: italic;
+    color: #6b7c8e;
+  }
+  .tagline .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: fadeUp 1.4s forwards;
+    filter: blur(6px);
+  }
+  .hero-sub .word.line2 { color: #4a5a6c; }
+
+  .divider {
+    margin: 38px auto 30px;
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(180deg, transparent, var(--c-deep) 50%, transparent);
+    opacity: 0;
+    animation: fadeIn 1.6s 1.8s forwards;
+  }
+
+  .stats {
+    display: flex;
+    gap: clamp(40px, 7vw, 96px);
+    justify-content: center;
+    margin-top: 8px;
+    opacity: 0;
+    animation: fadeUp 1.4s 2.0s forwards;
+  }
+  .stat {
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    pointer-events: auto;
+    cursor: none;
+  }
+  .stat .pct {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(40px, 4.2vw, 56px);
+    color: var(--c-deep);
+    line-height: 1;
+    margin-bottom: 8px;
+    transition: color 0.6s ease;
+  }
+  .stat:hover .pct { color: #1f2a36; }
+  .stat .label {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.65;
+  }
+  .stat .bar {
+    margin: 14px auto 0;
+    width: 110px;
+    height: 2px;
+    background: rgba(58, 74, 92, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat .bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--c-deep);
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: grow 2.2s 2.6s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .stat.unknown .bar::after {
+    background: var(--c-sage);
+    animation: grow99 2.6s 2.8s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+
+  /* Custom cursor — a paintbrush dot */
+  .brush {
+    position: fixed;
+    z-index: 50;
+    width: 22px;
+    height: 22px;
+    border: 1px solid rgba(58, 74, 92, 0.55);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, opacity 0.4s;
+    mix-blend-mode: multiply;
+  }
+  .brush::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    background: var(--c-deep);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+  .brush.click { width: 60px; height: 60px; }
+
+  /* Subtle film grain */
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.06;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* Vignette for painterly edges */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(58,74,92,0.18) 100%);
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes grow { to { transform: scaleX(0.01); } }
+  @keyframes grow99 { to { transform: scaleX(1); } }
+
+  /* Top-right nav */
+  .top-nav {
+    position: absolute;
+    top: 4.5vh;
+    right: 4.5vw;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 22px;
+  }
+  .nav-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c-deep);
+    opacity: 0.7;
+    text-decoration: none;
+    padding: 6px 16px;
+    border: 1px solid rgba(58, 74, 92, 0.22);
+    transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+    cursor: none;
+    pointer-events: auto;
+    background: rgba(244, 236, 222, 0.35);
+    backdrop-filter: blur(2px);
+  }
+  .nav-link:hover {
+    opacity: 1;
+    background: rgba(58, 74, 92, 0.08);
+    border-color: rgba(58, 74, 92, 0.4);
+  }
+</style>
 </head>
-<body></body>
+<body>
+<div id="stage">
+  <canvas id="canvas-paint"></canvas>
+  <canvas id="canvas-life"></canvas>
+</div>
+
+<div class="frame"></div>
+
+<div class="meta">Replicater Labs</div>
+
+<nav class="top-nav">
+  <a href="/" class="nav-link">Research</a>
+  <a href="manifesto.html" class="nav-link">Manifesto</a>
+</nav>
+
+<div class="overlay">
+  <div class="tagline">
+    <div class="eyebrow"><span class="line"></span>An invisible world<span class="line"></span></div>
+    <h1 class="hero-title">
+      <span class="word" style="animation-delay:.5s">Discovering</span>
+      <span class="word" style="animation-delay:.66s">Microbial</span>
+      <span class="word em" style="animation-delay:.82s">Dark&nbsp;Matter</span>
+    </h1>
+    <p class="hero-sub">
+      <span class="word" style="animation-delay:1.05s">We've</span>
+      <span class="word" style="animation-delay:1.13s">only</span>
+      <span class="word" style="animation-delay:1.21s">discovered</span>
+      <span class="word num hero" style="animation-delay:1.29s">1%</span>
+      <span class="word" style="animation-delay:1.37s">of</span>
+      <span class="word em" style="animation-delay:1.45s">microbes.</span>
+      <br/>
+      <span class="word line2" style="animation-delay:1.55s">We're</span>
+      <span class="word line2" style="animation-delay:1.63s">discovering</span>
+      <span class="word line2" style="animation-delay:1.71s">the</span>
+      <span class="word line2" style="animation-delay:1.79s">other</span>
+      <span class="word line2 num" style="animation-delay:1.87s">99%.</span>
+    </p>
+    <div class="divider"></div>
+    <div class="stats">
+      <div class="stat known">
+        <div class="pct">1<span style="font-size:0.55em; vertical-align: 0.25em; margin-left:2px">%</span></div>
+        <div class="label">Discovered</div>
+        <div class="bar"></div>
+      </div>
+      <div class="stat unknown">
+        <div class="pct">99<span style="font-size:0.55em; vertical-align: 0.25em; margin-left:2px">%</span></div>
+        <div class="label">Awaiting Discovery</div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<div class="meta-bottom-left">Drag to paint · Click to bloom</div>
+
+<div class="brush" id="brush"></div>
+
+<script>
+(() => {
+  // ===== Setup canvases =====
+  const paintCanvas = document.getElementById('canvas-paint');
+  const lifeCanvas = document.getElementById('canvas-life');
+  const pctx = paintCanvas.getContext('2d');
+  const lctx = lifeCanvas.getContext('2d');
+
+  let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    [paintCanvas, lifeCanvas].forEach(c => {
+      c.width = W * DPR;
+      c.height = H * DPR;
+      c.style.width = W + 'px';
+      c.style.height = H + 'px';
+    });
+    pctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    lctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    seedAmbient();
+  }
+  window.addEventListener('resize', resize);
+
+  // ===== Palette =====
+  const palette = [
+    [184, 201, 216], // sky blue
+    [194, 182, 207], // lavender
+    [230, 185, 174], // rose
+    [155, 178, 154], // sage
+    [212, 198, 175], // wheat
+    [120, 140, 160], // deep blue-grey
+    [200, 168, 158], // peach
+    [170, 190, 200], // misty
+  ];
+  function pickColor() { return palette[Math.floor(Math.random() * palette.length)]; }
+  function rgba(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
+
+  // ===== Brush stroke (impressionist dab) =====
+  function dab(x, y, size, color, alpha, angle) {
+    pctx.save();
+    pctx.translate(x, y);
+    pctx.rotate(angle);
+    pctx.fillStyle = rgba(color, alpha);
+    // elongated brush dab
+    pctx.beginPath();
+    pctx.ellipse(0, 0, size * 1.6, size * 0.7, 0, 0, Math.PI * 2);
+    pctx.fill();
+    // highlight
+    pctx.fillStyle = rgba([Math.min(255,color[0]+30), Math.min(255,color[1]+30), Math.min(255,color[2]+30)], alpha * 0.4);
+    pctx.beginPath();
+    pctx.ellipse(-size*0.3, -size*0.15, size * 1.0, size * 0.35, 0, 0, Math.PI * 2);
+    pctx.fill();
+    pctx.restore();
+  }
+
+  // ===== Ambient strokes (background painting) =====
+  function seedAmbient() {
+    // Clear and lay down a soft painterly base
+    pctx.fillStyle = '#f4ecde';
+    pctx.fillRect(0, 0, W, H);
+
+    const passes = Math.floor((W * H) / 3500);
+    for (let i = 0; i < passes; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      // bias palette by region — top sky-ish, middle lavender, bottom sage/wheat
+      const yn = y / H;
+      let color;
+      const r = Math.random();
+      if (yn < 0.35) color = palette[r < 0.5 ? 0 : (r < 0.8 ? 1 : 7)];
+      else if (yn < 0.65) color = palette[r < 0.4 ? 1 : (r < 0.7 ? 2 : 6)];
+      else color = palette[r < 0.45 ? 3 : (r < 0.75 ? 4 : 1)];
+
+      const size = 6 + Math.random() * 22;
+      const alpha = 0.05 + Math.random() * 0.13;
+      const angle = (Math.random() - 0.5) * 0.6 + (Math.random() < 0.5 ? 0 : Math.PI / 2);
+      dab(x, y, size, color, alpha, angle);
+    }
+  }
+
+  // ===== Cursor / brush trail =====
+  const brushEl = document.getElementById('brush');
+  let mx = -100, my = -100, lmx = -100, lmy = -100;
+  let isDown = false;
+  let lastStroke = 0;
+
+  window.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    brushEl.style.left = mx + 'px';
+    brushEl.style.top = my + 'px';
+  });
+  window.addEventListener('mousedown', e => {
+    isDown = true;
+    brushEl.classList.add('click');
+    bloom(e.clientX, e.clientY);
+  });
+  window.addEventListener('mouseup', () => {
+    isDown = false;
+    brushEl.classList.remove('click');
+  });
+  window.addEventListener('mouseleave', () => {
+    brushEl.style.opacity = 0;
+  });
+  window.addEventListener('mouseenter', () => {
+    brushEl.style.opacity = 1;
+  });
+
+  // touch
+  window.addEventListener('touchmove', e => {
+    if (e.touches[0]) {
+      mx = e.touches[0].clientX;
+      my = e.touches[0].clientY;
+      brushEl.style.left = mx + 'px';
+      brushEl.style.top = my + 'px';
+    }
+  }, { passive: true });
+  window.addEventListener('touchstart', e => {
+    if (e.touches[0]) bloom(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  function bloom(x, y) {
+    const n = 26 + Math.floor(Math.random() * 14);
+    for (let i = 0; i < n; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.random() * 70;
+      const px = x + Math.cos(angle) * r;
+      const py = y + Math.sin(angle) * r;
+      const color = pickColor();
+      dab(px, py, 8 + Math.random() * 16, color, 0.18 + Math.random() * 0.22, angle);
+    }
+    // spawn a few floating microbes near click
+    for (let i = 0; i < 3; i++) {
+      microbes.push(makeMicrobe(x + (Math.random()-0.5)*60, y + (Math.random()-0.5)*60));
+    }
+  }
+
+  // ===== Microbes (drifting organic shapes) =====
+  const microbes = [];
+  function makeMicrobe(x, y) {
+    return {
+      x: x ?? Math.random() * W,
+      y: y ?? Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      r: 3 + Math.random() * 8,
+      kind: Math.floor(Math.random() * 4),
+      color: pickColor(),
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.005 + Math.random() * 0.012,
+      life: 1,
+      spin: (Math.random() - 0.5) * 0.02,
+      angle: Math.random() * Math.PI * 2,
+    };
+  }
+
+  function drawMicrobe(m, t) {
+    lctx.save();
+    lctx.translate(m.x, m.y);
+    lctx.rotate(m.angle);
+    const wobble = Math.sin(t * m.speed + m.phase) * 0.3;
+    const a = 0.5 * m.life;
+    lctx.globalAlpha = a;
+    lctx.fillStyle = rgba(m.color, 0.55);
+    lctx.strokeStyle = rgba([40,50,65], 0.35);
+    lctx.lineWidth = 0.8;
+
+    if (m.kind === 0) {
+      // cocci (round cluster)
+      for (let i = 0; i < 4; i++) {
+        const ax = Math.cos(i * 1.5 + wobble) * m.r * 0.7;
+        const ay = Math.sin(i * 1.5 + wobble) * m.r * 0.7;
+        lctx.beginPath();
+        lctx.arc(ax, ay, m.r * 0.6, 0, Math.PI * 2);
+        lctx.fill();
+        lctx.stroke();
+      }
+    } else if (m.kind === 1) {
+      // bacillus (rod)
+      lctx.beginPath();
+      lctx.ellipse(0, 0, m.r * 2 + wobble * 2, m.r * 0.6, 0, 0, Math.PI * 2);
+      lctx.fill();
+      lctx.stroke();
+    } else if (m.kind === 2) {
+      // spirillum (squiggle)
+      lctx.beginPath();
+      for (let i = -m.r * 2; i <= m.r * 2; i += 1) {
+        const yy = Math.sin(i * 0.5 + m.phase + t * 0.001) * m.r * 0.5;
+        if (i === -m.r * 2) lctx.moveTo(i, yy);
+        else lctx.lineTo(i, yy);
+      }
+      lctx.lineWidth = m.r * 0.6;
+      lctx.strokeStyle = rgba(m.color, 0.55);
+      lctx.lineCap = 'round';
+      lctx.stroke();
+    } else {
+      // spore w/ flagellum
+      lctx.beginPath();
+      lctx.ellipse(0, 0, m.r, m.r * 0.85, 0, 0, Math.PI * 2);
+      lctx.fill();
+      lctx.stroke();
+      lctx.beginPath();
+      lctx.moveTo(m.r, 0);
+      for (let i = 0; i < 12; i++) {
+        const xx = m.r + i * 1.6;
+        const yy = Math.sin(i * 0.8 + t * 0.004 + m.phase) * 1.6;
+        lctx.lineTo(xx, yy);
+      }
+      lctx.lineWidth = 0.6;
+      lctx.stroke();
+    }
+    lctx.restore();
+  }
+
+  // ===== Trail particles for cursor strokes =====
+  const trailDabs = [];
+
+  function update(t) {
+    // Cursor brush trail — paint dabs continuously while moving
+    const dx = mx - lmx, dy = my - lmy;
+    const dist = Math.hypot(dx, dy);
+    if (dist > 1 && mx > 0 && lmx > 0) {
+      const steps = Math.min(8, Math.max(1, Math.floor(dist / 4)));
+      const angle = Math.atan2(dy, dx);
+      for (let s = 0; s < steps; s++) {
+        const px = lmx + (dx * s) / steps + (Math.random() - 0.5) * 6;
+        const py = lmy + (dy * s) / steps + (Math.random() - 0.5) * 6;
+        const color = pickColor();
+        const size = (isDown ? 9 : 4) + Math.random() * (isDown ? 8 : 4);
+        const alpha = isDown ? 0.18 + Math.random() * 0.22 : 0.06 + Math.random() * 0.08;
+        dab(px, py, size, color, alpha, angle + (Math.random() - 0.5) * 0.3);
+      }
+    }
+    lmx = mx; lmy = my;
+
+    // Slow ambient drift — occasional dabs across canvas to keep it alive
+    if (t - lastStroke > 60) {
+      lastStroke = t;
+      for (let i = 0; i < 2; i++) {
+        const x = Math.random() * W;
+        const y = Math.random() * H;
+        const yn = y / H;
+        let color;
+        const r = Math.random();
+        if (yn < 0.35) color = palette[r < 0.5 ? 0 : 1];
+        else if (yn < 0.65) color = palette[r < 0.5 ? 1 : 2];
+        else color = palette[r < 0.5 ? 3 : 4];
+        dab(x, y, 5 + Math.random() * 10, color, 0.025 + Math.random() * 0.04,
+            (Math.random() - 0.5) * 0.6 + (Math.random() < 0.5 ? 0 : Math.PI / 2));
+      }
+    }
+
+    // Microbes
+    lctx.clearRect(0, 0, W, H);
+    for (let i = microbes.length - 1; i >= 0; i--) {
+      const m = microbes[i];
+      m.x += m.vx;
+      m.y += m.vy;
+      m.angle += m.spin;
+      // Soft attraction to cursor
+      const ddx = mx - m.x, ddy = my - m.y;
+      const d2 = ddx * ddx + ddy * ddy;
+      if (d2 < 30000 && d2 > 1) {
+        const f = 0.0003;
+        m.vx += ddx * f;
+        m.vy += ddy * f;
+      }
+      // friction
+      m.vx *= 0.985; m.vy *= 0.985;
+      // gentle currents
+      m.vx += Math.sin(t * 0.0004 + m.phase) * 0.005;
+      m.vy += Math.cos(t * 0.0003 + m.phase) * 0.005;
+
+      // wrap
+      if (m.x < -30) m.x = W + 30;
+      if (m.x > W + 30) m.x = -30;
+      if (m.y < -30) m.y = H + 30;
+      if (m.y > H + 30) m.y = -30;
+
+      drawMicrobe(m, t);
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  // ===== Init =====
+  resize();
+  // Seed initial microbes
+  for (let i = 0; i < 22; i++) microbes.push(makeMicrobe());
+  requestAnimationFrame(update);
+
+  // Hover effect: grow brush over interactive items
+  document.querySelectorAll('.stat, .nav-link').forEach(el => {
+    el.addEventListener('mouseenter', () => brushEl.classList.add('click'));
+    el.addEventListener('mouseleave', () => brushEl.classList.remove('click'));
+  });
+})();
+</script>
+</body>
 </html>
