@@ -330,24 +330,6 @@
   @keyframes grow { to { transform: scaleX(0.01); } }
   @keyframes grow99 { to { transform: scaleX(1); } }
 
-  .palette-swatches {
-    position: absolute;
-    bottom: 4.5vh;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 6px;
-    z-index: 4;
-    pointer-events: none;
-    opacity: 0;
-    animation: fadeIn 2s 3s forwards;
-  }
-  .palette-swatches .sw {
-    width: 18px;
-    height: 24px;
-    border: 1px solid rgba(58,74,92,0.2);
-  }
-
   /* Top-right nav */
   .top-nav {
     position: absolute;
@@ -439,15 +421,6 @@
 <div class="grain"></div>
 
 <div class="meta-bottom-left">Drag to paint · Click to bloom</div>
-
-<div class="palette-swatches">
-  <div class="sw" style="background:#b8c9d8"></div>
-  <div class="sw" style="background:#c2b6cf"></div>
-  <div class="sw" style="background:#e6b9ae"></div>
-  <div class="sw" style="background:#9bb29a"></div>
-  <div class="sw" style="background:#f4ecde"></div>
-  <div class="sw" style="background:#3a4a5c"></div>
-</div>
 
 <div class="brush" id="brush"></div>
 
