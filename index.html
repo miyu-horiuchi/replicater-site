@@ -32,8 +32,10 @@
     overflow: hidden;
     background: var(--c-cream);
     color: var(--c-ink);
-    cursor: none;
     font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+  @media (pointer: fine) {
+    html, body { cursor: none; }
   }
   #stage {
     position: fixed;
@@ -344,7 +346,7 @@
     padding: 6px 16px;
     border: 1px solid rgba(58, 74, 92, 0.22);
     transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
-    cursor: none;
+    cursor: pointer;
     pointer-events: auto;
     background: rgba(244, 236, 222, 0.35);
     backdrop-filter: blur(2px);
