@@ -6,16 +6,16 @@
 <title>Replicater</title>
 <script>
   (function () {
-    var path = location.pathname.replace(/\/+$/, '') || '/';
-    var target = {
-      '/index.html': '/',
-      '/lab.html': '/',
-      '/research.html': '/research',
-      '/research/index.html': '/research'
-    }[path];
-    if (target) {
-      location.replace(target + location.search + location.hash);
+    var path = location.pathname;
+    if (/\.html$/.test(path)) {
+      var clean = path.replace(/\.html$/, '');
+      if (clean === '/index') clean = '/';
+      if (clean === '/lab') clean = '/';
+      location.replace(clean + location.search + location.hash);
       return;
+    }
+    if (path === '/research/index.html') {
+      location.replace('/research' + location.search + location.hash);
     }
   })();
 </script>
@@ -33,6 +33,6 @@
 </style>
 </head>
 <body>
-  <p>Page not found. <a href="/">Home</a> · <a href="/research">Research</a></p>
+  <p>Page not found. <a href="/">Home</a> · <a href="/research">Research</a> · <a href="/manifesto">Manifesto</a></p>
 </body>
 </html>
