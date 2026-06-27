@@ -4,21 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Replicater</title>
-<script>
-  (function () {
-    var path = location.pathname;
-    if (/\.html$/.test(path)) {
-      var clean = path.replace(/\.html$/, '');
-      if (clean === '/index') clean = '/';
-      if (clean === '/lab') clean = '/';
-      location.replace(clean + location.search + location.hash);
-      return;
-    }
-    if (path === '/research/index.html') {
-      location.replace('/research' + location.search + location.hash);
-    }
-  })();
-</script>
+<script src="/clean-urls.js"></script>
 <style>
   body {
     margin: 0;
