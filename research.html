@@ -37,16 +37,19 @@
          To add a paper: copy one <li class="paper-item"> … </li> block,
          point href at the new page in /writing, update the <time> date
          and title. Keep newest first.
+
+         To lock a paper (visible but not clickable): use
+         <li class="paper-item paper-item--locked"> with a <div class="paper-link">
+         instead of <a>, and add <span class="paper-lock">Locked</span>.
          ─────────────────────────────────────────────────────────── -->
     <ul class="papers">
-      <!-- Locked — hidden from papers list (page still at writing/tokenization-trap.html)
-      <li class="paper-item">
-        <a class="paper-link" href="writing/tokenization-trap.html">
+      <li class="paper-item paper-item--locked">
+        <div class="paper-link" aria-disabled="true">
           <time class="paper-date" datetime="2026-06-22">22 Jun 2026</time>
           <span class="paper-title">The Tokenization Trap: Domain-Adaptive BPE Restores Language-Like Token Statistics for Protein and Genome Language Models</span>
-        </a>
+          <span class="paper-lock">Locked</span>
+        </div>
       </li>
-      -->
       <li class="paper-item">
         <a class="paper-link" href="writing/taxonomy-ceiling.html">
           <time class="paper-date" datetime="2026-06-17">17 Jun 2026</time>
