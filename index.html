@@ -80,16 +80,6 @@
     z-index: 4;
     pointer-events: none;
   }
-  .meta .dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: var(--c-sage);
-    border-radius: 50%;
-    margin-right: 10px;
-    vertical-align: middle;
-    animation: pulse 2.4s ease-in-out infinite;
-  }
   .meta-right {
     position: absolute;
     top: 4.5vh;
@@ -323,10 +313,6 @@
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
   @keyframes fadeIn { to { opacity: 1; } }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.4); }
-  }
   @keyframes grow { to { transform: scaleX(0.01); } }
   @keyframes grow99 { to { transform: scaleX(1); } }
 
@@ -372,7 +358,7 @@
 
 <div class="frame"></div>
 
-<div class="meta"><span class="dot"></span>Replicater Labs</div>
+<div class="meta">Replicater Labs</div>
 
 <nav class="top-nav">
   <a href="research.html" class="nav-link">Research</a>
