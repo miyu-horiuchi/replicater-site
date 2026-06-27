@@ -7,12 +7,12 @@
 <script>
   (function () {
     var path = location.pathname.replace(/\/$/, '') || '/';
-    if (path === '/research') {
-      location.replace('/research.html' + location.search + location.hash);
+    if (path === '/research' || path === '/research.html') {
+      location.replace('/research/' + location.search + location.hash);
       return;
     }
-    if (path === '/manifesto') {
-      location.replace('/manifesto.html' + location.search + location.hash);
+    if (path === '/manifesto' || path === '/manifesto.html') {
+      location.replace('/manifesto/' + location.search + location.hash);
       return;
     }
     if (/\/index\.html$/.test(location.pathname)) {
@@ -22,12 +22,11 @@
     if (/\.html$/.test(location.pathname)) {
       var clean = location.pathname.replace(/\.html$/, '');
       if (clean === '/index' || clean === '/lab') clean = '/';
-      if (clean === '/research' || clean === '/manifesto') return;
       location.replace(clean + location.search + location.hash);
     }
   })();
 </script>
-<script src="/clean-urls.js?v=3"></script>
+<script src="/clean-urls.js?v=4"></script>
 <style>
   body {
     margin: 0;
@@ -42,6 +41,6 @@
 </style>
 </head>
 <body>
-  <p>Page not found. <a href="/">Home</a> · <a href="/research">Research</a> · <a href="/manifesto">Manifesto</a></p>
+  <p>Page not found. <a href="/">Home</a> · <a href="/research/">Research</a> · <a href="/manifesto/">Manifesto</a></p>
 </body>
 </html>

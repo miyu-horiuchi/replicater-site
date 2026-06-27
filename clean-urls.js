@@ -9,8 +9,10 @@
     var clean = path.replace(/\.html$/, '');
     if (clean === '/index') clean = '/';
     if (clean === '/lab') clean = '/';
-    if (clean === '/research' || clean === '/manifesto') return;
     location.replace(clean + location.search + location.hash);
     return;
+  }
+  if (path === '/research' || path === '/manifesto') {
+    location.replace(path + '/' + location.search + location.hash);
   }
 })();
