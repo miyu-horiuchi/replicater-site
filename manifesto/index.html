@@ -65,14 +65,6 @@
         z-index: 0;
       }
 
-      .site-frame {
-        position: fixed;
-        inset: 3vh 3vw;
-        border: 1px solid var(--c-line);
-        pointer-events: none;
-        z-index: 1;
-      }
-
       .top-nav {
         position: fixed;
         top: 4.5vh;
@@ -466,7 +458,6 @@
 
       @media (max-width: 720px) {
         body { font-size: 18px; }
-        .site-frame { inset: 16px; }
         .top-nav {
           position: absolute;
           top: 28px;
@@ -494,7 +485,6 @@
   </head>
 
   <body>
-    <div class="site-frame"></div>
     <nav class="top-nav" aria-label="Site navigation">
       <a href="/" class="nav-link">Home</a>
       <a href="/research" class="nav-link">Research</a>
