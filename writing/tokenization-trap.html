@@ -167,7 +167,7 @@
     </p>
 
     <figure class="figure">
-      <img src="../figures/tokenization-trap-fig1-zipf.png" alt="Log-log rank-frequency plots by tokenizer. Single-residue tokenization is a flat line (non-Zipfian); domain BPE develops a heavy, downward-sloping language-like tail." />
+      <img src="/writing/figures/tokenization-trap-fig1-zipf.png" alt="Log-log rank-frequency plots by tokenizer. Single-residue tokenization is a flat line (non-Zipfian); domain BPE develops a heavy, downward-sloping language-like tail." />
       <figcaption><b>Rank–frequency tails by tokenizer.</b> Single-residue tokenization is flat (non-Zipfian); domain BPE develops a heavy, language-like tail.</figcaption>
     </figure>
 
@@ -205,7 +205,7 @@
     </p>
 
     <figure class="figure">
-      <img src="../figures/tokenization-trap-fig2-scaling-proof.png" alt="Left: training-loss curves by tokenizer at identical model size and compute. Right: horizontal bar chart of bits-per-residue, with domain BPE lowest and GPT-2 English BPE highest." />
+      <img src="/writing/figures/tokenization-trap-fig2-scaling-proof.png" alt="Left: training-loss curves by tokenizer at identical model size and compute. Right: horizontal bar chart of bits-per-residue, with domain BPE lowest and GPT-2 English BPE highest." />
       <figcaption><b>Fixed-size scaling proof.</b> Identical TinyGPT per tokenizer; only the tokenizer changes. Domain BPE compresses best, GPT-2 English BPE worst.</figcaption>
     </figure>
 
@@ -244,7 +244,7 @@
     </p>
 
     <figure class="figure">
-      <img src="../figures/tokenization-trap-fig3-scaling-curve.png" alt="Log-log plot of bits-per-residue versus non-embedding parameters for four tokenizers. Single-AA is a nearly flat low line; domain BPE lines slope down ~2x steeper and converge toward it; GPT-2 English BPE is a high line that drops steeply but stays worst." />
+      <img src="/writing/figures/tokenization-trap-fig3-scaling-curve.png" alt="Log-log plot of bits-per-residue versus non-embedding parameters for four tokenizers. Single-AA is a nearly flat low line; domain BPE lines slope down ~2x steeper and converge toward it; GPT-2 English BPE is a high line that drops steeply but stays worst." />
       <figcaption><b>Scaling curve on real Swiss-Prot.</b> Single-residue tokenization (red) is nearly flat — scaling barely helps. Domain BPE (blue/green) has a ~2× steeper slope and converges toward the single-AA line. GPT-2 English BPE (orange) is worst at every size.</figcaption>
     </figure>
 
@@ -285,7 +285,7 @@
     </p>
 
     <figure class="figure">
-      <img src="../figures/tokenization-trap-fig4-probe.png" alt="Horizontal bar chart of linear-probe accuracy on a six-family task with chance line at 0.167. single-AA sits at chance (0.233); domain BPE 256 reaches 0.863; domain BPE 1000 is 0.647; GPT-2 English BPE is highest at 0.937." />
+      <img src="/writing/figures/tokenization-trap-fig4-probe.png" alt="Horizontal bar chart of linear-probe accuracy on a six-family task with chance line at 0.167. single-AA sits at chance (0.233); domain BPE 256 reaches 0.863; domain BPE 1000 is 0.647; GPT-2 English BPE is highest at 0.937." />
       <figcaption><b>Linear probe, composition-controlled family task.</b> Single-residue features (red) sit at chance; subword tokenizers recover the motif-ordering structure. Domain BPE reaches 0.863 with a 256-token vocab.</figcaption>
     </figure>
 
