@@ -6,19 +6,28 @@
 <title>Replicater</title>
 <script>
   (function () {
-    var path = location.pathname;
-    if (/\/index\.html$/.test(path)) {
-      location.replace((path.replace(/\/index\.html$/, '') || '/') + location.search + location.hash);
+    var path = location.pathname.replace(/\/$/, '') || '/';
+    if (path === '/research') {
+      location.replace('/research.html' + location.search + location.hash);
       return;
     }
-    if (/\.html$/.test(path)) {
-      var clean = path.replace(/\.html$/, '');
+    if (path === '/manifesto') {
+      location.replace('/manifesto.html' + location.search + location.hash);
+      return;
+    }
+    if (/\/index\.html$/.test(location.pathname)) {
+      location.replace((location.pathname.replace(/\/index\.html$/, '') || '/') + location.search + location.hash);
+      return;
+    }
+    if (/\.html$/.test(location.pathname)) {
+      var clean = location.pathname.replace(/\.html$/, '');
       if (clean === '/index' || clean === '/lab') clean = '/';
+      if (clean === '/research' || clean === '/manifesto') return;
       location.replace(clean + location.search + location.hash);
     }
   })();
 </script>
-<script src="/clean-urls.js?v=2"></script>
+<script src="/clean-urls.js?v=3"></script>
 <style>
   body {
     margin: 0;
