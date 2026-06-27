@@ -110,7 +110,6 @@
 
     if (trigger) {
       Array.from(trigger.childNodes).forEach(function (child) {
-        if (child.classList && child.classList.contains('paper-lock')) return;
         link.appendChild(child);
       });
       trigger.remove();

@@ -172,34 +172,19 @@ body {
 }
 .paper-link:hover .paper-title { color: var(--c-deep); }
 
-.paper-item--locked .paper-link {
-  cursor: pointer;
-  opacity: 0.72;
+.paper-link--locked {
   width: 100%;
   border: 0;
   background: transparent;
   font: inherit;
   text-align: left;
+  cursor: pointer;
 }
-.paper-item--locked .paper-link:hover {
-  background: transparent;
-  padding-left: 2px;
-}
-.paper-lock {
-  flex: 0 0 auto;
-  margin-left: auto;
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--c-deep);
-  opacity: 0.55;
-  padding-top: 4px;
-}
+.paper-link--locked:hover .paper-title { color: var(--c-deep); }
+
 @media (max-width: 560px) {
   .paper-link { flex-direction: column; gap: 6px; }
   .paper-date { flex-basis: auto; }
-  .paper-lock { margin-left: 0; }
 }
 
 .paper-unlock-modal {
