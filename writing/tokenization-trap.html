@@ -67,7 +67,20 @@
   </nav>
 </div>
 
-<article class="col">
+<div class="paper-gate" id="paper-gate" data-paper-slug="tokenization-trap">
+  <h2 class="paper-unlock-title">This paper is locked</h2>
+  <p class="paper-unlock-lede">Enter the password to read The Tokenization Trap.</p>
+  <form class="paper-unlock-form">
+    <input type="password" class="paper-unlock-input" autocomplete="current-password" required />
+    <p class="paper-unlock-error" hidden>Incorrect password.</p>
+    <div class="paper-unlock-actions">
+      <button type="submit" class="paper-unlock-submit">Unlock</button>
+    </div>
+  </form>
+  <a class="paper-gate-back" href="../research.html">← Back to research</a>
+</div>
+
+<article class="col" id="paper-content" hidden>
   <header class="article-head">
     <h1>The Tokenization Trap: Domain-Adaptive BPE Restores Language-Like Token Statistics for Protein and Genome Language Models</h1>
     <p class="subtitle">Single-residue tokenization gives a flat, non-Zipfian token distribution that barely benefits from scale. Domain-trained BPE restores a language-like distribution and scales ~2× faster — but it is only the first of two bottlenecks; attention is the second.</p>
@@ -350,5 +363,6 @@
   <span><a href="../research.html">← All research</a></span>
   <span><a href="../index.html">replicater.xyz</a></span>
 </footer>
+<script src="../research-lock.js"></script>
 </body>
 </html>
