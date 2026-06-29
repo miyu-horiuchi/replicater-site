@@ -277,7 +277,7 @@
     </p>
     <p>
       We are honest about the caveat rather than overclaiming a crossover: at this
-      CPU-bounded, <em>step-matched</em> budget (&lt; 2M params, 150 steps), single-residue
+      small-scale, <em>step-matched</em> budget (&lt; 2M params, 150 steps), single-residue
       tokenization still has the lowest <em>absolute</em> bpr, because shorter BPE token
       streams get less gradient at fixed steps. The load-bearing signal is the <em>slope</em>:
       single residues convert scale into compression ~2× more slowly than domain BPE, and the
@@ -462,8 +462,8 @@
 
     <h2 id="limitations">Limitations</h2>
     <p>
-      All modelling experiments are CPU-bounded (&lt; 2M non-embedding params, a few hundred
-      steps) to isolate the tokenizer variable; they establish slopes and orderings, not absolute
+      All modelling experiments are deliberately small-scale (&lt; 2M non-embedding params, a few
+      hundred steps) to isolate the tokenizer variable; they establish slopes and orderings, not absolute
       scaling exponents at foundation-model scale. The scaling curve is step-matched rather
       than compute/token-matched, which disadvantages BPE's shorter token streams. The
       composition-controlled probe is synthetic, not a natural functional benchmark. The
