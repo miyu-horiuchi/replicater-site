@@ -38,6 +38,12 @@
     margin-left: auto;
     margin-right: auto;
   }
+  /* single-panel charts shrunk to a smaller, centered size */
+  .figure--small {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   /* lightweight result tables tuned to the cream/ink theme */
   .data-table {
     margin: 4vh 0;
@@ -291,7 +297,7 @@
       confirmation.
     </p>
 
-    <figure class="figure">
+    <figure class="figure figure--small">
       <img src="/writing/figures/tokenization-trap-fig3-scaling-curve.png" alt="Log-log plot of bits-per-residue versus non-embedding parameters for four tokenizers. Single-AA is a nearly flat low line; domain BPE lines slope down ~2x steeper and converge toward it; GPT-2 English BPE is a high line that drops steeply but stays worst." />
       <figcaption><b>Scaling curve on real Swiss-Prot.</b> Single-residue tokenization (red) is nearly flat; scaling barely helps. Domain BPE (blue/green) has a ~2× steeper slope and converges toward the single-AA line. GPT-2 English BPE (orange) is worst at every size.</figcaption>
     </figure>
@@ -332,7 +338,7 @@
       tiny vocabulary, exactly the profile a scalable foundation model needs.
     </p>
 
-    <figure class="figure">
+    <figure class="figure figure--small">
       <img src="/writing/figures/tokenization-trap-fig4-probe.png" alt="Horizontal bar chart of linear-probe accuracy on a six-family task with chance line at 0.167. single-AA sits at chance (0.233); domain BPE 256 reaches 0.863; domain BPE 1000 is 0.647; GPT-2 English BPE is highest at 0.937." />
       <figcaption><b>Linear probe, composition-controlled family task.</b> Single-residue features (red) sit at chance; subword tokenizers recover the motif-ordering structure. Domain BPE reaches 0.863 with a 256-token vocab.</figcaption>
     </figure>
@@ -380,12 +386,12 @@
       outweigh three orders of magnitude of scale spent on single nucleotides.
     </p>
 
-    <figure class="figure">
+    <figure class="figure figure--small">
       <img src="/writing/figures/tokenization-trap-fig5-genome-zipf.png" alt="Zipf exponent on real microbial DNA: single-nt at 0.31, k-mer at 0.50, domain BPE at 1.12 in the language-like band." />
       <figcaption><b>Intrinsic token statistics on real microbial DNA.</b> The single-nt → k-mer → domain-BPE ladder moves α from a flat 0.31 into the language-like band (α ≈ 1).</figcaption>
     </figure>
 
-    <figure class="figure">
+    <figure class="figure figure--small">
       <img src="/writing/figures/tokenization-trap-fig6-microbe-ladder.png" alt="Downstream trait prediction across tokenizer ladder on 364 genomes." />
       <figcaption><b>Downstream trait prediction across the tokenizer ladder</b> (364 genomes, mean per-head score). Domain BPE is best or tied-best at every taxonomic holdout.</figcaption>
     </figure>
