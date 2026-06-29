@@ -379,7 +379,7 @@ article { padding-top: 9vh; }
   display: block;
   width: 100%;
   height: auto;
-  background: #fff;
+  background: var(--c-cream);
   border: 1px solid rgba(58, 74, 92, 0.16);
   border-radius: 3px;
   padding: 14px 16px;
