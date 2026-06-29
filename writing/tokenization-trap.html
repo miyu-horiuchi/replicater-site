@@ -32,6 +32,12 @@
     background: var(--c-cream);
     border-color: rgba(58, 74, 92, 0.12);
   }
+  /* square scatter plot reads better at a smaller, centered size */
+  .figure--narrow {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   /* lightweight result tables tuned to the cream/ink theme */
   .data-table {
     margin: 4vh 0;
@@ -405,7 +411,7 @@
       <figcaption><b>Where domain BPE helps.</b> Per-head gap Δ(domain-BPE − single-nt) by trait class and split. The advantage is consistently positive but small relative to seed noise.</figcaption>
     </figure>
 
-    <figure class="figure">
+    <figure class="figure figure--narrow">
       <img src="/writing/figures/tokenization-trap-fig8-vs-evo2.png" alt="Scatter of per-trait scores: a ~3M-parameter domain-BPE model versus the 7B single-nucleotide Evo2 model on the species split. Most points sit on or above the diagonal." />
       <figcaption><b>A tiny domain-BPE model vs a 7B genome model</b> (species split). Most heads sit on or above the diagonal: tokenization buys with ~3 M params what scale does not buy Evo2 with 7B.</figcaption>
     </figure>
