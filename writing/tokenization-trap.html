@@ -115,13 +115,13 @@
       under-examined cause is <em>tokenization</em>. The near-universal choice of
       single-residue tokenization (one token per amino acid or nucleotide) collapses the
       token-frequency distribution onto the marginal residue frequencies, producing a flat,
-      non-Zipfian spectrum (fitted exponent α ≈ 0.4–0.6). Natural language is Zipfian
+      non-Zipfian spectrum (fitted exponent α ≈ 0.4-0.6). Natural language is Zipfian
       (α ≈ 1), and that heavy tail is exactly what neural scaling laws exploit. We formalize
       this as the <strong>tokenization trap</strong> and test it on real Swiss-Prot.
     </p>
     <p>
       Domain-adaptive byte-pair encoding (BPE) moves the token-frequency exponent into the
-      language-like band (α ≈ 1.0–1.2) with high goodness-of-fit, while single-residue
+      language-like band (α ≈ 1.0-1.2) with high goodness-of-fit, while single-residue
       tokenization and an English-trained GPT-2 BPE do not. At a fixed parameter budget,
       domain BPE reduces bits-per-residue by ~9% relative to single-residue tokenization,
       whereas GPT-2's English BPE is worst. A model-size sweep makes the trap quantitative:
@@ -164,21 +164,21 @@
       <em>generic</em> (English) BPE learns no biological units; (e) so a
       <em>domain-derived</em> tokenizer is required; and (f) even then, attention is the wrong
       inductive bias, motivating (g) a spectral, mechanism-aware architecture. This work gives
-      evidence for (a)–(e) and a concrete design and falsifiable test for (f)–(g).
+      evidence for (a)-(e) and a concrete design and falsifiable test for (f)-(g).
     </p>
 
     <h2 id="distribution">Domain BPE restores Zipfian statistics</h2>
     <p>
-      On real Swiss-Prot, single-residue tokenization sits at α ≈ 0.5–0.6 with a poor
+      On real Swiss-Prot, single-residue tokenization sits at α ≈ 0.5-0.6 with a poor
       power-law fit. Across a vocabulary sweep, domain BPE moves the exponent into the
-      language-like ≈ 1.0–1.2 band <em>with high r²</em> (≥ 0.9), a genuinely Zipfian
-      distribution. The rank–frequency tail is flat for single residues and heavy-tailed for
+      language-like ≈ 1.0-1.2 band <em>with high r²</em> (≥ 0.9), a genuinely Zipfian
+      distribution. The rank-frequency tail is flat for single residues and heavy-tailed for
       BPE.
     </p>
 
     <figure class="figure">
       <img src="/writing/figures/tokenization-trap-fig1-zipf.png" alt="Log-log rank-frequency plots by tokenizer. Single-residue tokenization is a flat line (non-Zipfian); domain BPE develops a heavy, downward-sloping language-like tail." />
-      <figcaption><b>Rank–frequency tails by tokenizer.</b> Single-residue tokenization is flat (non-Zipfian); domain BPE develops a heavy, language-like tail.</figcaption>
+      <figcaption><b>Rank-frequency tails by tokenizer.</b> Single-residue tokenization is flat (non-Zipfian); domain BPE develops a heavy, language-like tail.</figcaption>
     </figure>
 
     <div class="data-table">
