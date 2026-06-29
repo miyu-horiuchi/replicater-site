@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="canonical" href="https://replicater.xyz/writing/hmm-gated-plm-embeddings" />
 <script src="/clean-urls.js?v=4"></script>
-<title>HMM-Gated PLM Embeddings — Microbe 1%</title>
+<title>HMM-Gated PLM Embeddings | Microbe 1%</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="bar">
-  <a class="wordmark" href="/"><span class="dot"></span>Microbe — 1%</a>
+  <a class="wordmark" href="/"><span class="dot"></span>Microbe 1%</a>
   <nav class="bar-nav">
     <a class="nav-link" href="/research/">Research</a>
     <a class="nav-link" href="/manifesto/">Manifesto</a>
@@ -54,8 +54,8 @@
     <p>
       The majority of microbial diversity remains uncultivated, in large part because we
       do not know what cultivation conditions a given lineage requires. Existing
-      genome-based phenotype predictors operate on a single feature family — protein
-      family inventories, codon usage statistics, or single-trait marker panels — and most
+      genome-based phenotype predictors operate on a single feature family: protein
+      family inventories, codon usage statistics, or single-trait marker panels, and most
       binarize continuous phenotypes such as optimum temperature, pH, and salinity into
       coarse labels. Here we introduce <strong>HMM-gated protein language model embeddings
       (PTPE, phenotype-targeted PLM embeddings)</strong>: for each genome we run
@@ -66,9 +66,9 @@
       <em>within each category</em> to produce a compact per-genome functional fingerprint.
     </p>
     <p>
-      We integrate PTPE with five additional feature paths — amino acid composition,
+      We integrate PTPE with five additional feature paths: amino acid composition,
       MediaDive recipe metadata, Pfam HMM marker counts, KEGG module fractional completeness
-      (570 modules), and parsed BacDive isolation metadata — for a total of 6,313 features
+      (570 modules), and parsed BacDive isolation metadata, for a total of 6,313 features
       per genome, and train a multi-task XGBoost over 46,029 BacDive strains (22,300 unique
       genomes) for four cultivation targets (optimum temperature, pH, oxygen requirement,
       salt tolerance) with five-fold family-grouped cross-validation.
@@ -81,7 +81,7 @@
       use</strong>: optimum temperature, pH, oxygen tolerance, and salinity must be chosen,
       typically from broad ranges, before a strain can be enriched in pure culture. For the
       &gt;99% of bacterial and archaeal lineages that have never been cultivated, 16S
-      placement provides only weak constraints on these conditions — phylogenetically close
+      placement provides only weak constraints on these conditions. Phylogenetically close
       strains routinely differ by 10&nbsp;°C in optimum temperature or several pH units.
       Direct prediction of cultivation conditions from genome sequence would lower this
       barrier substantially.
@@ -92,7 +92,7 @@
       A common gap across the prior literature is that <strong>protein family inventories
       are coarse</strong>. A Pfam hit is binary: "does this genome contain a cytochrome c
       oxidase?" It collapses the substantial <em>sequence-level</em> variation between
-      different cytochromes — variation that determines whether the organism is
+      different cytochromes: variation that determines whether the organism is
       microaerophilic, strictly aerobic, or facultative. Protein language models such as
       ESM-2 are designed to expose precisely this continuous variation, but naive
       whole-proteome PLM pooling averages ESM-2 across every protein in a genome, drowning
@@ -110,7 +110,7 @@
       functional fingerprint that keeps the <em>specificity</em> of HMM-based feature
       selection and the <em>continuous functional resolution</em> of PLMs. We integrate PTPE
       with five additional feature paths and train a multi-task XGBoost on 46,029 BacDive
-      strains with family-grouped cross-validation — the largest BacDive-anchored phenotype
+      strains with family-grouped cross-validation, the largest BacDive-anchored phenotype
       prediction corpus published to date (~2× the size of prior work).
     </p>
 
@@ -171,7 +171,7 @@
     </figure>
 
     <p class="keywords">
-      Keywords — microbial cultivation · phenotype prediction · protein language models ·
+      Keywords: microbial cultivation · phenotype prediction · protein language models ·
       HMM profiles · KEGG modules · BacDive · uncultivated microorganisms
     </p>
   </div>

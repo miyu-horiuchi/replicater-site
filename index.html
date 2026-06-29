@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="canonical" href="https://replicater.xyz/" />
 <script src="/clean-urls.js?v=4"></script>
-<title>Replicater Labs — Discovering Microbial Dark Matter</title>
+<title>Replicater Labs: Discovering Microbial Dark Matter</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -211,7 +211,7 @@
     opacity: 0.65;
   }
 
-  /* Custom cursor — a paintbrush dot */
+  /* Custom cursor: a paintbrush dot */
   .brush {
     position: fixed;
     z-index: 50;
@@ -402,7 +402,7 @@
     for (let i = 0; i < passes; i++) {
       const x = Math.random() * W;
       const y = Math.random() * H;
-      // bias palette by region — top sky-ish, middle lavender, bottom sage/wheat
+      // bias palette by region: top sky-ish, middle lavender, bottom sage/wheat
       const yn = y / H;
       let color;
       const r = Math.random();
@@ -554,7 +554,7 @@
   const trailDabs = [];
 
   function update(t) {
-    // Cursor brush trail — paint dabs continuously while moving
+    // Cursor brush trail: paint dabs continuously while moving
     const dx = mx - lmx, dy = my - lmy;
     const dist = Math.hypot(dx, dy);
     if (dist > 1 && mx > 0 && lmx > 0) {
@@ -571,7 +571,7 @@
     }
     lmx = mx; lmy = my;
 
-    // Slow ambient drift — occasional dabs across canvas to keep it alive
+    // Slow ambient drift: occasional dabs across canvas to keep it alive
     if (t - lastStroke > 60) {
       lastStroke = t;
       for (let i = 0; i < 2; i++) {

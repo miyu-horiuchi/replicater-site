@@ -87,7 +87,7 @@ body {
 
 /* ── research index (9dlabs-style minimal list) ────── */
 .index-head { padding: 12vh 0 0; }
-/* h1 — matches 9dlabs: 32px, weight 500, ls 0.12em, uppercase sans */
+/* h1: matches 9dlabs: 32px, weight 500, ls 0.12em, uppercase sans */
 .index-head h1 {
   font-family: 'Inter', sans-serif;
   font-size: 32px;
@@ -97,7 +97,7 @@ body {
   text-transform: uppercase;
   color: var(--c-ink);
 }
-/* thesis — matches 9dlabs: 15px serif, lh 1.6 */
+/* thesis: matches 9dlabs: 15px serif, lh 1.6 */
 .index-head .lede {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 17px;
@@ -113,7 +113,7 @@ body {
   margin: 1.9rem 0 0;
 }
 .research-block { margin-top: 1.9rem; }
-/* section label — matches 9dlabs: 13px uppercase sans */
+/* section label: matches 9dlabs: 13px uppercase sans */
 .section-label {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
@@ -140,7 +140,7 @@ body {
   background: rgba(58, 74, 92, 0.04);
   padding-left: 10px;
 }
-/* date — 9dlabs layout, but Inter (site meta font) for consistency */
+/* date: 9dlabs layout, but Inter (site meta font) for consistency */
 .paper-date {
   flex: 0 0 150px;
   font-family: 'Inter', sans-serif;
@@ -151,7 +151,7 @@ body {
   opacity: 0.6;
   padding-top: 3px;
 }
-/* title — 9dlabs layout, but Cormorant serif (site title font) */
+/* title: 9dlabs layout, but Cormorant serif (site title font) */
 .paper-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.32rem;

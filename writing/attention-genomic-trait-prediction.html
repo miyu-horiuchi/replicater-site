@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="canonical" href="https://replicater.xyz/writing/attention-genomic-trait-prediction" />
 <script src="/clean-urls.js?v=4"></script>
-<title>When Does Attention Help in Genomic Trait Prediction? — Microbe 1%</title>
+<title>When Does Attention Help in Genomic Trait Prediction? | Microbe 1%</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="bar">
-  <a class="wordmark" href="/"><span class="dot"></span>Microbe — 1%</a>
+  <a class="wordmark" href="/"><span class="dot"></span>Microbe 1%</a>
   <nav class="bar-nav">
     <a class="nav-link" href="/research/">Research</a>
     <a class="nav-link" href="/manifesto/">Manifesto</a>
@@ -32,7 +32,7 @@
 <article class="col">
   <header class="article-head">
     <h1>When Does Attention Help in Genomic Trait Prediction?</h1>
-    <p class="subtitle">The predictability gradient — adaptive pooling helps in proportion to how localized a trait's genomic signal is, and collapses under cross-clade distribution shift.</p>
+    <p class="subtitle">The predictability gradient: adaptive pooling helps in proportion to how localized a trait's genomic signal is, and collapses under cross-clade distribution shift.</p>
     <p class="byline">Miyu Horiuchi<span class="sep">·</span>5 June 2026</p>
   </header>
 
@@ -82,7 +82,7 @@
       unordered <em>set</em> of <em>P</em> proteins (<em>P</em> ≈ 10³–10⁴), so every such
       model must <strong>pool</strong> a variable-size set of protein vectors into one genome
       representation before prediction. This pooling step is almost always chosen by
-      convention — typically a mean — and almost never studied.
+      convention, typically a mean, and almost never studied.
     </p>
     <p>
       This is a missed opportunity, because pooling encodes a strong inductive bias about
@@ -105,10 +105,10 @@
     </p>
     <p>
       We pre-register a partition of the 21 BacDive heads into <strong>compositional</strong>
-      (11 traits, signal expected diffuse — gram stain, cell shape, motility, sporulation,
+      (11 traits, signal expected diffuse, gram stain, cell shape, motility, sporulation,
       oxygen tolerance, catalase, cytochrome oxidase, temperature class, pH class, halophily,
       pigmentation) and <strong>machinery</strong> (8 traits, signal expected gene-localized
-      — pathogenicity, cultivation medium, carbon utilization, metabolite production,
+     , pathogenicity, cultivation medium, carbon utilization, metabolite production,
       antimicrobial-resistance phenotype, biosafety level, FAME profile), from biological
       first principles and <em>before</em> seeing any pooling results.
     </p>
@@ -140,7 +140,7 @@
     <p>
       We evaluate under <strong>species-, genus-, and family-held-out</strong> splits: no
       species (resp. genus, family) appears in more than one fold. Family-held-out
-      approximates prediction for clades unlike anything seen in training — the regime
+      approximates prediction for clades unlike anything seen in training, the regime
       relevant to uncultured "microbial dark matter." We report macro-F1 per head and, for
       the gradient, ΔF1 = F1<sub>attn</sub> − F1<sub>mean</sub>, aggregated within trait
       class, mean ± std over three seeds.
@@ -179,7 +179,7 @@
       At the species and genus levels the machinery gain exceeds the compositional gain by
       ~4×, with non-overlapping error bars (species: +0.083 ± 0.012 machinery vs.
       +0.021 ± 0.002 compositional). The compositional gain is small, positive, and tight;
-      attention does not <em>hurt</em> diffuse traits, it simply adds little — exactly as the
+      attention does not <em>hurt</em> diffuse traits, it simply adds little, exactly as the
       hypothesis predicts. The single largest per-head effects are pathogenicity (animal F1
       0.26 → 0.50, human 0.16 → 0.32 at species), the most gene-localized traits in the set.
     </p>
@@ -206,7 +206,7 @@
     <p>
       A deliberately simple taxonomy-majority baseline sharpens the interpretation: on
       species-held-out pathogenicity it reaches macro-F1 0.730 (animal) and 0.647 (human),
-      exceeding the attention model — pathogenicity prediction in BacDive is simultaneously a
+      exceeding the attention model. Pathogenicity prediction in BacDive is simultaneously a
       localized-gene task and a taxonomically confounded one. Finally, single-task
       attention-pool pathogenicity models discriminate well on held-out genomes (AUROC 0.88
       animal, 0.85 human), and their top-attended proteins are externally validated against
@@ -215,11 +215,11 @@
 
     <figure class="figure">
       <img src="figures/fig-5-virulence.png" alt="Two panels. Left: top-5 attended proteins hit VFDB virulence factors at 28.1% versus 5.9% for random (Wilcoxon p = 2.5e-7). Right: masking the top-5 proteins flips 22.7% of pathogenic calls versus near-zero for random masking (p = 1.2e-4)." />
-      <figcaption><b>Does the attention find the right genes?</b> Top-attended proteins are enriched for VFDB virulence factors against matched controls (left), and masking them measurably flips pathogenic predictions (right) — evidence the learned attention is mechanistically real, not just predictive.</figcaption>
+      <figcaption><b>Does the attention find the right genes?</b> Top-attended proteins are enriched for VFDB virulence factors against matched controls (left), and masking them measurably flips pathogenic predictions (right), evidence the learned attention is mechanistically real, not just predictive.</figcaption>
     </figure>
 
     <p class="keywords">
-      Keywords — set learning · attention pooling · protein language models · genomic trait
+      Keywords: set learning · attention pooling · protein language models · genomic trait
       prediction · covariate shift · BacDive · ESM-2 · uncultivated microorganisms
     </p>
   </div>
