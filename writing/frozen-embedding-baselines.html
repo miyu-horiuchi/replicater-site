@@ -71,6 +71,7 @@
       <li><a href="#design">A family of simple readouts</a></li>
       <li><a href="#results">Simple readouts are competitive models</a></li>
       <li><a href="#rank">Rank 25 beats rank 6</a></li>
+      <li><a href="#sidedata">Does cheap side-data help?</a></li>
       <li><a href="#takeaway">What it means</a></li>
       <li><a href="#paper">Read the full paper</a></li>
     </ol>
@@ -128,6 +129,11 @@
       imbalanced biological labels).
     </p>
 
+    <figure class="figure">
+      <img src="figures/frozen-baselines-fig1-experiment.png" alt="Flow diagram: a BacDive genome with trait labels feeds a frozen ESM-2 encoder producing a 640-dimensional embedding, passes through a PCA-rank capacity sweep (6, 10, 25), into a set of simple readouts — L2 logistic, SGD logistic, polynomial logistic, regularized random forest, histogram gradient boosting, and a soft-vote ensemble — evaluated by family-held-out AUROC and macro-F1." />
+      <figcaption><b>Experimental control.</b> The encoder is never fine-tuned. We test whether frozen ESM-2 genome embeddings already contain trait signal that simple downstream models can recover under a family-held-out split.</figcaption>
+    </figure>
+
     <h2 id="results">Simple readouts are competitive models</h2>
     <p>
       These are not weak controls. The most striking single result is sporulation: a simple
@@ -136,6 +142,11 @@
       readouts. Catalase is strongly ranked by L2 logistic regression (AUROC 0.805), and
       motility, the hardest of the three, still clears chance.
     </p>
+
+    <figure class="figure">
+      <img src="figures/frozen-baselines-fig2-best-per-trait.png" alt="Grouped bar chart of AUROC and macro-F1 for the best simple model on each trait under held-out families: catalase 0.81 / 0.70, motility 0.73 / 0.64, sporulation 0.94 / 0.85. A dotted line marks chance AUROC at 0.5; all bars clear it." />
+      <figcaption><b>Best readout per trait.</b> AUROC and macro-F1 for the strongest simple model on each held-out-family trait. Sporulation is highly recoverable, catalase is well ranked, and motility is the hardest of the three but still clears chance.</figcaption>
+    </figure>
 
     <table class="results-table">
       <caption>Mean performance across catalase, motility, and sporulation.</caption>
@@ -171,6 +182,12 @@
       gradient boosting (0.781 → 0.803). The useful microbial trait signal is broader than six
       principal components.
     </p>
+
+    <figure class="figure">
+      <img src="figures/frozen-baselines-fig3-rank-sweep.png" alt="Line chart of mean AUROC across catalase, motility and sporulation as PCA rank grows from 6 to 10 to 25, for five readouts. Most lines rise with rank and the best cluster near 0.80 at rank 25; a dashed line marks the soft-vote ensemble at 0.824." />
+      <figcaption><b>Rank sweep.</b> Rank 25 generally improves over rank 6, so these microbial traits do not look like a six-dimensional perturbation benchmark. The best single-model baselines cluster around AUROC 0.80, and the soft-vote ensemble reaches 0.824.</figcaption>
+    </figure>
+
     <p>
       Framed as a capacity ladder — grow the readout while the metric keeps improving, then
       compare the plateau against an independent cosine-kNN coverage ceiling — the rule returns
@@ -179,6 +196,28 @@
       while motility has not yet plateaued (keep scaling the simple family before reaching for
       anything heavier).
     </p>
+
+    <figure class="figure">
+      <img src="figures/frozen-baselines-fig4-capacity-ladder.png" alt="Line chart of the primary metric at each capacity rung — PCA rank 6, 10, 25, 50, 100, full logistic, then random forest, then histogram gradient boosting — for all 12 targets. Catalase, motility and sporulation are highlighted; dashed lines mark each trait's cosine-kNN coverage ceiling, which catalase and sporulation reach while motility keeps climbing." />
+      <figcaption><b>Capacity ladder.</b> Primary metric at each rung (PCA rank 6&rarr;10&rarr;25&rarr;50&rarr;100&rarr;full logistic, then random forest, then histogram gradient boosting) across all 12 targets. Dashed lines mark the cosine-kNN coverage ceiling; catalase and sporulation plateau at or above it, while motility has not yet plateaued.</figcaption>
+    </figure>
+
+    <h2 id="sidedata">Does cheap side-data help?</h2>
+    <p>
+      A cheaper lever than more model capacity is adding side-data the encoder never saw: coarse
+      taxonomy, sequence-independent isolation metadata, and a second, independently trained
+      embedding (eggNOG functional annotations). Concatenated onto the frozen ESM-2 embedding under
+      the same family-held-out protocol, all three give a positive mean lift — but a small one: the
+      eggNOG embedding adds +0.014, taxonomy and isolation only +0.006 each. And the taxonomy number
+      needs a caveat: its lift lands mostly on clade-confounded targets and turns negative on the
+      pathogenicity traits, so it is partly a proxy for the very clade structure the split holds out,
+      not newly recovered biology.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/frozen-baselines-fig5-fusion-lift.png" alt="Horizontal bar chart of mean lift over embedding-only for three extra-data sources: eggNOG embedding about +0.014, taxonomy about +0.006, and isolation metadata about +0.006." />
+      <figcaption><b>Fusion lift.</b> Mean lift over embedding-only, averaged across the readouts and all 12 targets, for each cheap extra-data source. All three are positive on average, but the taxonomy lift is partly an artifact of clade-confounded targets.</figcaption>
+    </figure>
 
     <h2 id="takeaway">What it means</h2>
     <p>
