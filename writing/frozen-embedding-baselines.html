@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="canonical" href="https://replicater.xyz/writing/frozen-embedding-baselines" />
+<script src="/clean-urls.js?v=4"></script>
+<title>Simple Readouts on Frozen Genome Embeddings Are Strong Baselines for Cross-Family Microbial Trait Prediction | Microbe 1%</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/research.css" />
+<style>
+  /* results tables rendered on the site's cream canvas */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2.4vh 0 3vh;
+    font-family: "Inter", sans-serif;
+    font-size: 0.98rem;
+    color: var(--c-ink);
+  }
+  .results-table caption {
+    caption-side: top;
+    text-align: left;
+    font-style: italic;
+    color: var(--c-deep);
+    margin-bottom: 0.9em;
+    font-size: 1.02rem;
+  }
+  .results-table th,
+  .results-table td {
+    padding: 9px 14px;
+    text-align: right;
+    border-bottom: 1px solid rgba(58, 74, 92, 0.14);
+  }
+  .results-table th:first-child,
+  .results-table td:first-child { text-align: left; }
+  .results-table thead th {
+    border-bottom: 1px solid rgba(58, 74, 92, 0.4);
+    font-weight: 500;
+    color: var(--c-deep);
+  }
+  .results-table tbody tr:first-child td { font-weight: 600; }
+  .results-table .rank { color: var(--c-deep); opacity: 0.75; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="wordmark" href="/"><span class="dot"></span>Microbe 1%</a>
+  <nav class="bar-nav">
+    <a class="nav-link" href="/research/">Research</a>
+    <a class="nav-link" href="/manifesto/">Manifesto</a>
+    <a class="nav-link" href="/">Home</a>
+  </nav>
+</div>
+
+<article class="col">
+  <header class="article-head">
+    <h1>Simple Readouts on Frozen Genome Embeddings Are Strong Baselines for Cross-Family Microbial Trait Prediction</h1>
+    <p class="subtitle">Before reaching for encoder fine-tuning, fit a regularized model on frozen ESM-2 embeddings; the signal is already there, and the family-shift failure is coverage, not capacity.</p>
+    <p class="byline">Miyu Horiuchi<span class="sep">·</span>1 July 2026</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#question">The baseline we had skipped</a></li>
+      <li><a href="#design">A family of simple readouts</a></li>
+      <li><a href="#results">Simple readouts are competitive models</a></li>
+      <li><a href="#rank">Rank 25 beats rank 6</a></li>
+      <li><a href="#takeaway">What it means</a></li>
+      <li><a href="#paper">Read the full paper</a></li>
+    </ol>
+  </nav>
+
+  <div class="prose">
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      Recent microbial phenotype predictors often place architectural emphasis on genome-level
+      pooling or encoder adaptation. A simpler alternative is to treat a pretrained protein
+      language model as a <em>frozen</em> feature extractor and fit a regularized downstream
+      model. We test this baseline family on frozen ESM-2 genome embeddings under the same
+      family-held-out split used in our prior cross-clade studies. On three representative
+      binary traits (catalase, motility, sporulation), simple readouts are already strong: a
+      soft-vote ensemble reaches mean AUROC 0.824 and mean macro-F1 0.736, and the strongest
+      single models — regularized random forest, histogram gradient boosting, and L2 logistic
+      regression at PCA rank 25 — are within a hair of it.
+    </p>
+    <p>
+      The PCA rank sweep is especially informative: rank 25 generally outperforms rank 6,
+      arguing against a perturbation-style "six-dimensional" explanation for these microbial
+      traits. The result reframes our earlier pooling and LoRA findings: frozen ESM-2 already
+      contains substantial recoverable trait signal, so the remaining family-shift failure is
+      more likely due to cross-clade coverage, label sparsity and noise, and trait biology than
+      to a missing high-capacity encoder update.
+    </p>
+
+    <h2 id="question">The baseline we had skipped</h2>
+    <p>
+      Two earlier experiments isolated architectural levers in genome-to-phenotype prediction.
+      The first asked whether learned pooling over protein embeddings beats mean pooling — the
+      advantage was trait-dependent in-distribution and collapsed under family-held-out
+      evaluation. The second asked whether adapting ESM-2 with LoRA recovers the lost transfer
+      signal — again negative once imbalanced-label metric artifacts were removed.
+    </p>
+    <p>
+      A natural critique of both is that they skipped an important baseline: <em>simple
+      downstream models on frozen embeddings</em>. In many applied biological pipelines a heavy
+      upstream representation model produces rich features, and a smaller downstream classifier
+      extracts the task-specific signal. If the embedding already contains the relevant
+      information, then fine-tuning the encoder may add cost and overfitting risk without
+      improving generalization. This note tests that critique directly.
+    </p>
+
+    <h2 id="design">A family of simple readouts</h2>
+    <p>
+      We keep ESM-2 frozen, compress the genome embeddings to several PCA ranks (6, 10, 25),
+      and fit a family of simple readouts on the same family-held-out split: L2 logistic
+      regression, an SGD-trained logistic classifier, degree-2 polynomial logistic regression,
+      a regularized random forest, histogram gradient boosting, and a fixed soft-vote ensemble.
+      Rank 6 is included because low-rank perturbation benchmarks in single-cell modeling have
+      been criticized for containing only a handful of effective dimensions; rank 25 tests
+      whether microbial trait signal needs a broader subspace. We report AUROC (threshold-free
+      ranking quality) and macro-F1 (which weights both classes equally, important for
+      imbalanced biological labels).
+    </p>
+
+    <h2 id="results">Simple readouts are competitive models</h2>
+    <p>
+      These are not weak controls. The most striking single result is sporulation: a simple
+      ensemble over frozen embeddings reaches AUROC 0.936 and macro-F1 0.848 on held-out
+      families — the ESM-2 embedding already exposes a strong sporulation signal to lightweight
+      readouts. Catalase is strongly ranked by L2 logistic regression (AUROC 0.805), and
+      motility, the hardest of the three, still clears chance.
+    </p>
+
+    <table class="results-table">
+      <caption>Mean performance across catalase, motility, and sporulation.</caption>
+      <thead>
+        <tr><th>Model</th><th>Rank</th><th>Mean macro-F1</th><th>Mean AUROC</th><th>Mean AUPRC</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Soft-vote ensemble</td><td class="rank">fixed</td><td>0.736</td><td>0.824</td><td>0.795</td></tr>
+        <tr><td>Regularized random forest</td><td class="rank">25</td><td>0.724</td><td>0.803</td><td>0.765</td></tr>
+        <tr><td>Histogram gradient boosting</td><td class="rank">25</td><td>0.717</td><td>0.803</td><td>0.768</td></tr>
+        <tr><td>L2 logistic regression</td><td class="rank">25</td><td>0.713</td><td>0.808</td><td>0.759</td></tr>
+        <tr><td>Polynomial logistic</td><td class="rank">25</td><td>0.698</td><td>0.776</td><td>0.726</td></tr>
+        <tr><td>SGD logistic</td><td class="rank">25</td><td>0.671</td><td>0.761</td><td>0.720</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Three single-model baselines are close — L2 logistic regression, regularized random
+      forest, and histogram gradient boosting. The logistic result says much of the signal is
+      almost linearly recoverable from frozen ESM-2; the tree results say there are useful
+      nonlinear interactions that do not require a deep downstream architecture. Polynomial
+      logistic is competitive but not best, suggesting "all pairwise interactions" is not the
+      right inductive bias by itself, and the SGD classifier is the weakest — optimizer and
+      regularization details matter even for simple readouts.
+    </p>
+
+    <h2 id="rank">Rank 25 beats rank 6</h2>
+    <p>
+      The PCA sweep is the key connection to the low-rank-data critique. If these traits behaved
+      like a six-dimensional perturbation dataset, rank 6 would saturate simple-model
+      performance. It does not. Mean AUROC rises from rank 6 to rank 25 for L2 logistic
+      regression (0.751 → 0.808), regularized random forest (0.770 → 0.803), and histogram
+      gradient boosting (0.781 → 0.803). The useful microbial trait signal is broader than six
+      principal components.
+    </p>
+    <p>
+      Framed as a capacity ladder — grow the readout while the metric keeps improving, then
+      compare the plateau against an independent cosine-kNN coverage ceiling — the rule returns
+      the same verdict as the rest of the project. Where the ceiling exists, catalase and
+      sporulation plateau at or above it (coverage-limited: a larger model is not indicated),
+      while motility has not yet plateaued (keep scaling the simple family before reaching for
+      anything heavier).
+    </p>
+
+    <h2 id="takeaway">What it means</h2>
+    <p>
+      The result sharpens, rather than contradicts, our earlier findings. Pooling helped some
+      traits in-distribution but not under family shift; LoRA did not rescue family transfer and
+      created metric artifacts on imbalanced heads. This baseline adds a third point: frozen
+      ESM-2 embeddings already contain substantial microbial trait signal, and simple
+      regularized readouts recover much of it. The failure mode is therefore unlikely to be
+      "the model is not big enough" or "the encoder was not fine-tuned." The more plausible
+      bottlenecks are family-level distribution shift, label sparsity and noise, trait-specific
+      biology, and metric choice.
+    </p>
+    <p>
+      The practical recipe: freeze the encoder, sweep PCA rank and simple regularized readouts,
+      identify which traits plateau, and only then escalate to attention pooling, LoRA, or a
+      small transformer head for the traits where simple models fail. It tests the "heavy
+      upstream embedding, simple downstream model" pattern directly — no straw-man baselines.
+    </p>
+
+    <p class="keywords">
+      Keywords: frozen embeddings · protein language models · ESM-2 · baseline regressors ·
+      PCA rank · logistic regression · random forest · gradient boosting · genomic trait
+      prediction · distribution shift · BacDive · uncultivated microorganisms
+    </p>
+  </div>
+
+  <div class="pdf-cta" id="paper">
+    <a href="/frozen-embedding-baselines.pdf" target="_blank" rel="noopener">Read the full paper (PDF) →</a>
+  </div>
+
+  <section class="citation">
+    <h2>Cite</h2>
+    <pre>@article{horiuchi2026frozenbaselines,
+  title   = {Simple Readouts on Frozen Genome Embeddings Are Strong Baselines for Cross-Family Microbial Trait Prediction},
+  author  = {Horiuchi, Miyu},
+  year    = {2026},
+  note    = {replicater.xyz/writing/frozen-embedding-baselines}
+}</pre>
+  </section>
+</article>
+
+<footer>
+  <span><a href="/research/">← All research</a></span>
+  <span><a href="/">replicater.xyz</a></span>
+</footer>
+</body>
+</html>
