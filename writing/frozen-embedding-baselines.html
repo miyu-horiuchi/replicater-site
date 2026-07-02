@@ -17,8 +17,8 @@
     width: 100%;
     border-collapse: collapse;
     margin: 2.4vh 0 3vh;
-    font-family: "Inter", sans-serif;
-    font-size: 0.98rem;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.08rem;
     color: var(--c-ink);
   }
   .results-table caption {
@@ -87,8 +87,8 @@
       family-held-out split used in our prior cross-clade studies. On three representative
       binary traits (catalase, motility, sporulation), simple readouts are already strong: a
       soft-vote ensemble reaches mean AUROC 0.824 and mean macro-F1 0.736, and the strongest
-      single models — regularized random forest, histogram gradient boosting, and L2 logistic
-      regression at PCA rank 25 — are within a hair of it.
+      single models (regularized random forest, histogram gradient boosting, and L2 logistic
+      regression at PCA rank 25) are within a hair of it.
     </p>
     <p>
       The PCA rank sweep is especially informative: rank 25 generally outperforms rank 6,
@@ -102,10 +102,10 @@
     <h2 id="question">The baseline we had skipped</h2>
     <p>
       Two earlier experiments isolated architectural levers in genome-to-phenotype prediction.
-      The first asked whether learned pooling over protein embeddings beats mean pooling — the
+      The first asked whether learned pooling over protein embeddings beats mean pooling; the
       advantage was trait-dependent in-distribution and collapsed under family-held-out
       evaluation. The second asked whether adapting ESM-2 with LoRA recovers the lost transfer
-      signal — again negative once imbalanced-label metric artifacts were removed.
+      signal; the answer was again negative once imbalanced-label metric artifacts were removed.
     </p>
     <p>
       A natural critique of both is that they skipped an important baseline: <em>simple
@@ -130,7 +130,7 @@
     </p>
 
     <figure class="figure">
-      <img src="figures/frozen-baselines-fig1-experiment.png" alt="Flow diagram: a BacDive genome with trait labels feeds a frozen ESM-2 encoder producing a 640-dimensional embedding, passes through a PCA-rank capacity sweep (6, 10, 25), into a set of simple readouts — L2 logistic, SGD logistic, polynomial logistic, regularized random forest, histogram gradient boosting, and a soft-vote ensemble — evaluated by family-held-out AUROC and macro-F1." />
+      <img src="figures/frozen-baselines-fig1-experiment.png" alt="Flow diagram: a BacDive genome with trait labels feeds a frozen ESM-2 encoder producing a 640-dimensional embedding, passes through a PCA-rank capacity sweep (6, 10, 25), into a set of simple readouts (L2 logistic, SGD logistic, polynomial logistic, regularized random forest, histogram gradient boosting, and a soft-vote ensemble) evaluated by family-held-out AUROC and macro-F1." />
       <figcaption><b>Experimental control.</b> The encoder is never fine-tuned. We test whether frozen ESM-2 genome embeddings already contain trait signal that simple downstream models can recover under a family-held-out split.</figcaption>
     </figure>
 
@@ -138,7 +138,7 @@
     <p>
       These are not weak controls. The most striking single result is sporulation: a simple
       ensemble over frozen embeddings reaches AUROC 0.936 and macro-F1 0.848 on held-out
-      families — the ESM-2 embedding already exposes a strong sporulation signal to lightweight
+      families; the ESM-2 embedding already exposes a strong sporulation signal to lightweight
       readouts. Catalase is strongly ranked by L2 logistic regression (AUROC 0.805), and
       motility, the hardest of the three, still clears chance.
     </p>
@@ -164,13 +164,13 @@
     </table>
 
     <p>
-      Three single-model baselines are close — L2 logistic regression, regularized random
+      Three single-model baselines are close: L2 logistic regression, regularized random
       forest, and histogram gradient boosting. The logistic result says much of the signal is
       almost linearly recoverable from frozen ESM-2; the tree results say there are useful
       nonlinear interactions that do not require a deep downstream architecture. Polynomial
       logistic is competitive but not best, suggesting "all pairwise interactions" is not the
-      right inductive bias by itself, and the SGD classifier is the weakest — optimizer and
-      regularization details matter even for simple readouts.
+      right inductive bias by itself, and the SGD classifier is the weakest, a reminder that
+      optimizer and regularization details matter even for simple readouts.
     </p>
 
     <h2 id="rank">Rank 25 beats rank 6</h2>
@@ -189,8 +189,8 @@
     </figure>
 
     <p>
-      Framed as a capacity ladder — grow the readout while the metric keeps improving, then
-      compare the plateau against an independent cosine-kNN coverage ceiling — the rule returns
+      Framed as a capacity ladder (grow the readout while the metric keeps improving, then
+      compare the plateau against an independent cosine-kNN coverage ceiling), the rule returns
       the same verdict as the rest of the project. Where the ceiling exists, catalase and
       sporulation plateau at or above it (coverage-limited: a larger model is not indicated),
       while motility has not yet plateaued (keep scaling the simple family before reaching for
@@ -198,7 +198,7 @@
     </p>
 
     <figure class="figure">
-      <img src="figures/frozen-baselines-fig4-capacity-ladder.png" alt="Line chart of the primary metric at each capacity rung — PCA rank 6, 10, 25, 50, 100, full logistic, then random forest, then histogram gradient boosting — for all 12 targets. Catalase, motility and sporulation are highlighted; dashed lines mark each trait's cosine-kNN coverage ceiling, which catalase and sporulation reach while motility keeps climbing." />
+      <img src="figures/frozen-baselines-fig4-capacity-ladder.png" alt="Line chart of the primary metric at each capacity rung (PCA rank 6, 10, 25, 50, 100, full logistic, then random forest, then histogram gradient boosting) for all 12 targets. Catalase, motility and sporulation are highlighted; dashed lines mark each trait's cosine-kNN coverage ceiling, which catalase and sporulation reach while motility keeps climbing." />
       <figcaption><b>Capacity ladder.</b> Primary metric at each rung (PCA rank 6&rarr;10&rarr;25&rarr;50&rarr;100&rarr;full logistic, then random forest, then histogram gradient boosting) across all 12 targets. Dashed lines mark the cosine-kNN coverage ceiling; catalase and sporulation plateau at or above it, while motility has not yet plateaued.</figcaption>
     </figure>
 
@@ -207,7 +207,7 @@
       A cheaper lever than more model capacity is adding side-data the encoder never saw: coarse
       taxonomy, sequence-independent isolation metadata, and a second, independently trained
       embedding (eggNOG functional annotations). Concatenated onto the frozen ESM-2 embedding under
-      the same family-held-out protocol, all three give a positive mean lift — but a small one: the
+      the same family-held-out protocol, all three give a positive mean lift, but a small one: the
       eggNOG embedding adds +0.014, taxonomy and isolation only +0.006 each. And the taxonomy number
       needs a caveat: its lift lands mostly on clade-confounded targets and turns negative on the
       pathogenicity traits, so it is partly a proxy for the very clade structure the split holds out,
@@ -233,8 +233,9 @@
     <p>
       The practical recipe: freeze the encoder, sweep PCA rank and simple regularized readouts,
       identify which traits plateau, and only then escalate to attention pooling, LoRA, or a
-      small transformer head for the traits where simple models fail. It tests the "heavy
-      upstream embedding, simple downstream model" pattern directly — no straw-man baselines.
+      small transformer head for the traits where simple models fail. Because the simple readouts
+      here are competitive models rather than straw men, this is a fair test of whether a heavier
+      encoder is needed at all, and for most traits under family shift it is not.
     </p>
 
     <p class="keywords">
