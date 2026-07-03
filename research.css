@@ -144,11 +144,12 @@ body {
 .paper-date {
   flex: 0 0 150px;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--c-deep);
-  opacity: 0.6;
+  color: #7d5a3c;
+  opacity: 1;
   padding-top: 3px;
 }
 /* title: 9dlabs layout, but Cormorant serif (site title font) */
