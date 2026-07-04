@@ -178,13 +178,26 @@
   }
   .hero-sub .word.line2 { color: #4a5a6c; }
 
+  .hero-mission {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.42;
+    color: var(--c-deep);
+    max-width: 560px;
+    margin: 22px auto 0;
+    text-wrap: balance;
+    opacity: 0;
+    animation: fadeUp 1.4s 2.0s forwards;
+  }
+  .hero-mission em { font-style: italic; }
+
   .stats {
     display: flex;
     gap: clamp(40px, 7vw, 96px);
     justify-content: center;
-    margin-top: 8px;
+    margin-top: 24px;
     opacity: 0;
-    animation: fadeUp 1.4s 2.0s forwards;
+    animation: fadeUp 1.4s 2.4s forwards;
   }
   .stat {
     text-align: center;
@@ -298,7 +311,6 @@
 
 <div class="overlay">
   <div class="tagline">
-    <div class="eyebrow">An invisible world</div>
     <h1 class="hero-title">
       <span class="word" style="animation-delay:.5s">Discovering</span>
       <span class="word" style="animation-delay:.66s">Microbial</span>
@@ -317,6 +329,9 @@
       <span class="word line2" style="animation-delay:1.71s">the</span>
       <span class="word line2" style="animation-delay:1.79s">other</span>
       <span class="word line2 num" style="animation-delay:1.87s">99%.</span>
+    </p>
+    <p class="hero-mission">
+      We are building a <em>world model for biology</em>, starting with microbial dark matter.
     </p>
     <div class="stats">
       <div class="stat known">
