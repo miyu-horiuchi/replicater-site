@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/research.css" />
+<style>
+  /* the last three charts read better at a smaller, centered size */
+  .figure--narrow img { max-width: 560px; margin-left: auto; margin-right: auto; }
+</style>
 </head>
 <body>
 <div class="bar">
@@ -162,7 +166,7 @@
       genome-context representation recovers it, provided it does not discard gene content by pooling.
     </p>
 
-    <figure class="figure">
+    <figure class="figure figure--narrow">
       <img src="figures/machinery-fig3-bacformer-coordinate.png" alt="Bar chart of coverage-AUROC by coordinate and trait class on the Bacformer subset, with solid bars for machinery traits and hatched bars for compositional. For machinery traits, Bacformer (blue) and KEGG machinery (orange) predict generalization while mean-pooled ESM-2 (green) and taxonomy (purple) do not." />
       <figcaption><b>Coverage-AUROC on the Bacformer subset.</b> For machinery traits, the genome-context foundation model (Bacformer) and explicit KEGG machinery predict generalization; mean-pooled ESM-2 and taxonomy do not. The failure localizes to the representation, not to foundation models as such.</figcaption>
     </figure>
@@ -183,7 +187,7 @@
       representation play different roles, and only a learned genome-context model fills both.
     </p>
 
-    <figure class="figure">
+    <figure class="figure figure--narrow">
       <img src="figures/machinery-fig4-representation.png" alt="Bar chart of AUROC gain over mean-pooled ESM-2 as a readout under held-out-family evaluation. Only Bacformer beats ESM-2 specifically on machinery traits (orange); eggNOG helps both trait classes; KEGG completeness is negative as a readout." />
       <figcaption><b>AUROC gain over mean-pooled ESM-2 as a readout.</b> Only Bacformer, a genome-context foundation model, beats ESM-2 specifically on machinery traits (orange). eggNOG helps both classes; KEGG completeness is a coverage coordinate, not a readout.</figcaption>
     </figure>
@@ -202,7 +206,7 @@
       predictions on genomes that are both confidently scored and machinery-covered.
     </p>
 
-    <figure class="figure">
+    <figure class="figure figure--narrow">
       <img src="figures/machinery-fig5-selective-prediction.png" alt="Risk-coverage curve: as the retained fraction of genomes shrinks (abstaining on the least-confident), balanced accuracy on machinery traits rises fastest when genomes are ranked by machinery coverage or by the combined signal, while the model's own probability margin (blue) stays nearly flat." />
       <figcaption><b>Selective prediction on machinery traits</b> (mean over pathogenicity and biosafety). As the retained fraction shrinks (abstain on the least-confident), balanced accuracy rises fastest when genomes are ranked by machinery coverage or the combined signal; the model's own probability margin is nearly flat, i.e. poorly calibrated out of distribution.</figcaption>
     </figure>
