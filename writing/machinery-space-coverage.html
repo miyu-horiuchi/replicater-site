@@ -40,6 +40,7 @@
       <li><a href="#penalty">A ceiling, and a taxonomy penalty</a></li>
       <li><a href="#bacformer">A foundation model recovers the coordinate</a></li>
       <li><a href="#representation">Representation, not sampling</a></li>
+      <li><a href="#selective">A practical payoff: abstain when uncertain</a></li>
       <li><a href="#takeaway">What it means</a></li>
       <li><a href="#paper">Read the full paper</a></li>
     </ol>
@@ -185,6 +186,25 @@
     <figure class="figure">
       <img src="figures/machinery-fig4-representation.png" alt="Bar chart of AUROC gain over mean-pooled ESM-2 as a readout under held-out-family evaluation. Only Bacformer beats ESM-2 specifically on machinery traits (orange); eggNOG helps both trait classes; KEGG completeness is negative as a readout." />
       <figcaption><b>AUROC gain over mean-pooled ESM-2 as a readout.</b> Only Bacformer, a genome-context foundation model, beats ESM-2 specifically on machinery traits (orange). eggNOG helps both classes; KEGG completeness is a coverage coordinate, not a readout.</figcaption>
+    </figure>
+
+    <h2 id="selective">A practical payoff: abstain when uncertain</h2>
+    <p>
+      If machinery-space coverage predicts whether a held-out genome is classified correctly, it
+      should work as a <em>selective-prediction</em> signal: a deployed pipeline could abstain on
+      low-coverage genomes and trust the rest. The sharp test is whether it beats the model's own
+      predicted-probability margin, the standard confidence signal, which is poorly calibrated out
+      of distribution. On machinery traits, keeping the confident half by machinery-coverage raises
+      balanced accuracy far more than ranking by the model's own margin (+0.054 vs +0.014); the two
+      signals are complementary, and combining them (rank-averaging) is best of all (+0.079),
+      winning on every machinery trait. On compositional traits, where the model is well-calibrated,
+      its own confidence suffices. The practical rule for mechanism-driven function prediction: trust
+      predictions on genomes that are both confidently scored and machinery-covered.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/machinery-fig5-selective-prediction.png" alt="Risk-coverage curve: as the retained fraction of genomes shrinks (abstaining on the least-confident), balanced accuracy on machinery traits rises fastest when genomes are ranked by machinery coverage or by the combined signal, while the model's own probability margin (blue) stays nearly flat." />
+      <figcaption><b>Selective prediction on machinery traits</b> (mean over pathogenicity and biosafety). As the retained fraction shrinks (abstain on the least-confident), balanced accuracy rises fastest when genomes are ranked by machinery coverage or the combined signal; the model's own probability margin is nearly flat, i.e. poorly calibrated out of distribution.</figcaption>
     </figure>
 
     <h2 id="takeaway">What it means</h2>
