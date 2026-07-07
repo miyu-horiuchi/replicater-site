@@ -43,7 +43,7 @@
       <li><a href="#proxy">Not taxonomy in disguise</a></li>
       <li><a href="#penalty">A ceiling, and a taxonomy penalty</a></li>
       <li><a href="#bacformer">A foundation model recovers the coordinate</a></li>
-      <li><a href="#representation">Representation, not sampling</a></li>
+      <li><a href="#representation">Is it also a better readout?</a></li>
       <li><a href="#selective">A practical payoff: abstain when uncertain</a></li>
       <li><a href="#takeaway">What it means</a></li>
       <li><a href="#paper">Read the full paper</a></li>
@@ -160,8 +160,9 @@
       <em>mean-pooling a protein language model</em>, an operation that averages away gene content,
       the very thing machinery depends on? We repeat the coverage analysis with a fourth coordinate:
       Bacformer, a foundation model that represents proteins in genomic context (gene order and
-      content). For machinery traits, Bacformer-space proximity predicts generalization at 0.662, as
-      well as explicit KEGG pathways (0.605) and far above mean-pooled ESM-2 (0.489, below chance).
+      content). For machinery traits, Bacformer-space proximity predicts generalization at 0.683, as
+      well as or better than explicit KEGG pathways (0.633), and far above the near-chance
+      mean-pooled ESM-2 (0.523) and taxonomy (0.563).
       The machinery coordinate is thus not specific to a hand-built pathway ontology: a learned
       genome-context representation recovers it, provided it does not discard gene content by pooling.
     </p>
@@ -171,25 +172,25 @@
       <figcaption><b>Coverage-AUROC on the Bacformer subset.</b> For machinery traits, the genome-context foundation model (Bacformer) and explicit KEGG machinery predict generalization; mean-pooled ESM-2 and taxonomy do not. The failure localizes to the representation, not to foundation models as such.</figcaption>
     </figure>
 
-    <h2 id="representation">Representation, not sampling</h2>
+    <h2 id="representation">Is it also a better readout? A weak, honest trend</h2>
     <p>
-      The coverage analysis is diagnostic; can it be turned into a better model? The failed operator
-      result says re-sampling training data is not the lever; the Bacformer coverage result says the
-      <em>representation</em> is. Testing this directly gives a three-part answer. (i) Bacformer beats
-      mean-pooled ESM-2 <em>specifically</em> on machinery traits: +0.079 AUROC on machinery versus
-      +0.025 on compositional (interaction +0.054), with significant per-trait gains on pathogenicity
-      (human +0.108, animal +0.092). (ii) Raw orthogroup content (eggNOG) improves the readout broadly
-      (+0.03 to +0.04 on both classes) but shows no interaction: gene content helps everywhere, not
-      machinery-specifically. (iii) KEGG module completeness is a good coverage coordinate but a poor
-      readout (0.053 worse on machinery traits): metabolic-module similarity indicates whether a
-      genome's function is <em>covered</em> by training, yet is too coarse to <em>predict</em>
-      pathogenicity, which is not itself a metabolic module. The coverage coordinate and the readout
-      representation play different roles, and only a learned genome-context model fills both.
+      The coverage analysis is diagnostic; can the coordinate also improve the model directly, as
+      readout features? Testing this gives a deliberately unflattering three-part answer. (i) Bacformer
+      only <em>trends</em> toward helping machinery traits more than compositional (+0.033 vs +0.012;
+      interaction +0.021), consistent with the coverage result, but at 9,062 genomes no per-trait gain
+      is individually significant (pathogenicity human +0.036, animal +0.044, biosafety +0.020; all 95%
+      intervals include zero). An earlier estimate on a smaller subset looked significant (+0.10); it
+      did not survive more data, and we report the weaker, larger-sample result. (ii) Raw orthogroup
+      content (eggNOG) improves the readout broadly (+0.03 to +0.04 on both classes) with no
+      interaction. (iii) KEGG module completeness is a poor readout (0.053 worse on machinery traits)
+      despite being a good coverage coordinate. The through-line is a dissociation: the machinery
+      coordinate is a robust coverage and confidence signal but only a weak readout representation.
+      Measuring coverage in machinery space is the reliable lever; swapping input features is not.
     </p>
 
     <figure class="figure figure--narrow">
-      <img src="figures/machinery-fig4-representation.png" alt="Bar chart of AUROC gain over mean-pooled ESM-2 as a readout under held-out-family evaluation. Only Bacformer beats ESM-2 specifically on machinery traits (orange); eggNOG helps both trait classes; KEGG completeness is negative as a readout." />
-      <figcaption><b>AUROC gain over mean-pooled ESM-2 as a readout.</b> Only Bacformer, a genome-context foundation model, beats ESM-2 specifically on machinery traits (orange). eggNOG helps both classes; KEGG completeness is a coverage coordinate, not a readout.</figcaption>
+      <img src="figures/machinery-fig4-representation.png" alt="Bar chart of AUROC gain over mean-pooled ESM-2 as a readout under held-out-family evaluation. Bacformer only weakly and non-significantly trends toward helping machinery traits more (orange); eggNOG helps both trait classes; KEGG completeness is negative as a readout." />
+      <figcaption><b>Representation as readout: AUROC gain over mean-pooled ESM-2.</b> Bacformer only weakly and non-significantly trends toward helping machinery traits more (orange); eggNOG helps both classes; KEGG completeness is a coverage coordinate, not a readout.</figcaption>
     </figure>
 
     <h2 id="selective">A practical payoff: abstain when uncertain</h2>
