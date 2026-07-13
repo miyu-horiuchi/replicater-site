@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="canonical" href="https://replicater.xyz/writing/latent-prediction-beats-scale" />
+<script src="/clean-urls.js?v=4"></script>
+<title>Latent Prediction Beats Scale | Microbe 1%</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/research.css" />
+</head>
+<body>
+<div class="bar">
+  <a class="wordmark" href="/">Microbe 1%</a>
+  <nav class="bar-nav">
+    <a class="nav-link" href="/research/">Research</a>
+    <a class="nav-link" href="/manifesto/">Manifesto</a>
+    <a class="nav-link" href="/">Home</a>
+  </nav>
+</div>
+
+<article class="col">
+  <header class="article-head">
+    <h1>Latent Prediction Beats Scale: A World Model for Held-Out Microbial Traits</h1>
+    <p class="subtitle">A Joint-Embedding Predictive Architecture trained from scratch on 5,675 bacterial genomes&mdash;no ESM, no Evo, no pretrained foundation model&mdash;matches ESM-2 on held-out-family machinery-trait transfer. The lever is the objective and the diversity of the data, not scale: adding more genomes makes it worse.</p>
+    <p class="byline">Miyu Horiuchi<span class="sep">&middot;</span>13 July 2026</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#question">A sharper question than &ldquo;does the FM win&rdquo;</a></li>
+      <li><a href="#coordinate">The coordinate is mechanistic, not phylogenetic</a></li>
+      <li><a href="#model">A from-scratch genome-JEPA</a></li>
+      <li><a href="#parity">Matching ESM-2 at 40,000&times; less data</a></li>
+      <li><a href="#ablation">The objective is the driver</a></li>
+      <li><a href="#data">The right data, not more data</a></li>
+      <li><a href="#takeaway">What it means</a></li>
+      <li><a href="#paper">Read the full paper</a></li>
+    </ol>
+  </nav>
+
+  <div class="prose">
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      Foundation models (FMs) for biological sequence are increasingly proposed for microbial
+      phenotype prediction, yet recent benchmarks find they rarely beat simple baselines, and it
+      is unclear what they add. Rather than ask &ldquo;does the FM win,&rdquo; we ask what
+      actually governs generalization, and whether a small group can build a competitive model by
+      getting the <em>objective</em> and the <em>data diversity</em> right rather than by scaling.
+      We report three results. <b>(1) The objective works.</b> A Joint-Embedding Predictive
+      Architecture (JEPA) trained from scratch on the amino-acid sequences of just 5,675 bacterial
+      genomes&mdash;no ESM, no Evo, no pretrained foundation model&mdash;matches ESM-2, pretrained
+      on ~250M proteins, on held-out-family machinery-trait transfer (AUROC 0.748 vs 0.747).
+      <b>(2) The right coordinate is mechanistic, not phylogenetic.</b> In a resampled matched-split
+      analysis, proximity in machinery space predicts held-out generalization while phylogenetic
+      distance carries no independent signal, and the effect grows with extrapolation distance.
+      <b>(3) More data is not the lever; the right data is.</b> Scaling the JEPA from 5,675 to
+      14,949 genomes under a matched protocol <em>decreases</em> machinery-trait AUROC
+      (0.748&rarr;0.654), because the added genomes contribute phylogenetic, not mechanistic,
+      diversity.
+    </p>
+
+    <h2 id="question">A sharper question than &ldquo;does the FM win&rdquo;</h2>
+    <p>
+      Neural scaling laws promise loss falling as a power law in data and model size, and
+      biological foundation models such as ESM-2 and Evo&nbsp;2 were expected to inherit it. On
+      function and phenotype prediction they largely do not: added pretraining data gives
+      diminishing returns, simple baselines match far larger models, and single-cell FMs neither
+      beat simple baselines nor improve when their pretraining data is made more diverse. Prior
+      work in this program named this a <em>compositional ceiling</em> and argued it is a statement
+      about which axis one samples.
+    </p>
+    <p>
+      We ask whether that diagnosis points to a constructive path: a model whose inductive bias and
+      training data match it. We adopt the JEPA framing&mdash;predict masked content in a learned
+      <em>latent</em> space rather than reconstructing tokens, so the target encoder discards
+      unpredictable low-level detail and concentrates capacity on functional structure&mdash;and
+      build such a model for bacterial genomes from scratch, evaluated under held-out-taxon
+      phenotype transfer.
+    </p>
+
+    <h2 id="coordinate">The coordinate is mechanistic, not phylogenetic</h2>
+    <p>
+      Before building a model, we ask which coordinate predicts <em>where</em> a trait model
+      generalizes. For each held-out-family test genome we compute its proximity to the training
+      set in three spaces&mdash;ESM-2 embedding, a learned encoder, and KEGG machinery space&mdash;and
+      measure how well each predicts per-genome correctness. Machinery space is the coverage
+      coordinate: for machinery traits it predicts held-out correctness at AUROC 0.65, versus 0.53
+      for embedding or learned-encoder proximity.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/lpbs-fig2-coverage.png" alt="Grouped bar chart of coverage-AUROC by coordinate and trait class. For machinery traits, the machinery-space bar reaches 0.65 while ESM-2 space and learned-encoder space stay near 0.53, close to the chance line." />
+      <figcaption><b>Machinery space is the coverage coordinate.</b> For machinery traits, proximity in machinery space predicts where the model generalizes (AUROC 0.65); ESM-2 and learned-encoder proximity are near chance (0.53).</figcaption>
+    </figure>
+
+    <p>
+      We de-confound machinery from phylogeny by construction: we build matched test groups with an
+      identical phylogenetic-distance distribution but differing machinery distance (and the
+      symmetric control), and contrast accuracy across species/genus/family held-out splits.
+      Machinery-space distance drives generalization; phylogenetic distance carries no independent
+      signal at any depth, and the machinery effect grows monotonically with extrapolation distance.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/lpbs-fig3-matched-split.png" alt="Line chart of matched-split accuracy delta versus held-out level (species, genus, family). The machinery effect with phylogeny matched rises from +0.015 to +0.086 to +0.149, while the phylogeny effect with machinery matched stays near or below zero." />
+      <figcaption><b>Mechanistic diversity governs generalization; phylogeny does not.</b> With phylogeny held fixed, the machinery effect grows with extrapolation distance (+0.015&rarr;+0.086&rarr;+0.149); with machinery held fixed, the phylogeny effect stays near zero.</figcaption>
+    </figure>
+
+    <h2 id="model">A from-scratch genome-JEPA</h2>
+    <p>
+      A learnable residue <em>stem</em> (amino-acid embedding plus 1-D convolutions) maps each
+      protein to a gene embedding, replacing ESM entirely. A transformer <em>context encoder</em>
+      over the gene sequence, with a masked contiguous gene span, predicts the masked genes&rsquo;
+      latents produced by an EMA <em>target encoder</em> (stop-gradient, LayerNorm). There is no
+      tokenizer and no pretrained input; the pooled context is frozen and read out with a logistic
+      trait probe.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/lpbs-fig1-architecture.png" alt="Architecture schematic. Protein sequences feed a learnable residue stem, then a context encoder over gene patches with a masked span, then a predictor; an EMA target encoder branch produces the prediction targets; a smooth-L1 latent loss compares them. The pooled context is read out with a logistic trait probe." />
+      <figcaption><b>From-scratch genome-JEPA.</b> A learnable residue stem feeds a context encoder whose masked-gene latents are predicted against an EMA target (smooth-L1); the pooled context is read out for trait transfer. No ESM, no Evo, no pretraining.</figcaption>
+    </figure>
+
+    <h2 id="parity">Matching ESM-2 at 40,000&times; less data</h2>
+    <p>
+      Trained on 5,675 genomes (3,005 held-out-family train) for 40 epochs on a single A100, the
+      frozen genome embedding matches ESM-2 on machinery traits: pure JEPA 0.748 versus ESM-2 0.747
+      AUROC. That is parity from a model trained on roughly 40,000&times; less data, with no
+      pretrained foundation model in the loop. The interesting claim is not that latent prediction
+      is more accurate&mdash;on this evidence it is a tie&mdash;but that the objective alone,
+      learned from scratch on a few thousand genomes, reaches the accuracy of a protein language
+      model pretrained on hundreds of millions of sequences.
+    </p>
+
+    <h2 id="ablation">The objective is the driver</h2>
+    <p>
+      Holding data and compute fixed and varying one component at a time, the latent-predictive
+      objective is what carries the signal. A genome-level machinery-prediction head&mdash;a
+      plausible-sounding form of supervision&mdash;is <em>actively harmful</em>, dropping machinery
+      AUROC by 0.13; removing the context transformer or the JEPA objective also hurts. Less is
+      more: the self-supervised objective alone matches ESM-2, and adding supervision degrades the
+      pooled representation.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/lpbs-fig4-ablation.png" alt="Bar chart of held-out-family machinery AUROC by configuration: pure JEPA 0.752 (highest, above the dashed ESM-2 reference line at 0.747), mean-pool stem 0.716, machinery-head only 0.641, JEPA plus machinery head 0.619." />
+      <figcaption><b>The JEPA objective is the driver; the machinery head hurts.</b> Matched data and compute, one component changed at a time. Pure JEPA matches ESM-2 (dashed line); a genome-level machinery head is actively harmful.</figcaption>
+    </figure>
+
+    <h2 id="data">The right data, not more data</h2>
+    <p>
+      If mechanistic diversity is the coordinate, then <em>which</em> machinery you ground in, and
+      <em>what kind</em> of diversity you add, should matter more than volume. Grounding a
+      representation to predict functional-ortholog occupancy (eggNOG&mdash;secretion, defense,
+      virulence orthologs) lifts machinery-trait AUROC from 0.807 to 0.846, whereas grounding in
+      core-metabolic modules (KEGG) leaves it flat. The hard traits live in specialized machinery,
+      not core metabolism.
+    </p>
+
+    <figure class="figure figure--narrow">
+      <img src="figures/lpbs-fig5-which-machinery.png" alt="Grouped bar chart. For machinery traits, grounding in eggNOG functional orthologs reaches 0.846 while raw ESM-2 (0.807) and KEGG-module grounding (0.811) are flat; compositional traits move less." />
+      <figcaption><b>Which machinery matters.</b> Machinery traits move only with functional-ortholog grounding (eggNOG), not core-metabolic KEGG.</figcaption>
+    </figure>
+
+    <p>
+      We then scaled the from-scratch JEPA from 5,675 to 14,949 genomes under a strictly matched
+      protocol&mdash;same GPU, batch size, epochs, and model&mdash;varying <em>only</em> the data.
+      More data <em>decreased</em> performance (0.748&rarr;0.654). This is not an artifact: the
+      smaller run reproduced the parity result exactly, and only the data differed. The added
+      ~9,000 genomes contributed phylogenetic breadth, not mechanistic diversity, diluting a
+      fixed-capacity representation. One cannot raise the machinery ceiling by adding
+      phylogenetically-diverse genomes&mdash;a third, independent confirmation that mechanistic, not
+      phylogenetic, diversity is the lever.
+    </p>
+
+    <figure class="figure figure--narrow">
+      <img src="figures/lpbs-fig6-scaling.png" alt="Grouped bar chart comparing 5,675 genomes and 14,949 genomes. On machinery traits the score falls from 0.748 to 0.654; on compositional traits from 0.751 to 0.720. Arrows point downward, indicating more data hurts." />
+      <figcaption><b>More data hurts.</b> Under a matched protocol, scaling to 14,949 genomes decreases machinery-trait AUROC: the added diversity is phylogenetic, not mechanistic.</figcaption>
+    </figure>
+
+    <h2 id="takeaway">What it means</h2>
+    <p>
+      Three independent lines&mdash;a coverage diagnostic, a from-scratch model, and a scaling
+      test&mdash;point to one conclusion: a latent-predictive objective is sufficient to reach
+      foundation-model parity at tiny scale, and the binding constraint is the mechanistic diversity
+      of the data, which neither scale nor naive supervision supplies. This reframes the &ldquo;FMs
+      don&rsquo;t beat baselines&rdquo; critique constructively: the failure is one of
+      <em>sampling</em>, and the remedy is mechanistic-diversity-aware curation with a
+      self-supervised objective, not larger models. The natural next step is a mechanistic-diversity
+      sampler that de-duplicates genomes in machinery space rather than sequence space&mdash;which
+      our results predict is the way scale finally helps.
+    </p>
+    <p class="tags">
+      latent prediction &middot; joint-embedding predictive architecture &middot; microbial world models &middot; held-out-family generalization &middot; mechanistic diversity
+    </p>
+  </div>
+
+  <div class="pdf-cta" id="paper">
+    <a href="/latent-prediction-beats-scale.pdf" target="_blank" rel="noopener">Read the full paper (PDF) &rarr;</a>
+  </div>
+
+  <section class="citation">
+    <h2>Cite</h2>
+    <pre>@article{horiuchi2026latent,
+  title   = {Latent Prediction Beats Scale: A World Model for Held-Out Microbial Traits},
+  author  = {Horiuchi, Miyu},
+  year    = {2026},
+  note    = {replicater.xyz/writing/latent-prediction-beats-scale}
+}</pre>
+  </section>
+</article>
+
+<footer>
+  <span><a href="/research/">&larr; All research</a></span>
+  <span><a href="/">replicater.xyz</a></span>
+</footer>
+</body>
+</html>
