@@ -25,7 +25,7 @@
 <article class="col">
   <header class="article-head">
     <h1>Latent Prediction Beats Scale: A World Model for Held-Out Microbial Traits</h1>
-    <p class="subtitle">A Joint-Embedding Predictive Architecture trained from scratch on 5,675 bacterial genomes&mdash;no ESM, no Evo, no pretrained foundation model&mdash;matches ESM-2 on held-out-family machinery-trait transfer. The lever is the objective and the diversity of the data, not scale: adding more genomes makes it worse.</p>
+    <p class="subtitle">A Joint-Embedding Predictive Architecture trained from scratch on 5,675 bacterial genomes (no ESM, no Evo, no pretrained foundation model) matches ESM-2 on held-out-family machinery-trait transfer. The lever is the objective and the diversity of the data, not scale: adding more genomes makes it worse.</p>
     <p class="byline">Miyu Horiuchi<span class="sep">&middot;</span>13 July 2026</p>
   </header>
 
@@ -54,7 +54,7 @@
       getting the <em>objective</em> and the <em>data diversity</em> right rather than by scaling.
       We report three results. <b>(1) The objective works.</b> A Joint-Embedding Predictive
       Architecture (JEPA) trained from scratch on the amino-acid sequences of just 5,675 bacterial
-      genomes&mdash;no ESM, no Evo, no pretrained foundation model&mdash;matches ESM-2, pretrained
+      genomes (no ESM, no Evo, no pretrained foundation model) matches ESM-2, pretrained
       on ~250M proteins, on held-out-family machinery-trait transfer (AUROC 0.748 vs 0.747).
       <b>(2) The right coordinate is mechanistic, not phylogenetic.</b> In a resampled matched-split
       analysis, proximity in machinery space predicts held-out generalization while phylogenetic
@@ -77,9 +77,9 @@
     </p>
     <p>
       We ask whether that diagnosis points to a constructive path: a model whose inductive bias and
-      training data match it. We adopt the JEPA framing&mdash;predict masked content in a learned
+      training data match it. We adopt the JEPA framing (predict masked content in a learned
       <em>latent</em> space rather than reconstructing tokens, so the target encoder discards
-      unpredictable low-level detail and concentrates capacity on functional structure&mdash;and
+      unpredictable low-level detail and concentrates capacity on functional structure) and
       build such a model for bacterial genomes from scratch, evaluated under held-out-taxon
       phenotype transfer.
     </p>
@@ -88,7 +88,7 @@
     <p>
       Before building a model, we ask which coordinate predicts <em>where</em> a trait model
       generalizes. For each held-out-family test genome we compute its proximity to the training
-      set in three spaces&mdash;ESM-2 embedding, a learned encoder, and KEGG machinery space&mdash;and
+      set in three spaces (ESM-2 embedding, a learned encoder, and KEGG machinery space) and
       measure how well each predicts per-genome correctness. Machinery space is the coverage
       coordinate: for machinery traits it predicts held-out correctness at AUROC 0.65, versus 0.53
       for embedding or learned-encoder proximity.
@@ -133,7 +133,7 @@
       frozen genome embedding matches ESM-2 on machinery traits: pure JEPA 0.748 versus ESM-2 0.747
       AUROC. That is parity from a model trained on roughly 40,000&times; less data, with no
       pretrained foundation model in the loop. The interesting claim is not that latent prediction
-      is more accurate&mdash;on this evidence it is a tie&mdash;but that the objective alone,
+      is more accurate (on this evidence it is a tie) but that the objective alone,
       learned from scratch on a few thousand genomes, reaches the accuracy of a protein language
       model pretrained on hundreds of millions of sequences.
     </p>
@@ -141,8 +141,8 @@
     <h2 id="ablation">The objective is the driver</h2>
     <p>
       Holding data and compute fixed and varying one component at a time, the latent-predictive
-      objective is what carries the signal. A genome-level machinery-prediction head&mdash;a
-      plausible-sounding form of supervision&mdash;is <em>actively harmful</em>, dropping machinery
+      objective is what carries the signal. A genome-level machinery-prediction head (a
+      plausible-sounding form of supervision) is <em>actively harmful</em>, dropping machinery
       AUROC by 0.13; removing the context transformer or the JEPA objective also hurts. Less is
       more: the self-supervised objective alone matches ESM-2, and adding supervision degrades the
       pooled representation.
@@ -157,7 +157,7 @@
     <p>
       If mechanistic diversity is the coordinate, then <em>which</em> machinery you ground in, and
       <em>what kind</em> of diversity you add, should matter more than volume. Grounding a
-      representation to predict functional-ortholog occupancy (eggNOG&mdash;secretion, defense,
+      representation to predict functional-ortholog occupancy (eggNOG: secretion, defense,
       virulence orthologs) lifts machinery-trait AUROC from 0.807 to 0.846, whereas grounding in
       core-metabolic modules (KEGG) leaves it flat. The hard traits live in specialized machinery,
       not core metabolism.
@@ -170,12 +170,12 @@
 
     <p>
       We then scaled the from-scratch JEPA from 5,675 to 14,949 genomes under a strictly matched
-      protocol&mdash;same GPU, batch size, epochs, and model&mdash;varying <em>only</em> the data.
+      protocol (same GPU, batch size, epochs, and model) varying <em>only</em> the data.
       More data <em>decreased</em> performance (0.748&rarr;0.654). This is not an artifact: the
       smaller run reproduced the parity result exactly, and only the data differed. The added
       ~9,000 genomes contributed phylogenetic breadth, not mechanistic diversity, diluting a
       fixed-capacity representation. One cannot raise the machinery ceiling by adding
-      phylogenetically-diverse genomes&mdash;a third, independent confirmation that mechanistic, not
+      phylogenetically-diverse genomes, a third, independent confirmation that mechanistic, not
       phylogenetic, diversity is the lever.
     </p>
 
@@ -186,14 +186,14 @@
 
     <h2 id="takeaway">What it means</h2>
     <p>
-      Three independent lines&mdash;a coverage diagnostic, a from-scratch model, and a scaling
-      test&mdash;point to one conclusion: a latent-predictive objective is sufficient to reach
+      Three independent lines (a coverage diagnostic, a from-scratch model, and a scaling
+      test) point to one conclusion: a latent-predictive objective is sufficient to reach
       foundation-model parity at tiny scale, and the binding constraint is the mechanistic diversity
       of the data, which neither scale nor naive supervision supplies. This reframes the &ldquo;FMs
       don&rsquo;t beat baselines&rdquo; critique constructively: the failure is one of
       <em>sampling</em>, and the remedy is mechanistic-diversity-aware curation with a
       self-supervised objective, not larger models. The natural next step is a mechanistic-diversity
-      sampler that de-duplicates genomes in machinery space rather than sequence space&mdash;which
+      sampler that de-duplicates genomes in machinery space rather than sequence space, which
       our results predict is the way scale finally helps.
     </p>
     <p class="tags">
