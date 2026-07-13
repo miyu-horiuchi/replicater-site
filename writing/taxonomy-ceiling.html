@@ -17,6 +17,43 @@
     background: var(--c-cream);
     border-color: rgba(58, 74, 92, 0.12);
   }
+  /* lightweight result tables tuned to the cream/ink theme */
+  .data-table {
+    margin: 4vh 0;
+    overflow-x: auto;
+  }
+  .data-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Inter", sans-serif;
+    font-size: 0.86rem;
+    color: var(--c-ink);
+  }
+  .data-table caption {
+    caption-side: top;
+    text-align: left;
+    font-family: "Inter", sans-serif;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(58, 74, 92, 0.14);
+    text-align: right;
+  }
+  .data-table th:first-child,
+  .data-table td:first-child {
+    text-align: left;
+  }
+  .data-table thead th {
+    border-bottom: 1.5px solid rgba(58, 74, 92, 0.35);
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .data-table .num { font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -44,7 +81,9 @@
       <li><a href="#design">A deliberately narrow experiment</a></li>
       <li><a href="#contributions">Contributions</a></li>
       <li><a href="#results">The gain is an accuracy illusion</a></li>
+      <li><a href="#geometry">Why family prediction collapses</a></li>
       <li><a href="#takeaway">What it means</a></li>
+      <li><a href="#limitations">Limitations</a></li>
       <li><a href="#paper">Read the full paper</a></li>
     </ol>
   </nav>
@@ -70,7 +109,12 @@
       <em>exactly zero</em>. With those two heads removed, encoder adaptation is net negative
       (−0.011), and on F1 it is neutral-to-harmful across the imbalanced traits. The
       conclusion mirrors and extends our earlier pooling study: under cross-family shift,
-      neither the pooling operator nor encoder adaptation is the binding constraint. We
+      neither the pooling operator nor encoder adaptation is the binding constraint. To ask
+      <em>why</em> family prediction collapses, we add a geometry-only diagnostic: cosine
+      <em>k</em>-nearest-neighbor label transfer on the frozen embeddings already reaches
+      AUROC 0.76-0.92, and transfer quality rises monotonically with a held-out family's
+      cosine proximity to labelled training families. This localizes the bottleneck to
+      cross-clade coverage in the frozen space rather than a missing encoder update. We
       document the artifact as a reusable warning, that accuracy is the wrong primary metric
       for imbalanced genomic traits, and offer this as a focused, single-seed pilot rather
       than a finished benchmark.
@@ -183,6 +227,76 @@
       <figcaption><b>Per-head F1 change under encoder adaptation (LoRA − frozen).</b> The large movements are losses, including both pathogenicity heads that collapse to F1 = 0; gains are few and small. On positive-class performance, adaptation is neutral-to-harmful.</figcaption>
     </figure>
 
+    <p>
+      The artifact has a clear signature across heads: the traits where adaptation most
+      <em>raises</em> accuracy are exactly the traits where it most <em>lowers</em> F1. The
+      two pathogenicity heads sit alone in the bottom-right "accuracy-up, F1-down" quadrant,
+      precisely the corner an accuracy-only benchmark rewards and an F1-aware one penalizes.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/taxonomy-ceiling-fig5-acc-vs-f1.png" alt="Scatter of classification heads by change in accuracy (x) versus change in F1 (y) under encoder adaptation. Most heads cluster near the origin; the two pathogenicity heads sit in a shaded bottom-right quadrant where accuracy rises while F1 collapses." />
+      <figcaption><b>Where accuracy rises, F1 falls.</b> Each point is a classification head, plotted by its change in accuracy (x) against its change in F1 (y) under encoder adaptation. The two pathogenicity heads occupy the shaded bottom-right quadrant, where accuracy increases while F1 collapses, isolating the metric artifact that drives the aggregate number.</figcaption>
+    </figure>
+
+    <h2 id="geometry">Why family prediction collapses: a cosine-geometry diagnostic</h2>
+    <p>
+      Neither pooling nor encoder adaptation moves family-level generalization, which raises a
+      more basic question: <em>why</em> does prediction on held-out families collapse in the
+      first place? One hypothesis is representational, that the frozen ESM-2 genome space
+      simply does not place held-out families near the labelled training families it would need
+      as evidence. To test this directly, and independently of any trained head, we run a
+      geometry-only diagnostic on the same family-held-out split. For each trait we standardize
+      the frozen embeddings using training-family statistics, L2-normalize them, and measure two
+      quantities per held-out genome: its cosine similarity to the nearest training-family
+      centroid ("cosine support"), and the label predicted by cosine-weighted
+      <em>k</em>-nearest-neighbor transfer from training genomes. A non-parametric
+      <em>k</em>NN transfer isolates whether the geometry <em>alone</em> already carries the
+      label, with no encoder fine-tuning and no learned classifier.
+    </p>
+
+    <div class="data-table">
+      <table>
+        <caption><b>Cosine-geometry diagnostic on frozen ESM-2 (family-held-out split).</b> Cosine <em>k</em>NN transfer needs no encoder adaptation; "nearest-family cos" is the mean cosine similarity of held-out genomes to the nearest training-family centroid. ρ is the Spearman correlation between cosine support and probe error (negative = less support, more error).</caption>
+        <thead>
+          <tr><th>Trait</th><th>Test n</th><th>Nearest-family cos</th><th><em>k</em>NN AUROC</th><th>Probe AUROC</th><th>ρ(cos, error)</th></tr>
+        </thead>
+        <tbody class="num">
+          <tr><td>catalase</td><td>1,442</td><td>0.845</td><td>0.764</td><td>0.817</td><td>−0.107</td></tr>
+          <tr><td>motility</td><td>1,673</td><td>0.846</td><td>0.695</td><td>0.728</td><td>+0.007</td></tr>
+          <tr><td>sporulation</td><td>809</td><td>0.850</td><td>0.924</td><td>0.935</td><td>+0.220</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Two things follow. First, the frozen embedding is <em>not</em> empty of signal: cosine
+      <em>k</em>NN alone reaches AUROC 0.924 on sporulation and 0.76 on catalase without
+      touching the encoder, consistent with the frozen-vs-LoRA null. If adaptation were fixing a
+      missing representation, a pure-geometry transfer this strong should not be possible.
+      Second, transfer quality rises with geometric coverage: binning by cosine support,
+      <em>k</em>NN macro-F1 climbs monotonically from the far to the near tercile for catalase
+      (0.60 → 0.69 → 0.79) and motility (0.58 → 0.60 → 0.69), and catalase shows a negative rank
+      correlation between cosine support and probe error (ρ = −0.107), the signature of a
+      coverage-limited trait.
+    </p>
+
+    <figure class="figure">
+      <img src="figures/taxonomy-ceiling-fig6-cosine-coverage.png" alt="Line chart of cosine-only kNN macro-F1 versus cosine-support tercile (low/far, mid, high/near). Catalase and motility rise monotonically toward the near tercile; sporulation stays high across all bins." />
+      <figcaption><b>Family transfer improves with geometric coverage.</b> Held-out genomes are binned by cosine similarity to the nearest training-family centroid (far → near). Cosine-only <em>k</em>NN macro-F1 rises with coverage for catalase and motility, and stays high for sporulation. The bottleneck is <em>where</em> held-out families sit in the frozen embedding relative to labelled training families, not a missing encoder update.</figcaption>
+    </figure>
+
+    <p>
+      This reframes the collapse. It is not primarily that the genome representation is wrong or
+      that the encoder is under-trained; it is that many held-out families land in regions of the
+      frozen space that are sparsely covered by labelled training families, so there is no
+      reliable labelled neighbour to transfer from. Where coverage is good, even a trivial cosine
+      <em>k</em>NN transfers labels well; where it is poor, the trait collapses regardless of
+      whether the encoder was adapted. This is a coverage-and-labels problem, not an architecture
+      problem, which is exactly why changing the pooling operator or fine-tuning the encoder does
+      not help.
+    </p>
+
     <h2 id="takeaway">What it means</h2>
     <p>
       Our earlier study showed that swapping the pooling operator (mean vs attention) does not
@@ -194,6 +308,18 @@
       evolutionary distance. Architecture is not the lever; distribution shift is the problem.
     </p>
     <p>
+      The cosine diagnostic gives a <em>positive</em> explanation for the twin nulls: because a
+      pure-geometry <em>k</em>NN already transfers labels well when a held-out family sits near
+      labelled training families, and degrades when it does not, the frozen representation
+      clearly contains transferable trait signal, what varies is whether the held-out clade has
+      labelled neighbours to borrow from. An architectural lever, whether a smarter pool or an
+      adapted encoder, cannot manufacture evidence for families that are unrepresented in the
+      labelled set. The collapse is <em>coverage-shaped, not architecture-shaped</em>. This
+      predicts the productive next levers are ones that add or propagate labels across clades
+      (broader taxonomic sampling, semi-supervised or retrieval-augmented transfer, and
+      coverage-aware evaluation) rather than further encoder capacity.
+    </p>
+    <p>
       The cleanest practical takeaway is methodological: a benchmark that aggregates per-head
       accuracy will <em>reward</em> a model for collapsing to the majority class on imbalanced
       labels, exactly the failure mode that matters most for rare, high-stakes traits like
@@ -202,10 +328,25 @@
       guard.
     </p>
 
+    <h2 id="limitations">Limitations</h2>
+    <p>
+      We state the scope plainly. This is a <strong>single seed</strong> (seed 0) per arm with
+      no error bars; the small aggregate differences are well within plausible seed variance,
+      which is itself part of why the +0.011 "win" should not be trusted. All results use one
+      encoder scale (ESM-2-150M) and a <strong>short, three-epoch schedule</strong>; whether a
+      larger encoder, a longer schedule, or an unscaled learning rate changes the picture is
+      untested. The LoRA arm inherits √world-size learning-rate scaling and warmup, so
+      disentangling adaptation from the LR/large-batch interaction would need a dedicated
+      ablation. We test LoRA, the parameter-efficient lever, not full-encoder fine-tuning, and we
+      evaluate the <strong>family-held-out</strong> regime only. A genuinely positive result for
+      encoder adaptation would need to show gains <em>on F1 and across seeds</em> on the
+      imbalanced heads under family holdout, not an accuracy bump that coincides with F1 collapse.
+    </p>
+
     <p class="keywords">
       Keywords: encoder fine-tuning · LoRA · protein language models · genomic trait
-      prediction · distribution shift · class imbalance · BacDive · ESM-2 · uncultivated
-      microorganisms
+      prediction · distribution shift · class imbalance · cosine geometry · k-NN transfer ·
+      representational coverage · BacDive · ESM-2 · uncultivated microorganisms
     </p>
   </div>
 
