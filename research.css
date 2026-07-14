@@ -113,14 +113,9 @@ body {
   cursor: help;
   outline: none;
 }
-.index-head .reveal-pop {
-  display: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  margin-top: 12px;
-  z-index: 20;
+.index-head .lede-note {
+  display: none;                 /* revealed on hover of 'different'; in normal flow, shifts content */
+  margin: 16px 0 0;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 16px;
   line-height: 1.72;
@@ -128,10 +123,8 @@ body {
   background: #efe6d6;
   border-left: 3px solid rgba(58, 74, 92, 0.30);
   padding: 16px 22px;
-  box-shadow: 0 10px 30px rgba(58, 74, 92, 0.14);
 }
-.index-head .reveal:hover .reveal-pop,
-.index-head .reveal:focus .reveal-pop { display: block; }
+.index-head .lede-note.open { display: block; }
 .thesis-rule {
   border: 0;
   border-top: 1px solid rgba(58, 74, 92, 0.16);
