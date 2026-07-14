@@ -86,7 +86,7 @@ body {
 }
 
 /* ── research index (9dlabs-style minimal list) ────── */
-.index-head { padding: 12vh 0 0; }
+.index-head { padding: 12vh 0 0; position: relative; }
 /* h1: matches 9dlabs: 32px, weight 500, ls 0.12em, uppercase sans */
 .index-head h1 {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -106,16 +106,32 @@ body {
   color: var(--c-deep);
   margin-top: 22px;
 }
-.index-head .lede-note {
+.index-head .reveal {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: help;
+  outline: none;
+}
+.index-head .reveal-pop {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 12px;
+  z-index: 20;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 16px;
   line-height: 1.72;
   color: var(--c-deep);
-  margin: 18px 0 0;
-  padding: 14px 20px;
+  background: #efe6d6;
   border-left: 3px solid rgba(58, 74, 92, 0.30);
-  background: rgba(58, 74, 92, 0.045);
+  padding: 16px 22px;
+  box-shadow: 0 10px 30px rgba(58, 74, 92, 0.14);
 }
+.index-head .reveal:hover .reveal-pop,
+.index-head .reveal:focus .reveal-pop { display: block; }
 .thesis-rule {
   border: 0;
   border-top: 1px solid rgba(58, 74, 92, 0.16);
