@@ -25,7 +25,7 @@
 <article class="col">
   <header class="article-head">
     <h1>When Isotropy Fails: Selecting a JEPA&rsquo;s Collapse-Avoidance Geometry from the Data Distribution</h1>
-    <p class="subtitle">A JEPA prevents collapse with a geometry &mdash; an EMA target, a variance&ndash;covariance penalty, or a push toward an isotropic-Gaussian embedding. That choice is almost always fixed a priori, yet theory says the isotropic-Gaussian one is optimal only when the world&rsquo;s latents are Gaussian. We measure that property from the data and let it choose the geometry. On real genomes, which read non-Gaussian at every scale, the shape-agnostic geometries win &mdash; exactly as the selector predicts.</p>
+    <p class="subtitle">A JEPA prevents collapse with a geometry: an EMA target, a variance-covariance penalty, or a push toward an isotropic-Gaussian embedding. That choice is almost always fixed a priori, yet theory says the isotropic-Gaussian one is optimal only when the world&rsquo;s latents are Gaussian. We measure that property from the data and let it choose the geometry. On real genomes, which read non-Gaussian at every scale, the shape-agnostic geometries win, exactly as the selector predicts.</p>
     <p class="byline">Miyu Horiuchi<span class="sep">&middot;</span>22 July 2026</p>
   </header>
 
@@ -48,22 +48,22 @@
     <h2 id="abstract">Abstract</h2>
     <p>
       Joint-embedding predictive architectures (JEPAs) avoid representational collapse with a
-      <em>geometry</em>: an exponential-moving-average (EMA) target, a variance&ndash;covariance
+      <em>geometry</em>: an exponential-moving-average (EMA) target, a variance-covariance
       penalty (VICReg), or a push toward an isotropic-Gaussian embedding (LeJEPA/SIGReg). That
       geometry is almost always fixed a priori and applied across domains. Recent theory undercuts
       the practice: pushing embeddings toward an isotropic Gaussian recovers the world&rsquo;s
       latents <em>iff</em> those latents are themselves Gaussian, so no fixed shape is universally
       optimal. Yet the field only argues <em>against</em> a fixed geometry; nobody measures the
       deciding property and <em>selects</em> the geometry from it. We introduce a training-free
-      selector &mdash; the embedding distribution&rsquo;s sliced-negentropy non-Gaussianity,
-      validated by a column-shuffle permutation null that certifies the signal reflects genuine
-      joint structure &mdash; and use it to choose among {EMA, frozen, VICReg, isotropic-Gaussian}.
+      selector (the embedding distribution&rsquo;s sliced-negentropy non-Gaussianity, validated by a
+      column-shuffle permutation null that certifies the signal reflects genuine joint structure)
+      and use it to choose among {EMA, frozen, VICReg, isotropic-Gaussian}.
       In controlled synthetic data the rule sign-flips as predicted: the isotropic-Gaussian geometry
       is best when latents are Gaussian and worst when they are clustered, with the selector
       statistic tracking the crossover. On a real genome-JEPA, where genomes read non-Gaussian in
       every representation we test, the geometry bake-off ranks as the selector predicts (EMA 0.712,
       VICReg 0.703, SIGReg 0.684), under a <em>faithful</em> characteristic-function SIGReg with the
-      loss weight tuned per geometry &mdash; so the ranking is not an artifact of a non-faithful or
+      loss weight tuned per geometry, so the ranking is not an artifact of a non-faithful or
       over-weighted regularizer. The gap is small and rests on three seeds, so we assert a ranking
       rather than a large effect, and we do not obtain a naturally-Gaussian real control. Selecting
       collapse-avoidance geometry from a measured statistic is a promising, testable principle, and
@@ -75,8 +75,8 @@
       Self-supervised world models learn by predicting in representation space rather than in pixel
       or token space, and their central technical hazard is <em>representational collapse</em>: the
       encoder mapping every input to a near-constant. Every method adopts some
-      <em>collapse-avoidance geometry</em> to prevent it &mdash; an EMA / stop-gradient target, a
-      variance&ndash;covariance penalty, or, most recently, an explicit push toward an
+      <em>collapse-avoidance geometry</em> to prevent it: an EMA / stop-gradient target, a
+      variance-covariance penalty, or, most recently, an explicit push toward an
       isotropic-Gaussian embedding distribution. This geometry is almost always fixed once and
       applied across datasets and domains, as if one shape were universally right.
     </p>
@@ -90,8 +90,8 @@
       a faithful representation depends on the data-generating process, not the objective alone. A
       companion line argues that no single fixed covariance shape is optimal and instead adapts the
       target shape from the data, and an empirical study of vision encoders finds that global
-      isotropy does not track capability. Taken together, fixing the embedding geometry a priori
-      &mdash; and fixing it to a round Gaussian cloud in particular &mdash; is not obviously the
+      isotropy does not track capability. Taken together, fixing the embedding geometry a priori,
+      and fixing it to a round Gaussian cloud in particular, is not obviously the
       right default.
     </p>
     <p>
@@ -129,7 +129,7 @@
     <p>
       To validate the rule where ground truth is known, we dial the true latents from Gaussian to
       clustered, nonlinearly scramble them into observations, and train four tiny JEPAs that differ
-      only in geometry (three seeds). The metric is linear identifiability &mdash; how well a ridge
+      only in geometry (three seeds). The metric is linear identifiability: how well a ridge
       readout recovers the true latents. The result is a clean crossover: as the measured
       non-Gaussianity rises monotonically, the isotropic-Gaussian geometry moves from best (rank 1 of
       4, R<sup>2</sup> 0.557 when the latents are Gaussian) to worst (rank 4 of 4, R<sup>2</sup> 0.471
@@ -145,7 +145,7 @@
       We then run the validated selector on four data-reflecting representations of real genomes: a
       protein language model (ESM-2), machinery space (KEGG modules), functional composition (eggNOG
       orthologous groups), and a genomic foundation model (Evo2 1B). At matched sample size and
-      dimension, all four are decisively non-Gaussian &mdash; each real value exceeds its own
+      dimension, all four are decisively non-Gaussian: each real value exceeds its own
       marginal-preserving shuffle null by 25 to 104 standard deviations. We deliberately do
       <em>not</em> rank the representations against one another: the null level itself differs across
       them, so raw statistics are not comparable. The robust claim is only that genome structure
@@ -156,8 +156,8 @@
       The reading is scale-invariant. Narrowing taxonomic breadth from all phyla down to a single
       family never reaches the Gaussian level; stripping away phyla merely exposes genus-level
       clusters beneath, so the population stays non-Gaussian at every zoom level. A second real
-      domain &mdash; CIFAR-10 images embedded in a pretrained ResNet-18, the vision analog of the
-      ESM-2 coordinate &mdash; also reads decisively non-Gaussian. Neither accessible real domain
+      domain, CIFAR-10 images embedded in a pretrained ResNet-18 (the vision analog of the
+      ESM-2 coordinate), also reads decisively non-Gaussian. Neither accessible real domain
       supplies the near-Gaussian regime, so the synthetic sweep remains the only place the Gaussian
       end of the sign-flip can be exercised.
     </p>
@@ -171,7 +171,7 @@
       objective: predict an ortholog&rsquo;s latent in another genome from a gene&rsquo;s embedding
       and the pair&rsquo;s divergence, under a smooth-L1 loss against a stop-gradient target. Four
       geometries share the encoder, predictor, objective, data, and hyperparameters, differing only
-      in collapse avoidance &mdash; EMA, frozen, VICReg, and a <em>faithful</em>
+      in collapse avoidance: EMA, frozen, VICReg, and a <em>faithful</em>
       characteristic-function SIGReg that constrains all moments toward a standard normal rather than
       the first two.
     </p>
@@ -193,7 +193,7 @@
       Genomes read non-Gaussian in every representation and at every taxonomic scale we measure. And
       on the real genome-JEPA the shape-agnostic geometries beat isotropic-Gaussian, with SIGReg no
       longer trailing the random-feature floor. We still temper the claim: the genome gap is small
-      (~0.02&ndash;0.03) and rests on three seeds, and we lack a naturally-Gaussian real dataset for
+      (~0.02 to 0.03) and rests on three seeds, and we lack a naturally-Gaussian real dataset for
       the Gaussian end of the sign-flip.
     </p>
     <p>
@@ -201,8 +201,8 @@
       representations, not on the world&rsquo;s latents, and non-Gaussian observations are compatible
       with Gaussian latents, so consistency across independent representations is evidence for, not
       proof of, non-Gaussian structure. Even so, selecting collapse-avoidance geometry from a
-      measured, permutation-validated statistic is a cheap and testable principle &mdash; and on
-      every real representation we examined, it points the same way: away from forced isotropy.
+      measured, permutation-validated statistic is a cheap and testable principle, and on
+      every real representation we examined it points the same way: away from forced isotropy.
     </p>
     <p class="keywords">
       joint-embedding predictive architecture &middot; representational collapse &middot; collapse-avoidance geometry &middot; non-Gaussianity &middot; LeJEPA / SIGReg &middot; genome world models
