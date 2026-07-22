@@ -140,6 +140,11 @@
       deterministic function of a property we can measure from the data before training.
     </p>
 
+    <figure class="figure">
+      <img src="figures/jgs-fig1-signflip.png" alt="Line chart of identifiability R-squared versus data non-Gaussianity for four geometries. The SIGReg (iso-Gaussian) line starts highest when the data is Gaussian and ends lowest once it is clustered, crossing the rising VICReg, EMA, and frozen lines." />
+      <figcaption><b>The selection rule sign-flips.</b> Linear identifiability R&sup2; against data non-Gaussianity (synthetic, three seeds). The isotropic-Gaussian geometry (SIGReg) is best when the data is Gaussian and worst once it is clustered, while the shape-agnostic geometries rise. The measured non-Gaussianity statistic, shown in parentheses on the axis, tracks the crossover.</figcaption>
+    </figure>
+
     <h2 id="genomes">Genomes are non-Gaussian at every scale</h2>
     <p>
       We then run the validated selector on four data-reflecting representations of real genomes: a
@@ -152,6 +157,17 @@
       reads non-Gaussian in every representation we examine, including a state-of-the-art genomic
       foundation model.
     </p>
+
+    <figure class="figure">
+      <img src="figures/jgs-fig2-permnull.png" alt="Four panels, one per representation (Evo2, eggNOG, KEGG, ESM-2). Each shows a grey shuffle-null distribution and an orange line for the real statistic sitting far in the right tail, annotated with z-scores from 25 to 104." />
+      <figcaption><b>Permutation-null evidence, the rigorous test.</b> For each representation, the real sliced-negentropy statistic (orange) against 200 column-shuffle nulls (grey) that preserve every marginal but destroy joint structure. The real value sits far in the right tail of its own null (z of 25 to 104), so the signal is genuine joint structure, not a per-axis or sampling artifact. The null level differs across representations, so the panels are not comparable by raw value.</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img src="figures/jgs-fig3-pca.png" alt="Four 2D PCA scatter plots (Evo2, eggNOG, KEGG, ESM-2) with points coloured by phylum. Genomes form visibly lineage-specific groups rather than one round Gaussian cloud." />
+      <figcaption><b>What the clustering looks like (illustration only).</b> 2D PCA of genome representations, coloured by phylum: genomes visibly organize by lineage rather than forming a single Gaussian blob. This is a lossy two-dimensional projection used for intuition; the statistic operates in the full space, and we do not rank representations by this view.</figcaption>
+    </figure>
+
     <p>
       The reading is scale-invariant. Narrowing taxonomic breadth from all phyla down to a single
       family never reaches the Gaussian level; stripping away phyla merely exposes genus-level
@@ -161,6 +177,16 @@
       supplies the near-Gaussian regime, so the synthetic sweep remains the only place the Gaussian
       end of the sign-flip can be exercised.
     </p>
+
+    <figure class="figure">
+      <img src="figures/jgs-fig4-scale.png" alt="Bar chart of non-Gaussianity by training-set breadth from all phyla down to a single family. Every bar sits well above zero, annotated with z-scores from 12 to 46." />
+      <figcaption><b>Scale-invariant non-Gaussianity.</b> At matched N and d, every taxonomic breadth from all phyla down to a single family clears the non-Gaussian threshold (z far above 3). The values are non-monotonic, so we read no trend from them; the point is only that genome clustering persists at every scale and never reaches the Gaussian level.</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img src="figures/jgs-fig5-domains.png" alt="Horizontal bar chart of non-Gaussianity for five real representations: four genome coordinates in blue and CIFAR-10 vision in orange. Every bar clears the threshold and the vision bar falls within the genome range." />
+      <figcaption><b>Both real domains are non-Gaussian.</b> Non-Gaussianity of every real representation at matched N=675, d=40: four genome coordinates (blue) and vision (CIFAR-10 in a pretrained ResNet, orange). Every one clears the threshold, and vision falls squarely within the genome range, so no accessible real domain supplies the near-Gaussian regime.</figcaption>
+    </figure>
 
     <h2 id="bakeoff">The bake-off on real genomes</h2>
     <p>
@@ -184,6 +210,11 @@
       predicts therefore survives the two corrections that could most plausibly have confounded an
       earlier, weaker version of this experiment.
     </p>
+
+    <figure class="figure">
+      <img src="figures/jgs-fig6-bakeoff.png" alt="Horizontal bar chart of held-out-family trait AUROC by geometry. EMA (0.712) and VICReg (0.703) lead, SIGReg (0.683) and frozen (0.683) trail; three seed dots overlay each bar." />
+      <figcaption><b>The genome bake-off (faithful SIGReg, per-geometry tuning).</b> Held-out-family trait AUROC per geometry (bars are the mean of three seeds; dots are the seeds). The structure-preserving geometries (EMA, VICReg) lead and isotropic-Gaussian SIGReg trails, as the selector predicts; with the faithful implementation and tuned weight, SIGReg is level with the frozen floor rather than below it. The gap is small and rests on three seeds, so we claim a ranking, not a large effect.</figcaption>
+    </figure>
 
     <h2 id="takeaway">What it means, and what it does not</h2>
     <p>
