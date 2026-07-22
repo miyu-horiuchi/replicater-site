@@ -11,6 +11,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/research.css" />
+<style>
+  /* smaller, centered figures on this page */
+  .figure { max-width: 500px; margin: 4vh auto; }
+  /* the permutation-null panels are very wide; give them a little more room */
+  .figure.wide { max-width: 640px; }
+</style>
 </head>
 <body>
 <div class="bar">
@@ -158,7 +164,7 @@
       foundation model.
     </p>
 
-    <figure class="figure">
+    <figure class="figure wide">
       <img src="figures/jgs-fig2-permnull.png" alt="Four panels, one per representation (Evo2, eggNOG, KEGG, ESM-2). Each shows a grey shuffle-null distribution and an orange line for the real statistic sitting far in the right tail, annotated with z-scores from 25 to 104." />
       <figcaption><b>Permutation-null evidence, the rigorous test.</b> For each representation, the real sliced-negentropy statistic (orange) against 200 column-shuffle nulls (grey) that preserve every marginal but destroy joint structure. The real value sits far in the right tail of its own null (z of 25 to 104), so the signal is genuine joint structure, not a per-axis or sampling artifact. The null level differs across representations, so the panels are not comparable by raw value.</figcaption>
     </figure>
