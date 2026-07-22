@@ -541,6 +541,38 @@
         .fleuron { letter-spacing: 0.62em; }
         .call { padding: 24px 22px; font-size: 20px; }
       }
+
+      table.pheno {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: "Inter", sans-serif;
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--c-ink);
+        text-align: left;
+        margin-top: 6px;
+      }
+      table.pheno th {
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        padding: 9px 12px;
+        border-bottom: 1px solid rgba(58, 74, 92, 0.4);
+        vertical-align: bottom;
+        color: var(--c-deep);
+      }
+      table.pheno td {
+        padding: 9px 12px;
+        border-bottom: 1px solid var(--c-line);
+        vertical-align: top;
+      }
+      table.pheno td:first-child {
+        font-weight: 500;
+        color: var(--c-deep);
+      }
+      @media (max-width: 720px) {
+        table.pheno { font-size: 10.5px; }
+        table.pheno th, table.pheno td { padding: 7px 6px; }
+      }
     </style>
   </head>
 
@@ -555,7 +587,7 @@
         <div class="folio">A manifesto · 2026</div>
         <h1 class="title">The Microbial <em>dark matter</em></h1>
         <p class="subtitle">
-          99% of life we have yet to discover.
+          Biology is governed by physics. Our best models of it are built like language models. That is the mistake.
         </p>
         <p class="mission">
           We are building a <em>world model for biology</em>, starting with microbial dark matter.
@@ -569,6 +601,30 @@
           </svg>
         </div>
       </header>
+
+      <article class="thesis">
+        <p>
+          Today's genome models read DNA as text and predict the next base, which forces the network to rediscover thermodynamics, molecular mechanics, and interaction dynamics from tokens alone. We are building the alternative: a world model for biology that encodes biophysics into the architecture and the training objective itself. A model that cannot violate physics will generalize where a sequence model can only memorize. We are proving this by discovering the 99% of microbial life that has been sequenced but never grown, because there, predicting an organism's physics is the whole problem.
+        </p>
+
+        <p>
+          Living systems are defined by physics: thermodynamics, molecular mechanics, reaction-diffusion, the dynamics of thousands of interacting parts. A foundation model for biology should encode those dynamics, not fit around them. The dominant paradigm gets this wrong by treating biology as text. ESM-2 reads proteins. Evo 2 reads genomes. Both are trained, like language models, to compress sequences and predict tokens, which buys real implicit knowledge but forces the model to rediscover physics from statistics, and it mostly fails. We have done extensive research on why current genome and protein language models underperform, and the pattern is consistent: next-token prediction, weak key-value matching, and compression-first architectures are a poor fit for biology's data distribution and its interaction structure.
+        </p>
+
+        <p>
+          The alternative is to build the physics in, so the only things the model can express are physically admissible, and it happens in two places. The first is the architecture, where physics enters as symmetry and conservation. An SE(3)-equivariant network like MACE-MP-0 predicts forces that rotate with the molecule by construction.<sup class="cite"><a href="#fn8">8</a></sup> Energy-conserving potentials go further: the network learns a single scalar energy surface and derives forces as its gradient, so Newtonian mechanics is guaranteed rather than approximated. The physical law lives in the shape of the network, not in the loss.
+        </p>
+
+        <p>
+          The second is the objective, where the governing equation becomes the training target itself. Flow-matching models train a network to be the velocity field of an ordinary differential equation: AlphaFlow turns a single-structure predictor into a conformational-ensemble generator,<sup class="cite"><a href="#fn9">9</a></sup> and MDGen models full molecular-dynamics trajectories directly, up to 100,000 frames at a time.<sup class="cite"><a href="#fn11">11</a></sup> Score-based diffusion does the same through a stochastic differential equation, and BioEmu predicts free energies to roughly 1 kcal/mol using training substrates like ATLAS, an open corpus of 1,390 proteins simulated in triplicate.<sup class="cite"><a href="#fn10">10</a></sup><sup class="cite"><a href="#fn12">12</a></sup> Physics-informed neural networks make the principle explicit, adding the governing equation's residual directly to the loss. Sequence gives you the parts list. Dynamics gives you the runtime, and only the second one is physics.
+        </p>
+
+        <p>
+          A thesis about physics-informed biology is worth nothing until it beats sequence models on a problem where physics is the whole game, so we picked the hardest tractable one. The pieces already exist, scattered across communities that do not talk: interatomic potentials in materials,<sup class="cite"><a href="#fn8">8</a></sup> ensemble generators in biology,<sup class="cite"><a href="#fn9">9</a></sup> genome-scale metabolic networks at 247,000-microbe scale,<sup class="cite"><a href="#fn13">13</a></sup> and amino-acid-composition models that already predict oxygen tolerance, temperature, and salinity from genome alone.<sup class="cite"><a href="#fn14">14</a></sup> None individually is enough, and no one has assembled them into a system that predicts the physics of a living cell. We are proving the world model on the problem that most demands it: discovering the 99% of microbial life that has been sequenced but never grown.
+        </p>
+      </article>
+
+      <div class="fleuron">❧ ❦ ❧</div>
 
       <figure class="figure">
         <svg viewBox="0 0 580 620" xmlns="http://www.w3.org/2000/svg" aria-label="The microbial dark matter: 1 cultured microbe among 99 uncultured ghost outlines">
@@ -735,8 +791,9 @@
 
       <article>
         <p class="lede">
-          There is a bacterium in your gut right now, possibly several thousand
-          species, that we have never been able to grow in a lab.
+          Of every hundred microbes on Earth, we have grown one. There is a
+          bacterium in your gut right now, possibly several thousand species,
+          that we have never been able to grow in a lab.
         </p>
 
         <p>
@@ -748,8 +805,8 @@
         <p class="stat">this is true for 99% of microbial life on earth</p>
 
         <p>
-          It is not for lack of trying. Microbiologists have been at this for over a
-          century. The standard procedure is depressing: take a sample, dilute it,
+          Brute-force culturing has failed for a century despite genuine effort.
+          The standard procedure is depressing: take a sample, dilute it,
           plate it on agar, try every growth medium you can think of, wait days to
           weeks, see what grows. Most labs run this with perhaps five media. The most
           ambitious labs run two hundred. The result is always the same: a handful of
@@ -1669,23 +1726,25 @@
         </aside>
 
         <p>
-          Here is the surprise: we know these uncultured organisms make novel compounds.
-          Metagenomic mining (reading the DNA without growing the organism) has shown
-          they encode biosynthetic pathways for hundreds of thousands of small molecules
-          we have never characterised.<sup class="cite"><a href="#fn5">5</a></sup> We can
-          see the genes for the antibiotics. We just cannot grow the microbes to make them.
+          We already know the uncultured majority makes novel drugs. We can read the
+          genes, we just cannot grow the maker. Metagenomic mining (reading the DNA
+          without growing the organism) has shown they encode biosynthetic pathways for
+          hundreds of thousands of small molecules we have never
+          characterised.<sup class="cite"><a href="#fn5">5</a></sup> The genes for the
+          antibiotics are right there in the sequence. The cells that make them will not
+          grow in a flask.
         </p>
 
         <p>
-          The same is true for probiotics. The next generation of microbiome
+          The next blockbuster probiotic almost certainly already exists as an
+          unculturable sequence in a database. The next generation of microbiome
           therapeutics (drugs based on actual gut bacteria, not yogurt) is blocked by
           cultivability. Seres Therapeutics brought an FDA-approved microbiome drug to
           market;<sup class="cite"><a href="#fn6">6</a></sup> their pipeline is
-          constrained by what they can grow. The next breakthrough probiotic, the next
+          constrained by what they can grow. The next
           <i>Akkermansia</i> (itself only cultured in 2004, and now a billion-dollar
-          market opportunity<sup class="cite"><a href="#fn7">7</a></sup>), almost
-          certainly already exists as a sequence in someone's database. We just cannot
-          get it into a flask.
+          market opportunity<sup class="cite"><a href="#fn7">7</a></sup>) is waiting in
+          someone's dataset.
         </p>
 
         <p>
@@ -1773,101 +1832,108 @@
         <p class="turn" style="font-size: clamp(20px, 2.4vw, 26px);">So here is the question: what would it take to grow them?</p>
 
         <p>
-          The current approach is brute force. Try more media. Screen more conditions.
-          Hope something works. Some labs run two hundred conditions per sample.
-          Pacific Northwest National Lab runs more than a thousand. None of this scales.
-          Each condition takes weeks, requires expert microbiologists, and most attempts
-          fail.
+          A genome is not just a parts list. It encodes the organism's phenotypes, the
+          physical conditions it was built to live in, and each phenotype we can predict
+          collapses one axis of the discovery search. Culturing an unknown microbe is a
+          combinatorial search over oxygen level, temperature, pH, salinity, carbon
+          source, electron acceptor, and partner organisms. Brute force explores the
+          whole grid, thousands of conditions, weeks each. Physics-informed prediction
+          reads each axis off the genome and turns the grid into a shortlist.
+        </p>
+
+        <figure class="figure" style="margin: 44px auto 40px;">
+          <table class="pheno">
+            <thead>
+              <tr>
+                <th>Phenotype</th>
+                <th>What it is</th>
+                <th>Genomic signal</th>
+                <th>How it collapses the search</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Oxygen tolerance</td>
+                <td>Aerobe, anaerobe, or facultative</td>
+                <td>Catalase, superoxide dismutase, cytochrome-oxidase genes</td>
+                <td>Air on the bench is the most common killer of anaerobes; predict it and you know to use an anaerobic chamber before wasting the sample</td>
+              </tr>
+              <tr>
+                <td>Temperature optimum</td>
+                <td>Psychrophile, mesophile, or thermophile</td>
+                <td>Proteome thermostability signatures, amino-acid composition</td>
+                <td>Sets incubation temperature; a thermophile at 37&nbsp;&deg;C does nothing</td>
+              </tr>
+              <tr>
+                <td>pH optimum</td>
+                <td>Acidophile, neutrophile, or alkaliphile</td>
+                <td>Proteome isoelectric-point distribution, transporters</td>
+                <td>Sets medium and buffer pH</td>
+              </tr>
+              <tr>
+                <td>Salinity</td>
+                <td>Halophile or not</td>
+                <td>Osmolyte synthesis and transport genes, acidic proteome bias</td>
+                <td>Sets salt concentration</td>
+              </tr>
+              <tr>
+                <td>Nutrient needs</td>
+                <td>Auxotrophies: what the cell cannot make and must be fed</td>
+                <td>Missing biosynthesis pathways in a metabolic reconstruction</td>
+                <td>Gives the medium recipe itself: which amino acids, vitamins, and cofactors to add</td>
+              </tr>
+              <tr>
+                <td>Electron acceptor</td>
+                <td>Oxygen, nitrate, sulfate, or fermentation</td>
+                <td>Terminal reductase genes</td>
+                <td>Sets the terminal acceptor in the medium</td>
+              </tr>
+              <tr>
+                <td>Partner dependence</td>
+                <td>Needs a neighbour's metabolites (syntrophy)</td>
+                <td>Pathways that cannot be closed even with rich medium</td>
+                <td>Signals co-culture, and explains why <i>Patescibacteria</i> and <i>Asgard</i> resist solo culture</td>
+              </tr>
+            </tbody>
+          </table>
+          <figcaption><b>Fig. III.</b> &nbsp; Each phenotype, read from the genome, fixes one axis of the search.</figcaption>
+        </figure>
+
+        <p>
+          Each predicted phenotype is the difference between intractable and a month of
+          lab work. A naive grid of five oxygen levels, four temperatures, four pH values,
+          four salinities, and twenty carbon sources is 6,400 conditions at one to four
+          weeks each. Predict each phenotype to within one step and that collapses to a
+          handful of targeted conditions. This is where the world model pays for itself:
+          physics read from sequence, not guessed from a plate.
         </p>
 
         <p>
-          Exhaustive search over biological permutations is intractable. But evolution has
-          already run the experiment: billions of years of microbial biology encode hints
-          about function in the sequences that survived.
+          This is possible now for the first time, because foundation models can finally
+          read biological sequence and molecular dynamics. The parts exist. What we add is
+          the loop. From a genome, predict what the cell needs. Simulate the dynamics: how
+          membranes assemble, how metabolites flow, what conditions the cell was built to
+          live in. Test in the lab. Every outcome trains the world model further. Every
+          cycle, predictions get sharper. Every cycle, discovery gets faster and cheaper.
+          The artifact at the end is the most accurate model in the world for growing an
+          unknown microbe, and a step toward the <em>virtual cell</em>.
         </p>
 
         <p>
-          What has changed in the last five years is that we now have foundation models
-          that can read DNA and predict function. ESM-2 reads proteins and predicts
-          structure. Evo 2 reads genomes and predicts mutational effects. These models
-          contain a vast amount of implicit biological knowledge, learned from hundreds
-          of millions of sequences.
-        </p>
-
-        <p>
-          Yet raw capability is not the same as fit. We have done extensive research on why
-          current genome models and protein language models underperform on these problems,
-          and we are beginning to form a unified theory that pieces together interactions
-          with equations and formalism. It is clear to us why today's state-of-the-art
-          genome models struggle: next-token prediction, weak key-value matching, and
-          compression-first architectures are a poor fit for biology's data distribution
-          and its interaction structure.
-        </p>
-
-        <p>
-          And beyond sequence, there is molecular dynamics. In materials chemistry this
-          is already real: MACE-MP-0 is a foundation neural potential trained on the
-          Materials Project at near-DFT accuracy, running stable molecular dynamics on
-          solids, liquids, and battery cells.<sup class="cite"><a href="#fn8">8</a></sup>
-          In biology the equivalent is younger but arriving. AlphaFlow fine-tunes
-          AlphaFold under a flow-matching objective so the output is a conformational
-          ensemble rather than a single structure.<sup class="cite"><a href="#fn9">9</a></sup>
-          BioEmu, trained on over 200 milliseconds of aggregated MD, generates thousands
-          of protein equilibrium conformations per hour and predicts free energies to
-          roughly 1 kcal/mol.<sup class="cite"><a href="#fn10">10</a></sup> MDGen models
-          full molecular dynamics trajectories directly, up to 100,000 frames at a
-          time.<sup class="cite"><a href="#fn11">11</a></sup> The training substrate is
-          ATLAS, an open corpus of 1,390 proteins each simulated in triplicate for 100
-          nanoseconds.<sup class="cite"><a href="#fn12">12</a></sup> Sequence gives you
-          the parts list. Dynamics gives you the runtime.
-        </p>
-
-        <p>
-          None of this yet predicts key functions for an uncultured microbe.
-          The pieces sit in different communities: machine-learned interatomic
-          potentials in materials,<sup class="cite"><a href="#fn8">8</a></sup> protein
-          ensemble generators in computational biology,<sup class="cite"><a href="#fn9">9</a></sup>
-          genome-scale metabolic networks at 247,000-microbe
-          scale,<sup class="cite"><a href="#fn13">13</a></sup> and amino-acid-composition
-          models that already predict oxygen tolerance, optimum temperature, and
-          salinity from genome alone.<sup class="cite"><a href="#fn14">14</a></sup> None
-          of them individually is enough.
-        </p>
-
-        <p>
-          Deep learning fundamentals and the world-model framing map naturally onto biology,
-          because living systems are defined by complex interaction dynamics. We are building
-          a world model for biology, starting with microbial dark matter. We have
-          characterised only a small fraction of Earth's microbes, and even that fraction
-          has already shaped drug discovery, agriculture, food systems, and other
-          industries. If the same pattern holds for what remains uncharacterised, the
-          opportunity is enormous.
-        </p>
-
-        <p>
-          If this works, the impact could be large: cultivation-medium prediction, function
-          inference from genome sequence, progress toward virtual cells, and a dent in the
-          data-scarcity problem that runs across biology. The next breakthrough will come
-          from filling those gaps, by making microbial dark matter discoverable at scale.
-        </p>
-
-        <p>
-          The loop is how the world model learns. From a genome, predict what the cell
-          needs. Simulate the dynamics: how membranes assemble, how metabolites flow, what
-          conditions the cell was built to live in. Test in the lab. Every outcome trains
-          the world model further. Every cycle, predictions get sharper. Every cycle,
-          cultivation gets faster and cheaper. The artifact at the end is the most accurate
-          model in the world for growing an unknown microbe, and a step toward making
-          microbial dark matter <em>discoverable at scale</em>.
+          If it works, the payoff is a set of capabilities biology does not currently
+          have: cultivation-medium prediction, function inference from sequence, progress
+          toward virtual cells, and a dent in the data-scarcity problem that runs across
+          all of biology. We have characterised only a small fraction of Earth's microbes,
+          and even that fraction reshaped drug discovery, agriculture, and food systems. If
+          the same pattern holds for what remains, the opportunity is enormous, and it
+          generalizes, because a world model that predicts one cell's physics is not
+          specific to microbes.
         </p>
 
         <div class="fleuron">❧ ❦ ❧</div>
 
         <p>
-          This is hard for several reasons. The labels are bad: existing cultivation
-          databases (BacDive, ATCC, DSMZ) record what worked, not what failed; a working
-          ML pipeline needs both, and we will have to generate the negative data
-          ourselves. The same organism behaves differently in different communities. A
+          This is hard for several reasons. The same organism behaves differently in different communities. A
           bacterium that grows in a defined medium with one neighbour may refuse to
           grow alone, so cultivation is not really a property of an organism, but of an
           organism plus its context, and most existing models ignore this. Wet-lab
@@ -1903,9 +1969,10 @@
       </article>
 
       <div class="call">
-        If you would like to help (wet-lab partnership, advisor role, environmental
-        samples from weird places, or simply an idea), please
-        <a href="mailto:m@replicater.xyz">reach out</a>.
+        We are looking for more researchers in biophysics, machine learning, and
+        molecular biology. And if you would like to help in any other way (wet-lab
+        partnership, advisor role, environmental samples from weird places, or simply
+        an idea), please <a href="mailto:m@replicater.xyz">reach out</a>.
       </div>
 
       <div class="signature">
