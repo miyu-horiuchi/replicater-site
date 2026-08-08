@@ -24,12 +24,13 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
+    overflow-x: hidden;
     background: var(--c-cream);
     color: var(--c-ink);
     font-family: 'Cormorant Garamond', Georgia, serif;
   }
+  html { scroll-behavior: smooth; }
   @media (pointer: fine) {
     html, body { cursor: none; }
   }
@@ -54,9 +55,9 @@
     pointer-events: none;
   }
   .overlay {
-    position: absolute;
-    inset: 0;
+    position: relative;
     z-index: 3;
+    min-height: 100vh;
     pointer-events: none;
     display: flex;
     flex-direction: column;
@@ -65,7 +66,7 @@
     padding: 6vw;
   }
   .meta {
-    position: absolute;
+    position: fixed;
     top: 4.5vh;
     left: 4.5vw;
     font-family: 'Inter', sans-serif;
@@ -151,6 +152,53 @@
     filter: blur(6px);
   }
 
+  .scroll-cue {
+    position: absolute;
+    bottom: 3.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--c-deep);
+    opacity: 0;
+    animation: cueIn 1.2s 1.9s forwards, cueBob 2.6s 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes cueIn { to { opacity: 0.55; } }
+  @keyframes cueBob {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 7px); }
+  }
+
+  /* Mission copy below the hero */
+  .mission-wrap {
+    position: relative;
+    z-index: 3;
+    background: linear-gradient(180deg,
+      rgba(244, 236, 222, 0) 0%,
+      rgba(244, 236, 222, 0.9) 12%,
+      var(--c-cream) 26%);
+  }
+  .mission {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(48px, 9vh, 120px) clamp(24px, 6vw, 40px) clamp(88px, 15vh, 168px);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(17px, 1.45vw, 21px);
+    line-height: 1.72;
+    color: var(--c-ink);
+  }
+  .mission p { margin-bottom: 1.35em; }
+  .mission p:last-child { margin-bottom: 0; }
+  .mission .lead {
+    font-style: italic;
+    color: var(--c-deep);
+    font-size: clamp(20px, 1.9vw, 26px);
+    line-height: 1.5;
+    margin-bottom: 1.5em;
+  }
+
   /* Custom cursor: a paintbrush dot */
   .brush {
     position: fixed;
@@ -191,7 +239,7 @@
 
   /* Top-right nav */
   .top-nav {
-    position: absolute;
+    position: fixed;
     top: 4.5vh;
     right: 4.5vw;
     z-index: 5;
@@ -246,7 +294,17 @@
       <span class="word em" style="animation-delay:.82s">biology</span>
     </h1>
   </div>
+  <div class="scroll-cue" aria-hidden="true">↓</div>
 </div>
+
+<section class="mission-wrap">
+  <div class="mission">
+    <p class="lead">Our mission is to build biology models that can truly represent the living systems.</p>
+    <p>Today's models represent biology as a distribution over the data they were fed, and reasoning inside them is sampling from that distribution. It is treated the same way as a language model. But biology is way more than this. There is a mechanism underneath the data and a deeper structure that next token prediction alone does not capture.</p>
+    <p>The issue is that we do not yet know what it means for two molecules to interact, or at what level that interaction should be described. Quantum, molecular, or mechanical. Proteins, RNA, genomes, or atoms. There's no unified theory that can explain the interactions and mechanisms. Biological data is scarce by nature, and we don't know what the vast majority of it means. So current models, which approximate function from a distribution, collapse the moment something unseen arises. Biology deserves its own research, its own theorems, algorithms, and architectures.</p>
+    <p>The data of the natural world already has physics integrated into it. We believe that this can lead us to true functions that describe the movements or interactions. We think nothing else is more impactful than solving this problem. Being able to precisely simulate each interaction means we can ultimately build truly working virtual cells, and beyond that, a far deeper understanding of the human and living systems, which remain the least understood things we know of.</p>
+  </div>
+</section>
 
 <div class="grain"></div>
 
