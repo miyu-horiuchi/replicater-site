@@ -70,8 +70,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: clamp(32px, 5vw, 88px);
+    justify-content: flex-start;
+    gap: clamp(28px, 3.5vw, 64px);
     width: 100%;
     max-width: 1400px;
   }
@@ -128,7 +128,7 @@
   }
 
   .tagline {
-    flex: 1 1 520px;
+    flex: 0 1 auto;
     text-align: left;
     color: var(--c-ink);
   }
@@ -158,8 +158,8 @@
     font-size: clamp(18px, 1.7vw, 24px);
     line-height: 1.55;
     color: rgba(58, 74, 92, 0.78);
-    flex: 0 1 440px;
-    max-width: 460px;
+    flex: 0 1 400px;
+    max-width: 420px;
     margin: 0;
   }
   .hero-title .line,
