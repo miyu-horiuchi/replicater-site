@@ -63,8 +63,17 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: stretch;
     padding: 6vw clamp(24px, 7vw, 120px);
+  }
+  .hero-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(32px, 5vw, 88px);
+    width: 100%;
+    max-width: 1400px;
   }
   .meta {
     position: fixed;
@@ -119,8 +128,7 @@
   }
 
   .tagline {
-    max-width: 1240px;
-    width: 100%;
+    flex: 1 1 520px;
     text-align: left;
     color: var(--c-ink);
   }
@@ -136,7 +144,7 @@
   }
   .hero-title {
     font-weight: 300;
-    font-size: clamp(35px, 6.7vw, 98px);
+    font-size: clamp(30px, 5vw, 76px);
     line-height: 0.98;
     letter-spacing: -0.02em;
     margin: 0;
@@ -150,8 +158,9 @@
     font-size: clamp(18px, 1.7vw, 24px);
     line-height: 1.55;
     color: rgba(58, 74, 92, 0.78);
-    max-width: 660px;
-    margin: clamp(20px, 3vh, 36px) 0 0;
+    flex: 0 1 440px;
+    max-width: 460px;
+    margin: 0;
   }
   .hero-title .line,
   .hero-sub {
@@ -294,11 +303,13 @@
 </nav>
 
 <div class="overlay">
-  <div class="tagline">
-    <h1 class="hero-title">
-      <span class="line line-1" style="animation-delay:.3s">Replicater Labs</span>
-      <span class="line line-2" style="animation-delay:.5s">Biological Intelligence</span>
-    </h1>
+  <div class="hero-row">
+    <div class="tagline">
+      <h1 class="hero-title">
+        <span class="line line-1" style="animation-delay:.3s">Replicater Labs</span>
+        <span class="line line-2" style="animation-delay:.5s">Biological Intelligence</span>
+      </h1>
+    </div>
     <p class="hero-sub" style="animation-delay:.8s">Replicater Labs is building the next frontier of biology models, where reasoning is grounded in physics, discovering the true functions that describe how living systems interact.</p>
   </div>
 </div>
