@@ -587,10 +587,10 @@
         <div class="folio">A manifesto · 2026</div>
         <h1 class="title">The Microbial <em>dark matter</em></h1>
         <p class="subtitle">
-          Biology is governed by physics. Our best models of it are built like language models. That is the mistake.
+          Today's models approximate biology from the data they were fed, and collapse the moment they meet something they have never seen. The answer is not a bigger model. It is to find the function of life, not fit it.
         </p>
         <p class="mission">
-          We are building a <em>world model for biology</em>, starting with microbial dark matter.
+          We are building biology models that <em>find the functions of life</em>, starting with the microbial dark matter that showed us why approximation fails.
         </p>
         <div class="rule">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
@@ -604,23 +604,15 @@
 
       <article class="thesis">
         <p>
-          Today's genome models read DNA as text and predict the next base, which forces the network to rediscover thermodynamics, molecular mechanics, and interaction dynamics from tokens alone. We are building the alternative: a world model for biology that encodes biophysics into the architecture and the training objective itself. A model that cannot violate physics will generalize where a sequence model can only memorize. We are proving this by discovering the 99% of microbial life that has been sequenced but never grown, because there, predicting an organism's physics is the whole problem.
+          We started with the microbial dark matter, the 99% of microbial life that has been sequenced but never grown. The 1% we can grow already remade medicine, agriculture, and industry; reaching even a few percent more would be one of the largest expansions of useful biology in a century. So we set out to predict what these organisms do, and how to grow them, using the best genome and protein models the field has produced.
         </p>
 
         <p>
-          Living systems are defined by physics: thermodynamics, molecular mechanics, reaction-diffusion, the dynamics of thousands of interacting parts. A foundation model for biology should encode those dynamics, not fit around them. The dominant paradigm gets this wrong by treating biology as text. ESM-2 reads proteins. Evo 2 reads genomes. Both are trained, like language models, to compress sequences and predict tokens, which buys real implicit knowledge but forces the model to rediscover physics from statistics, and it mostly fails. We have done extensive research on why current genome and protein language models underperform, and the pattern is consistent: next-token prediction, weak key-value matching, and compression-first architectures are a poor fit for biology's data distribution and its interaction structure.
+          They did not work. Inside the distribution they were trained on, the models are fluent. Faced with a genuinely unseen organism, which is the entire point of the exercise, they collapse. They do not generalize, and after a great deal of checking we concluded the failure was not ours but theirs: these models learn to sample from the data they were fed, and the biology worth finding is, by definition, not in it.
         </p>
 
         <p>
-          The alternative is to build the physics in, so the only things the model can express are physically admissible, and it happens in two places. The first is the architecture, where physics enters as symmetry and conservation. An SE(3)-equivariant network like MACE-MP-0 predicts forces that rotate with the molecule by construction.<sup class="cite"><a href="#fn8">8</a></sup> Energy-conserving potentials go further: the network learns a single scalar energy surface and derives forces as its gradient, so Newtonian mechanics is guaranteed rather than approximated. The physical law lives in the shape of the network, not in the loss.
-        </p>
-
-        <p>
-          The second is the objective, where the governing equation becomes the training target itself. Flow-matching models train a network to be the velocity field of an ordinary differential equation: AlphaFlow turns a single-structure predictor into a conformational-ensemble generator,<sup class="cite"><a href="#fn9">9</a></sup> and MDGen models full molecular-dynamics trajectories directly, up to 100,000 frames at a time.<sup class="cite"><a href="#fn11">11</a></sup> Score-based diffusion does the same through a stochastic differential equation, and BioEmu predicts free energies to roughly 1 kcal/mol using training substrates like ATLAS, an open corpus of 1,390 proteins simulated in triplicate.<sup class="cite"><a href="#fn10">10</a></sup><sup class="cite"><a href="#fn12">12</a></sup> Physics-informed neural networks make the principle explicit, adding the governing equation's residual directly to the loss. Sequence gives you the parts list. Dynamics gives you the runtime, and only the second one is physics.
-        </p>
-
-        <p>
-          A thesis about physics-informed biology is worth nothing until it beats sequence models on a problem where physics is the whole game, so we picked the hardest tractable one. The pieces already exist, scattered across communities that do not talk: interatomic potentials in materials,<sup class="cite"><a href="#fn8">8</a></sup> ensemble generators in biology,<sup class="cite"><a href="#fn9">9</a></sup> genome-scale metabolic networks at 247,000-microbe scale,<sup class="cite"><a href="#fn13">13</a></sup> and amino-acid-composition models that already predict oxygen tolerance, temperature, and salinity from genome alone.<sup class="cite"><a href="#fn14">14</a></sup> None individually is enough, and no one has assembled them into a system that predicts the physics of a living cell. We are proving the world model on the problem that most demands it: discovering the 99% of microbial life that has been sequenced but never grown.
+          This essay is the argument that followed. That the failure is not a matter of scale, that biology's data will never be large enough to fix it, and that the way out is to stop approximating the function of life from examples and to find the function itself.
         </p>
       </article>
 
@@ -1829,135 +1821,67 @@
           The unseen is not the unknowable.
         </blockquote>
 
-        <p class="turn" style="font-size: clamp(20px, 2.4vw, 26px);">So here is the question: what would it take to grow them?</p>
+        <p class="turn">So we tried to reach them, and the tools broke.</p>
 
         <p>
-          A genome is not just a parts list. It encodes the organism's phenotypes, the
-          physical conditions it was built to live in, and each phenotype we can predict
-          collapses one axis of the discovery search. Culturing an unknown microbe is a
-          combinatorial search over oxygen level, temperature, pH, salinity, carbon
-          source, electron acceptor, and partner organisms. Brute force explores the
-          whole grid, thousands of conditions, weeks each. Physics-informed prediction
-          reads each axis off the genome and turns the grid into a shortlist.
-        </p>
-
-        <figure class="figure" style="margin: 44px auto 40px;">
-          <table class="pheno">
-            <thead>
-              <tr>
-                <th>Phenotype</th>
-                <th>What it is</th>
-                <th>Genomic signal</th>
-                <th>How it collapses the search</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Oxygen tolerance</td>
-                <td>Aerobe, anaerobe, or facultative</td>
-                <td>Catalase, superoxide dismutase, cytochrome-oxidase genes</td>
-                <td>Air on the bench is the most common killer of anaerobes; predict it and you know to use an anaerobic chamber before wasting the sample</td>
-              </tr>
-              <tr>
-                <td>Temperature optimum</td>
-                <td>Psychrophile, mesophile, or thermophile</td>
-                <td>Proteome thermostability signatures, amino-acid composition</td>
-                <td>Sets incubation temperature; a thermophile at 37&nbsp;&deg;C does nothing</td>
-              </tr>
-              <tr>
-                <td>pH optimum</td>
-                <td>Acidophile, neutrophile, or alkaliphile</td>
-                <td>Proteome isoelectric-point distribution, transporters</td>
-                <td>Sets medium and buffer pH</td>
-              </tr>
-              <tr>
-                <td>Salinity</td>
-                <td>Halophile or not</td>
-                <td>Osmolyte synthesis and transport genes, acidic proteome bias</td>
-                <td>Sets salt concentration</td>
-              </tr>
-              <tr>
-                <td>Nutrient needs</td>
-                <td>Auxotrophies: what the cell cannot make and must be fed</td>
-                <td>Missing biosynthesis pathways in a metabolic reconstruction</td>
-                <td>Gives the medium recipe itself: which amino acids, vitamins, and cofactors to add</td>
-              </tr>
-              <tr>
-                <td>Electron acceptor</td>
-                <td>Oxygen, nitrate, sulfate, or fermentation</td>
-                <td>Terminal reductase genes</td>
-                <td>Sets the terminal acceptor in the medium</td>
-              </tr>
-              <tr>
-                <td>Partner dependence</td>
-                <td>Needs a neighbour's metabolites (syntrophy)</td>
-                <td>Pathways that cannot be closed even with rich medium</td>
-                <td>Signals co-culture, and explains why <i>Patescibacteria</i> and <i>Asgard</i> resist solo culture</td>
-              </tr>
-            </tbody>
-          </table>
-          <figcaption><b>Fig. III.</b> &nbsp; Each phenotype, read from the genome, fixes one axis of the search.</figcaption>
-        </figure>
-
-        <p>
-          Each predicted phenotype is the difference between intractable and a month of
-          lab work. A naive grid of five oxygen levels, four temperatures, four pH values,
-          four salinities, and twenty carbon sources is 6,400 conditions at one to four
-          weeks each. Predict each phenotype to within one step and that collapses to a
-          handful of targeted conditions. This is where the world model pays for itself:
-          physics read from sequence, not guessed from a plate.
+          To predict what an uncultured organism needs, or what its proteins do, you reach for the best models the field has: the large genome models, the protein language models. We used them. On organisms resembling the ones in their training sets, they are impressive. On the uncultured majority, the ones we actually wanted, they came apart. The predictions were not a little worse. They were unrelated to reality the moment the input left the distribution the model had seen.
         </p>
 
         <p>
-          This is possible now for the first time, because foundation models can finally
-          read biological sequence and molecular dynamics. From a genome, we predict what
-          the cell needs and simulate the dynamics: how membranes assemble, how metabolites
-          flow, what conditions the cell was built to live in. The result is the most
-          accurate model in the world for growing an unknown microbe, and a step toward the
-          <em>virtual cell</em>.
+          It is worth being exact about the cause, because it is not a tuning problem. Almost every model in this field is built on attention, sometimes with a convolution or a regressor attached. Attention learns the shape of its training distribution and samples from it. Inside that distribution it interpolates beautifully. Step outside, and there is nothing to draw on. But stepping outside is the whole job. The biotech companies, the biomanufacturers, the agricultural labs are all looking for a protein, an enzyme, an interaction that has never been measured. These models are useless in exactly the situation that pays for them.
+        </p>
+
+        <p class="stat">the model is weakest exactly where it is needed</p>
+
+        <p>
+          And scaling will not save it. Scaling laws hold for transformers on text, but the Chinchilla work already showed the returns bending down, and biology has no text to scale on. Sequenced life is scarce and expensive. Every structure, every measured interaction, every grown organism costs months of work, and no amount of money turns biology's data into a language model's corpus. Scaling is the single most expensive path available here, and it ends at the same wall.
+        </p>
+
+        <p class="turn">So we stopped, and asked what the model is really supposed to be doing.</p>
+
+        <p>
+          A neural network approximates a function from examples. Follow that to its end. If all a network ever does is approximate the function hidden inside a dataset, it carries an irreducible error, some epsilon, because no dataset can hold every case a function produces. A function maps infinitely many inputs; a finite pile of measurements can never pin all of them down. To drive that error to zero you would need infinite data. In biology, where data is the scarcest thing we have, that is not a plan.
+        </p>
+
+        <p class="turn">So here is the better idea: instead of approximating the function, find it.</p>
+
+        <p>
+          The reflex objection is that the space of possible functions is infinite, so the search is hopeless. It is not. The way proteins move and interact is not a fresh law for every molecule; there is one set of rules beneath all of them, the way there is one Schr&ouml;dinger equation and not one per atom. Approximating that law needs infinite data to reach zero error. Finding it means zero error from the first line. And it is provable in the ordinary way, by doing the work, the way Schr&ouml;dinger's equation was. Which is why it does not really matter that we have not catalogued every protein.
         </p>
 
         <p>
-          If it works, the payoff is a set of capabilities biology does not currently
-          have: cultivation-medium prediction, function inference from sequence, progress
-          toward virtual cells, and a dent in the data-scarcity problem that runs across
-          all of biology. We have characterised only a small fraction of Earth's microbes,
-          and even that fraction reshaped drug discovery, agriculture, and food systems. If
-          the same pattern holds for what remains, the opportunity is enormous, and it
-          generalizes, because a world model that predicts one cell's physics is not
-          specific to microbes.
+          Science already writes functions like this down. Navier and Stokes for fluids. The diffusion equation. The wave equation. The Gaussian. Euler's exponential. The logistic map. Each is a small rule that generates endless specific behaviour, and none of them was found by collecting every case it governs. We are claiming that biological interaction has such a function, and that it can be found rather than fit.
+        </p>
+
+        <p>
+          Molecular dynamics is one way to run that law, and a better approximator than any statistical model, because it integrates known physics instead of searching an infinite space of guesses. But what the field usually calls a &ldquo;physics-based model&rdquo; is often not physics at all. It is easy to simulate a small molecule or a single protein. It is another thing entirely to simulate a vaccine, an antigen meeting a whole cell, a viral process crossing a membrane. Someone has to write a force field for all of that, and that is brutally hard.
+        </p>
+
+        <p>
+          It also forces a question no one answers cleanly. What level of physics are we approximating with a network at all: quantum, molecular, mechanical? And what data even describes a whole cell: protein, RNA, genome, atoms? We do not yet know which data belongs to which model.
+        </p>
+
+        <p>
+          Here is the part we keep returning to. The natural world already carries its physics inside its data. If a network is meant to approximate the function of a protein, it should not need us to hand it the physics; the physics is already there in what we measure. The failure of today's models is that they throw it away at the very first step, when they turn a molecule into a token and keep only the order of the letters. Keep the physical state instead of the token, and the law is recoverable. The search space is not infinite, and there are ways to make it smaller.
         </p>
 
         <div class="fleuron">❧ ❦ ❧</div>
 
         <p>
-          This is hard for several reasons. The same organism behaves differently in different communities. A
-          bacterium that grows in a defined medium with one neighbour may refuse to
-          grow alone, so cultivation is not really a property of an organism, but of an
-          organism plus its context, and most existing models ignore this.
+          Find the function and biology's hardest cases stop being out of distribution, because there is no distribution to fall out of. There is a law, and you evaluate it. The microbial dark matter that sent us here becomes reachable, and so does everything stacked above it, from proteins to the interactions that become medicine.
         </p>
 
         <p>
-          Most pharmaceuticals fail. Most biology is harder than it looks. This could fail
-          too. But the upside is large enough that even partial success
-          matters. Every previously uncultured organism we grow is a potentially useful
-          new tool. New antibiotics. New probiotics. New enzymes. New chemistry.
-        </p>
-
-        <p>
-          And if it works at scale, the implication is not subtle. The microbial
-          99% is the largest unexplored library of useful biology on
-          Earth. Unlocking it is the closest thing biology has to <em>computing the
-          missing dark matter and seeing what is actually out there</em>.
+          Most of biology is harder than it looks, and this could fail too. But the claim is testable in the plainest way: find a function, evaluate it on biology no one has measured, and see whether it holds. Even partial success changes what is reachable.
         </p>
 
         <p class="stat">that is the bet</p>
 
         <p>
           In a few years, hopefully, we will be writing the postmortem on this. Either
-          <i>"here is why it failed and what we learned,"</i> or <i>"here is a new genus
-          we just cultured, and the antibiotic it makes."</i> Either way, somebody has
-          to try.
+          <i>"here is why it failed and what we learned,"</i> or <i>"here is a function we
+          found, and the biology it predicted that no one had yet measured."</i> Either
+          way, somebody has to try.
         </p>
       </article>
 
@@ -2002,34 +1926,6 @@
           <li id="fn7">
             Derrien et al., <i>Int. J. Syst. Evol. Microbiol.</i>, 2004.
             <i>Akkermansia muciniphila</i> gen. nov., sp. nov.
-          </li>
-          <li id="fn8">
-            Batatia et al., <i>J. Chem. Phys.</i>, 2024. A foundation model for
-            atomistic materials chemistry (MACE-MP-0). arXiv:2401.00096.
-          </li>
-          <li id="fn9">
-            Jing, Berger, Jaakkola. <i>ICML</i>, 2024. AlphaFold meets flow matching
-            for generating protein ensembles. arXiv:2402.04845.
-          </li>
-          <li id="fn10">
-            Lewis et al., <i>Science</i>, 2025. Scalable emulation of protein
-            equilibrium ensembles with generative deep learning (BioEmu).
-          </li>
-          <li id="fn11">
-            Jing, Stark, Jaakkola, Berger. <i>NeurIPS</i>, 2024. Generative modeling
-            of molecular dynamics trajectories (MDGen). arXiv:2409.17808.
-          </li>
-          <li id="fn12">
-            Vander Meersche et al., <i>Nucleic Acids Research</i>, 2024. ATLAS: protein
-            flexibility description from atomistic molecular dynamics simulations.
-          </li>
-          <li id="fn13">
-            Heinken et al., <i>Cell Systems</i>, 2025. A genome-scale metabolic
-            reconstruction resource of 247,092 diverse human microbes (APOLLO).
-          </li>
-          <li id="fn14">
-            Weissman et al., bioRxiv, 2024. Predicting microbial growth conditions
-            from amino acid composition. doi:10.1101/2024.03.22.586313.
           </li>
         </ol>
       </section>
