@@ -608,11 +608,11 @@
         </p>
 
         <p>
-          They did not work. Inside the distribution they were trained on, the models are fluent. Faced with a genuinely unseen organism, which is the entire point of the exercise, they collapse. They do not generalize, and after a great deal of checking we concluded the failure was not ours but theirs: these models learn to sample from the data they were fed, and the biology worth finding is, by definition, not in it.
+          They did not succeed. Within the distribution on which they were trained, the models are fluent; confronted with a genuinely unseen organism, which is the entire purpose of the exercise, they collapse. They do not generalize, and after extensive checking we concluded that the failure was not ours but structural: these models learn to sample from the data they were given, and the biology worth finding is, by definition, absent from it.
         </p>
 
         <p>
-          This essay is the argument that followed. That the failure is not a matter of scale, that biology's data will never be large enough to fix it, and that the way out is not to approximate biology from examples but to find the function that captures how living systems move and interact.
+          This essay sets out the argument that followed: that the failure is not one of scale, that biological data will never be sufficient to overcome it, and that the way forward is not to approximate biology from observations but to recover the function that governs how living systems move and interact.
         </p>
       </article>
 
@@ -1821,67 +1821,67 @@
           The unseen is not the unknowable.
         </blockquote>
 
-        <p class="turn">So we tried to reach them, and the tools broke.</p>
+        <p class="turn">So we tried to reach them, and the existing tools failed.</p>
 
         <p>
-          To predict what an uncultured organism needs, or what its proteins do, you reach for the best models the field has: the large genome models, the protein language models. We used them. On organisms resembling the ones in their training sets, they are impressive. On the uncultured majority, the ones we actually wanted, they came apart. The predictions were not a little worse. They were unrelated to reality the moment the input left the distribution the model had seen.
+          To predict what an uncultured organism requires, or what its proteins do, one turns to the strongest models the field has produced: the large genome models and the protein language models. We used them. On organisms resembling those in their training sets, the results are impressive; on the uncultured majority, the organisms of interest, they degrade sharply. The predictions are not marginally worse. They bear no relation to reality once the input departs the distribution the model was trained on.
         </p>
 
         <p>
-          It is worth being exact about the cause, because it is not a tuning problem. Almost every model in this field is built on attention, sometimes with a convolution or a regressor attached. Attention learns the shape of its training distribution and samples from it. Inside that distribution it interpolates beautifully. Step outside, and there is nothing to draw on. But stepping outside is the whole job. The biotech companies, the biomanufacturers, the agricultural labs are all looking for a protein, an enzyme, an interaction that has never been measured. These models are useless in exactly the situation that pays for them.
+          The cause merits precision, because it is not a matter of tuning. Nearly every model in this field is built on attention, sometimes combined with convolution or a regression head. Attention learns the geometry of its training distribution and samples from it: within that distribution it interpolates well, but outside it there is nothing to draw upon. Yet moving outside the distribution is precisely the objective. Biotechnology firms, biomanufacturers, and agricultural laboratories are all searching for a protein, an enzyme, or an interaction that has never been measured. These models are least reliable in exactly the setting that motivates their use.
         </p>
 
-        <p class="stat">the model is weakest exactly where it is needed</p>
+        <p class="stat">the model is least reliable where it is most needed</p>
 
         <p>
-          And scaling will not save it. Scaling laws hold for transformers on text, but the Chinchilla work already showed the returns bending down, and biology has no text to scale on. Sequenced life is scarce and expensive. Every structure, every measured interaction, every grown organism costs months of work, and no amount of money turns biology's data into a language model's corpus. Scaling is the single most expensive path available here, and it ends at the same wall.
+          Nor can scale resolve this. Scaling laws hold for transformers trained on text, but the Chinchilla results already show the returns diminishing, and biology has no comparable corpus to scale on. Sequenced life is scarce and costly to obtain: every structure, every measured interaction, every cultured organism represents months of laboratory work, and no expenditure converts biological data into a language model's corpus. Scaling is the most expensive route available here, and it terminates at the same limit.
         </p>
 
-        <p class="turn">So we stopped, and asked what the model is really supposed to be doing.</p>
+        <p class="turn">So we stepped back and asked what such a model is actually doing.</p>
 
         <p>
-          A neural network approximates a function from examples. Follow that to its end. If all a network ever does is approximate the function hidden inside a dataset, it carries an irreducible error, some epsilon, because no dataset can hold every case a function produces. A function maps infinitely many inputs; a finite pile of measurements can never pin all of them down. To drive that error to zero you would need infinite data. In biology, where data is the scarcest thing we have, that is not a plan.
+          A neural network approximates a function from observations. Consider the implication. If a network only ever approximates the function latent in a dataset, it retains an irreducible error, some epsilon, because no dataset can contain every case a function produces. A function maps infinitely many inputs, and no finite set of measurements can determine all of them. Driving that error to zero would require unbounded data, and in biology, where data is the scarcest resource, that is not a viable path.
         </p>
 
-        <p class="turn">So here is the better idea: instead of approximating the function, find it.</p>
+        <p class="turn">So here is the alternative: rather than approximate the function, recover it.</p>
 
         <p>
-          The reflex objection is that the space of possible functions is infinite, so the search is hopeless. It is not. The way proteins move and interact is not a fresh law for every molecule; there is one set of rules beneath all of them, the way there is one Schr&ouml;dinger equation and not one per atom. Approximating that law needs infinite data to reach zero error. Finding it means zero error from the first line. And it is provable in the ordinary way, by doing the work, the way Schr&ouml;dinger's equation was. Which is why it does not really matter that we have not catalogued every protein.
-        </p>
-
-        <p>
-          Science already writes functions like this down. Navier and Stokes for fluids. The diffusion equation. The wave equation. The Gaussian. Euler's exponential. The logistic map. Each is a small rule that generates endless specific behaviour, and none of them was found by collecting every case it governs. We are claiming that biological interaction has such a function, and that it can be found rather than fit.
+          The immediate objection is that the space of candidate functions is infinite, and the search therefore intractable. It is not. The manner in which proteins move and interact is not a distinct law for each molecule; a single set of rules underlies all of them, much as there is one Schr&ouml;dinger equation rather than one per atom. Approximating that law demands unbounded data to reach zero error; recovering it yields zero error by construction. And it is demonstrable in the ordinary manner, by carrying out the work, as the Schr&ouml;dinger equation was. This is why it does not ultimately matter that we have not catalogued every protein.
         </p>
 
         <p>
-          Molecular dynamics is one way to run that law, and a better approximator than any statistical model, because it integrates known physics instead of searching an infinite space of guesses. But what the field usually calls a &ldquo;physics-based model&rdquo; is often not physics at all. It is easy to simulate a small molecule or a single protein. It is another thing entirely to simulate a vaccine, an antigen meeting a whole cell, a viral process crossing a membrane. Someone has to write a force field for all of that, and that is brutally hard.
+          Science already writes functions of this kind. The Navier&ndash;Stokes equations for fluids. The diffusion equation. The wave equation. The Gaussian. Euler's exponential. The logistic map. Each is a compact rule that generates unbounded specific behaviour, and none was obtained by enumerating every case it governs. Our claim is that biological interaction admits such a function, and that it can be recovered rather than fit.
         </p>
 
         <p>
-          It also forces a question no one answers cleanly. What level of physics are we approximating with a network at all: quantum, molecular, mechanical? And what data even describes a whole cell: protein, RNA, genome, atoms? We do not yet know which data belongs to which model.
+          Molecular dynamics is one means of evaluating that law, and a stronger approximator than any statistical model, because it integrates known physics rather than searching an unbounded space of candidates. Yet what the field commonly terms a &ldquo;physics-based model&rdquo; is frequently not physics at all. Simulating a small molecule or a single protein is straightforward; simulating a vaccine, an antigen engaging an entire cell, or a viral process traversing a membrane is not. Each would require a hand-specified force field, and constructing one is exceptionally difficult.
         </p>
 
         <p>
-          Here is the part we keep returning to. The natural world already carries its physics inside its data. If a network is meant to approximate the function of a protein, it should not need us to hand it the physics; the physics is already there in what we measure. The failure of today's models is that they throw it away at the very first step, when they turn a molecule into a token and keep only the order of the letters. Keep the physical state instead of the token, and the law is recoverable. The search space is not infinite, and there are ways to make it smaller.
+          It also raises a question the field has not answered cleanly. At what level should the physics be approximated by a network: quantum, molecular, or mechanical? And what representation adequately describes a whole cell: protein, RNA, genome, or atoms? We do not yet know which data belongs to which model.
+        </p>
+
+        <p>
+          This is the point we return to. The natural world already encodes its physics within its data. If a network is intended to approximate the function of a protein, it should not require that physics to be supplied by hand, because the physics is already present in what we measure. The failure of current models is that they discard it at the first step, when a molecule is reduced to a token and only the order of the symbols is retained. Preserve the physical state in place of the token, and the law becomes recoverable. The search space is not infinite, and there are principled ways to constrain it.
         </p>
 
         <div class="fleuron">❧ ❦ ❧</div>
 
         <p>
-          Find the function and biology's hardest cases stop being out of distribution, because there is no distribution to fall out of. There is a law, and you evaluate it. The microbial dark matter that sent us here becomes reachable, and so does everything stacked above it, from proteins to the interactions that become medicine.
+          Recover the function and biology's hardest cases cease to be out of distribution, because there is no distribution to fall outside of. There is a law, and one evaluates it. The microbial dark matter that led us here becomes tractable, as does everything above it, from proteins to the interactions that become medicine.
         </p>
 
         <p>
-          Most of biology is harder than it looks, and this could fail too. But the claim is testable in the plainest way: find a function, evaluate it on biology no one has measured, and see whether it holds. Even partial success changes what is reachable.
+          Much of biology is more difficult than it appears, and this programme may fail. But the claim is testable in the most direct way: recover a function, evaluate it on biology no one has yet measured, and determine whether it holds. Even partial success alters what is reachable.
         </p>
 
         <p class="stat">that is the bet</p>
 
         <p>
-          In a few years, hopefully, we will be writing the postmortem on this. Either
-          <i>"here is why it failed and what we learned,"</i> or <i>"here is a function we
-          found, and the biology it predicted that no one had yet measured."</i> Either
-          way, somebody has to try.
+          In a few years we expect to be writing the retrospective, reporting either
+          <i>why the approach failed and what it taught us</i>, or <i>a function we
+          recovered, and the biology it predicted that had not yet been measured</i>.
+          Either way, the attempt is warranted.
         </p>
       </article>
 
