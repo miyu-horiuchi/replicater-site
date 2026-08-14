@@ -11,10 +11,6 @@
       location.replace('/research/' + location.search + location.hash);
       return;
     }
-    if (path === '/manifesto' || path === '/manifesto.html') {
-      location.replace('/manifesto/' + location.search + location.hash);
-      return;
-    }
     if (/\/index\.html$/.test(location.pathname)) {
       location.replace((location.pathname.replace(/\/index\.html$/, '') || '/') + location.search + location.hash);
       return;
@@ -41,6 +37,6 @@
 </style>
 </head>
 <body>
-  <p>Page not found. <a href="/">Home</a> · <a href="/research/">Research</a> · <a href="/manifesto/">Manifesto</a></p>
+  <p>Page not found. <a href="/">Home</a> · <a href="/research/">Research</a></p>
 </body>
 </html>

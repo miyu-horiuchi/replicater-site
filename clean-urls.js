@@ -12,7 +12,7 @@
     location.replace(clean + location.search + location.hash);
     return;
   }
-  if (path === '/research' || path === '/manifesto') {
+  if (path === '/research') {
     location.replace(path + '/' + location.search + location.hash);
   }
 })();
